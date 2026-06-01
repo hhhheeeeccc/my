@@ -11,7 +11,8 @@ export const PortfolioProvider = ({ children }) => {
     const saved = localStorage.getItem('portfolio_content');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (parsed.en && parsed.ar) return parsed;
       } catch (e) {
         console.error('Failed to parse saved content', e);
       }
@@ -19,20 +20,19 @@ export const PortfolioProvider = ({ children }) => {
     return { en: initialEn.translation, ar: initialAr.translation };
   });
 
+  // Effect to sync state with i18next and localStorage
   useEffect(() => {
-    // Update i18next resources whenever content changes
     i18n.addResourceBundle('en', 'translation', content.en, true, true);
     i18n.addResourceBundle('ar', 'translation', content.ar, true, true);
-
-    // Persist to localStorage
     localStorage.setItem('portfolio_content', JSON.stringify(content));
 
-    // Force a re-render for i18next if needed (though addResourceBundle is usually enough)
+    // Most reliable way to trigger re-render in react-i18next components
+    i18n.changeLanguage(i18n.language);
   }, [content]);
 
   const updateContent = (lang, path, value) => {
     setContent(prev => {
-      const newContent = JSON.parse(JSON.stringify(prev)); // Deep clone
+      const newContent = JSON.parse(JSON.stringify(prev));
       const keys = path.split('.');
       let current = newContent[lang];
 
@@ -48,7 +48,8 @@ export const PortfolioProvider = ({ children }) => {
 
   const resetContent = () => {
     if (window.confirm('Are you sure you want to reset all data to defaults?')) {
-      setContent({ en: initialEn.translation, ar: initialAr.translation });
+      const defaultContent = { en: initialEn.translation, ar: initialAr.translation };
+      setContent(defaultContent);
     }
   };
 

@@ -16,16 +16,21 @@ const Dashboard = ({ onClose }) => {
   ];
 
   const renderField = (label, path, type = 'text') => {
-    const value = path.split('.').reduce((obj, key) => obj?.[key], content[activeLang]) || '';
+    const keys = path.split('.');
+    let value = content[activeLang];
+    for (const key of keys) {
+      value = value?.[key];
+    }
+    value = value || '';
 
     return (
-      <div className="mb-6">
+      <div className="mb-6 relative z-[110]">
         <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 capitalize">
           {label}
         </label>
         {type === 'textarea' ? (
           <textarea
-            className="w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+            className="editor-input w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
             rows="4"
             value={value}
             onChange={(e) => updateContent(activeLang, path, e.target.value)}
@@ -33,7 +38,7 @@ const Dashboard = ({ onClose }) => {
         ) : (
           <input
             type="text"
-            className="w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+            className="editor-input w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
             value={value}
             onChange={(e) => updateContent(activeLang, path, e.target.value)}
           />
@@ -44,7 +49,7 @@ const Dashboard = ({ onClose }) => {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-      <div className="bg-slate-50 dark:bg-slate-950 w-full max-w-6xl h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200 dark:border-slate-800">
+      <div className="bg-slate-50 dark:bg-slate-950 w-full max-w-6xl h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200 dark:border-slate-800 relative z-[101]">
         {/* Header */}
         <div className="px-8 py-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -122,7 +127,7 @@ const Dashboard = ({ onClose }) => {
           </div>
 
           {/* Main Content */}
-          <div className="flex-1 overflow-y-auto p-8 bg-white dark:bg-slate-900/30">
+          <div className="flex-1 overflow-y-auto p-8 bg-white dark:bg-slate-900/30 relative z-[105]">
             {activeSection === 'hero' && (
               <div className="max-w-2xl">
                 {renderField('Full Name', 'hero.name')}
