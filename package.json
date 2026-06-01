@@ -9,33 +9,22 @@
     "preview": "vite preview",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/hhhheeeeccc/my.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/hhhheeeeccc/my/issues"
-  },
-  "homepage": "https://github.com/hhhheeeeccc/my#readme",
-  "devDependencies": {
-    "@vitejs/plugin-react": "^6.0.2",
-    "vite": "^8.0.15"
-  },
+  "type": "module",
   "dependencies": {
-    "@tailwindcss/vite": "^4.3.0",
-    "autoprefixer": "^10.5.0",
-    "framer-motion": "^12.40.0",
-    "i18next": "^26.3.0",
-    "i18next-browser-languagedetector": "^8.2.1",
-    "lucide-react": "^1.17.0",
-    "postcss": "^8.5.15",
-    "react": "^19.2.6",
-    "react-dom": "^19.2.6",
-    "react-i18next": "^17.0.8",
-    "tailwindcss": "^4.3.0"
+    "@tailwindcss/vite": "^4.0.0",
+    "autoprefixer": "^10.4.0",
+    "framer-motion": "^12.0.0",
+    "i18next": "^24.0.0",
+    "i18next-browser-languagedetector": "^8.0.0",
+    "lucide-react": "^0.474.0",
+    "postcss": "^8.4.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-i18next": "^16.0.0",
+    "tailwindcss": "^4.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.0.0",
+    "vite": "^6.0.0"
   }
 }

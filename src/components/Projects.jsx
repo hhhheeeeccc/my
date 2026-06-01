@@ -84,12 +84,12 @@ const Projects = () => {
                     </span>
                   ))}
                 </div>
-                <div className="flex items-center space-x-4 rtl:space-x-reverse pt-6 border-t border-slate-100 dark:border-slate-800">
-                  <button className="flex items-center space-x-2 rtl:space-x-reverse text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                <div className="flex items-center gap-4  pt-6 border-t border-slate-100 dark:border-slate-800">
+                  <button className="flex items-center gap-2  text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                     <GithubIcon size={18} />
                     <span>{t('projects.sourceCode')}</span>
                   </button>
-                  <button className="flex items-center space-x-2 rtl:space-x-reverse text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                  <button className="flex items-center gap-2  text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                     <ExternalLink size={18} />
                     <span>{t('projects.liveDemo')}</span>
                   </button>

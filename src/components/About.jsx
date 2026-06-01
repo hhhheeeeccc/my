@@ -33,7 +33,7 @@ const About = () => {
             className="relative"
           >
             <div className="p-8 bg-white dark:bg-slate-950 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800">
-              <div className="flex items-center space-x-4 rtl:space-x-reverse mb-6">
+              <div className="flex items-center gap-4  mb-6">
                 <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-2xl">
                   <Gem className="text-blue-600 dark:text-blue-400" size={28} />
                 </div>

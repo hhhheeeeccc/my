@@ -23,7 +23,7 @@ const Contact = () => {
           <div className="grid md:grid-cols-5 gap-12">
             <div className="md:col-span-2 space-y-8">
               <div className="p-8 rounded-3xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800">
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center space-x-3 rtl:space-x-reverse">
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-3 ">
                   <Mail className="text-blue-600" />
                   <span>{t('contact.emailMe')}</span>
                 </h3>
@@ -32,7 +32,7 @@ const Contact = () => {
                 </a>
               </div>
 
-              <div className="flex justify-center md:justify-start space-x-6 rtl:space-x-reverse">
+              <div className="flex justify-center md:justify-start gap-6 ">
                 {[
                   { icon: <GithubIcon />, link: "#" },
                   { icon: <GitlabIcon />, link: "#" },
@@ -85,7 +85,7 @@ const Contact = () => {
                 </div>
                 <button
                   type="submit"
-                  className="w-full py-5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-blue-500/25 flex items-center justify-center space-x-3 rtl:space-x-reverse"
+                  className="w-full py-5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-blue-500/25 flex items-center justify-center gap-3 "
                 >
                   <span>{t('contact.sendButton')}</span>
                 </button>
