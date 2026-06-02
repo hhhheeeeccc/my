@@ -2,6 +2,17 @@
 
 A high-performance, bilingual (English & Arabic) personal portfolio website built with React 19 and Tailwind CSS v4. This project showcases the work, skills, and professional philosophy of Marwan Yahya Hassan Ghazi, a Senior Frontend & Desktop Application Developer and Software Architect.
 
+## 🌟 Visual Experience
+
+![Website Preview Placeholder](https://placehold.co/1200x630/0f172a/ffffff?text=Marwan+Yahya+Hassan+Ghazi+Portfolio\nBilingual+High-Performance+Design)
+
+The portfolio features a "Legendary" visual design with:
+- **Custom Animated Cursor:** A reactive cursor that tracks movement and scales when hovering over interactive elements.
+- **Scroll Progress Indicator:** A gradient progress bar at the top of the viewport that tracks reading progress (handles RTL/LTR).
+- **Dynamic Hero Section:** Floating background blobs with continuous fluid motion and staggered entrance animations.
+- **Advanced Scroll Animations:** Using Framer Motion's intersection observer to reveal content smoothly as you scroll.
+- **Interactive Card Hover:** Cards in the Skills and Projects sections feature "tilt" and "glow" effects with sophisticated shadow transitions.
+
 ## 🚀 Features
 
 -   **Bilingual Support (EN/AR):** Full localization using `i18next` with automatic direction (LTR/RTL) switching.
@@ -51,7 +62,7 @@ src/
     ```bash
     npm install --legacy-peer-deps
     ```
-    *Note: `--legacy-peer-deps` is recommended due to strict versioning in some dependencies.*
+    *Note: --legacy-peer-deps is recommended due to strict versioning in some dependencies.*
 
 3.  Start the development server:
     ```bash
@@ -64,7 +75,7 @@ To create a production build:
 ```bash
 npm run build
 ```
-The output will be in the `dist/` directory.
+The output will be in the dist/ directory.
 
 ## 👨‍💻 About the Developer
 
