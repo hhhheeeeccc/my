@@ -1,19 +1,29 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
 
 const Footer = () => {
   const { t } = useTranslation();
-  const year = new Date().getFullYear();
+  const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="py-12 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <p className="text-slate-600 dark:text-slate-400 font-medium mb-2">
-          {t('footer.rights', { year })}
-        </p>
-        <p className="text-slate-500 dark:text-slate-500 text-sm">
-          {t('footer.builtWith')}
-        </p>
+    <footer className="py-12 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-900 transition-colors duration-300">
+      <div className="max-w-7xl mx-auto px-4 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <p className="text-slate-600 dark:text-slate-400 font-medium">
+            &copy; {currentYear} <span className="font-bold text-slate-900 dark:text-white">Marwan Yahya Hassan Ghazi</span>.
+            {t('footer.rights', ' All rights reserved.')}
+          </p>
+          <div className="mt-4 flex justify-center gap-6 text-sm font-bold text-slate-400 dark:text-slate-600">
+            <a href="#" className="hover:text-blue-600 transition-colors uppercase tracking-widest">{t('footer.privacy', 'Privacy')}</a>
+            <a href="#" className="hover:text-blue-600 transition-colors uppercase tracking-widest">{t('footer.terms', 'Terms')}</a>
+          </div>
+        </motion.div>
       </div>
     </footer>
   );
