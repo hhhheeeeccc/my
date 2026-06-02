@@ -17,3 +17,25 @@ html {
 body {
   @apply bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100;
 }
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-50 dark:bg-slate-900;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 dark:bg-slate-700 rounded-full border-4 border-solid border-slate-50 dark:border-slate-900;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-blue-500;
+}
+
+/* Text Selection */
+::selection {
+  @apply bg-blue-500/30 text-blue-900 dark:text-blue-100;
+}
