@@ -30,14 +30,20 @@ function App() {
 
   const { scrollYProgress } = useScroll();
 
-  const scaleX = useSpring(scrollYProgress, {
+  // High-end smooth progress for global interactions
+  const smoothProgress = useSpring(scrollYProgress, {
     stiffness: 100,
     damping: 30,
     restDelta: 0.001
   });
 
-  const sceneRotateY = useTransform(scrollYProgress, [0, 1], ["0deg", "5deg"]);
-  const scenePerspective = useSpring(1200, { stiffness: 50, damping: 20 });
+  // Global 3D scene distortion and scale
+  const sceneRotateX = useTransform(smoothProgress, [0, 0.5, 1], ["2deg", "0deg", "-2deg"]);
+  const sceneRotateY = useTransform(smoothProgress, [0, 1], [isAr ? "2deg" : "-2deg", isAr ? "-2deg" : "2deg"]);
+  const sceneScale = useTransform(smoothProgress, [0, 0.5, 1], [1, 0.98, 1]);
+
+  // Progress bar logic
+  const scaleX = smoothProgress;
 
   useEffect(() => {
     const currentIsAr = i18n.language?.startsWith('ar');
@@ -53,7 +59,7 @@ function App() {
       <Floating3DBackground />
 
       <motion.div
-        className="fixed top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 z-[110] shadow-[0_0_15px_rgba(59,130,246,0.5)]"
+        className="fixed top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 z-[150] shadow-[0_0_15px_rgba(59,130,246,0.5)]"
         style={{
           scaleX,
           transformOrigin: isAr ? "right" : "left"
@@ -64,14 +70,19 @@ function App() {
 
       <motion.main
         style={{
-          perspective: scenePerspective,
+          perspective: "2000px",
           transformStyle: "preserve-3d"
         }}
         className="relative z-10"
       >
         <motion.div
-          style={{ rotateY: sceneRotateY, transformStyle: "preserve-3d" }}
-          className="w-full h-full"
+          style={{
+            rotateX: sceneRotateX,
+            rotateY: sceneRotateY,
+            scale: sceneScale,
+            transformStyle: "preserve-3d"
+          }}
+          className="w-full origin-center transition-transform duration-1000 ease-out"
         >
           <Hero />
           <SectionReveal><About /></SectionReveal>
