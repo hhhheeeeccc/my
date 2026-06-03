@@ -38,10 +38,10 @@ const Navbar = () => {
   ];
 
   return (
-    <div className="fixed top-0 w-full z-[100] flex justify-center pointer-events-none px-4">
+    <div className="fixed top-0 w-full z-[120] flex justify-center pointer-events-none px-4 pt-4">
       <motion.nav
         initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 20, opacity: 1 }}
+        animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
         style={{
           height: navHeight,
