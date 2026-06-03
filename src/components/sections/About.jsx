@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Gem, Sparkles } from 'lucide-react';
+import TextReveal3D from '../common/TextReveal3D';
 
 const About = () => {
   const { t } = useTranslation();
@@ -33,15 +34,18 @@ const About = () => {
                 {t('about.subtitle', 'My Journey')}
               </span>
             </div>
-            <h2 className="text-4xl md:text-6xl font-black mb-8 text-slate-900 dark:text-white leading-tight">
-              {t('about.title')}
+            <div className="mb-8">
+              <TextReveal3D
+                text={t('about.title')}
+                className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white leading-tight"
+              />
               <motion.div
                 initial={{ width: 0 }}
                 whileInView={{ width: 100 }}
                 transition={{ delay: 0.5, duration: 0.8 }}
                 className="h-2 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-full mt-4"
               />
-            </h2>
+            </div>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}

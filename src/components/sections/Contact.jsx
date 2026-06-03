@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Mail, Send, CheckCircle2 } from 'lucide-react';
 import { GithubIcon, LinkedinIcon, GitlabIcon } from '../../icons/CustomIcons';
+import TextReveal3D from '../common/TextReveal3D';
+import Magnetic from '../common/Magnetic';
 
 const Contact = () => {
   const { t } = useTranslation();
@@ -40,11 +42,12 @@ const Contact = () => {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-20"
+            className="text-center mb-20 flex flex-col items-center"
           >
-            <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white mb-6">
-              {t('contact.title')}
-            </h2>
+            <TextReveal3D
+              text={t('contact.title')}
+              className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white mb-6 justify-center"
+            />
             <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-medium opacity-80">
               {t('contact.subtitle')}
             </p>
@@ -82,15 +85,16 @@ const Contact = () => {
                   { icon: <GitlabIcon />, link: "#", color: "hover:text-[#FC6D26]" },
                   { icon: <LinkedinIcon />, link: "#", color: "hover:text-[#0077B5]" }
                 ].map((social, idx) => (
-                  <motion.a
-                    key={idx}
-                    href={social.link}
-                    whileHover={{ scale: 1.15, y: -5 }}
-                    whileTap={{ scale: 0.9 }}
-                    className={`p-5 rounded-2xl bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-100 dark:border-slate-700 shadow-sm transition-colors ${social.color}`}
-                  >
-                    {social.icon}
-                  </motion.a>
+                  <Magnetic key={idx}>
+                    <motion.a
+                      href={social.link}
+                      whileHover={{ scale: 1.15, y: -5 }}
+                      whileTap={{ scale: 0.9 }}
+                      className={`p-5 rounded-2xl bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-100 dark:border-slate-700 shadow-sm transition-colors ${social.color}`}
+                    >
+                      {social.icon}
+                    </motion.a>
+                  </Magnetic>
                 ))}
               </motion.div>
             </motion.div>
@@ -138,32 +142,34 @@ const Contact = () => {
                     placeholder={t('contact.messagePlaceholder')}
                   ></textarea>
                 </motion.div>
-                <motion.button
-                  variants={itemVariants}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  disabled={isSubmitting || isSent}
-                  type="submit"
-                  className={`w-full py-6 ${isSent ? 'bg-emerald-500' : 'bg-blue-600 hover:bg-blue-700'} text-white font-black rounded-2xl transition-all shadow-xl shadow-blue-500/20 flex items-center justify-center gap-3 relative overflow-hidden`}
-                >
-                  {isSubmitting ? (
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                      className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full"
-                    />
-                  ) : isSent ? (
-                    <>
-                      <CheckCircle2 size={24} />
-                      <span>Message Sent!</span>
-                    </>
-                  ) : (
-                    <>
-                      <Send size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                      <span>{t('contact.sendButton')}</span>
-                    </>
-                  )}
-                </motion.button>
+                <Magnetic>
+                  <motion.button
+                    variants={itemVariants}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    disabled={isSubmitting || isSent}
+                    type="submit"
+                    className={`w-full py-6 ${isSent ? 'bg-emerald-500' : 'bg-blue-600 hover:bg-blue-700'} text-white font-black rounded-2xl transition-all shadow-xl shadow-blue-500/20 flex items-center justify-center gap-3 relative overflow-hidden`}
+                  >
+                    {isSubmitting ? (
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full"
+                      />
+                    ) : isSent ? (
+                      <>
+                        <CheckCircle2 size={24} />
+                        <span>Message Sent!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                        <span>{t('contact.sendButton')}</span>
+                      </>
+                    )}
+                  </motion.button>
+                </Magnetic>
               </form>
             </motion.div>
           </div>
