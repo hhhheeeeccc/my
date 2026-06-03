@@ -38,7 +38,7 @@ const Navbar = () => {
   ];
 
   return (
-    <div className="fixed top-0 w-full z-[120] flex justify-center pointer-events-none px-4 pt-4">
+    <div className="fixed top-0 w-full z-[200] flex justify-center pointer-events-none px-4 pt-4">
       <motion.nav
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}

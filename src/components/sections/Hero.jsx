@@ -67,7 +67,7 @@ const Hero = () => {
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative min-h-screen flex items-center justify-center pt-32 pb-20 overflow-hidden bg-white dark:bg-slate-950 transition-colors duration-500 perspective-[2000px]"
+      className="relative min-h-screen flex items-center justify-center pt-48 pb-20 overflow-visible bg-white dark:bg-slate-950 transition-colors duration-500 perspective-[2000px]"
     >
       {/* Parallax Background Elements */}
       <motion.div

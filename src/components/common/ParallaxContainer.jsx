@@ -9,8 +9,9 @@ const ParallaxContainer = ({ children, className }) => {
   const mouseXSpring = useSpring(x, { stiffness: 100, damping: 30 });
   const mouseYSpring = useSpring(y, { stiffness: 100, damping: 30 });
 
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["5deg", "-5deg"]);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-5deg", "5deg"]);
+  // Increased rotation for a more dynamic feel
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["12deg", "-12deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-12deg", "12deg"]);
 
   const handleMouseMove = (e) => {
     if (!ref.current) return;
@@ -35,6 +36,14 @@ const ParallaxContainer = ({ children, className }) => {
       ref={ref}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      animate={{
+        y: [0, -15, 0],
+      }}
+      transition={{
+        duration: 6,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }}
       style={{
         rotateX,
         rotateY,
