@@ -101,6 +101,47 @@ export const en = {
     footer: {
       rights: "© {{year}} Marwan Yahya Hassan Ghazi. All rights reserved.",
       builtWith: "Built with React, Tailwind CSS, and Framer Motion."
+    },
+    admin: {
+      title: "Portfolio Editor",
+      subtitle: "Customize your portfolio content",
+      exportJson: "Export JSON",
+      resetConfirm: "Are you sure you want to reset all data to defaults?",
+      resetTitle: "Reset to defaults",
+      sections: {
+        hero: "Hero",
+        about: "About",
+        skills: "Skills",
+        projects: "Projects",
+        contact: "Contact"
+      },
+      fields: {
+        fullName: "Full Name",
+        profTitle: "Professional Title",
+        shortBio: "Short Bio / Subtitle",
+        exploreBtn: "Explore Button Text",
+        contactBtn: "Contact Button Text",
+        secTitle: "Section Title",
+        detailedBio: "Detailed Bio",
+        personalTouchTitle: "Personal Touch Title",
+        personalTouchBio: "Personal Touch Description",
+        categories: "Categories",
+        frontend: "Frontend Category",
+        backend: "Backend/Desktop Category",
+        architecture: "Architecture Category",
+        cicd: "CI/CD Category",
+        project1: "Project 1",
+        project2: "Project 2",
+        pTitle: "Title",
+        pDesc: "Description",
+        subtitle: "Subtitle",
+        emailLabel: "Email Label",
+        displayEmail: "Display Email",
+        namePlaceholder: "Name Placeholder",
+        emailPlaceholder: "Email Placeholder",
+        messagePlaceholder: "Message Placeholder",
+        submitBtn: "Submit Button Text"
+      }
     }
   }
 };
@@ -208,6 +249,47 @@ export const ar = {
     footer: {
       rights: "© {{year}} مروان يحيى حسن غازي. جميع الحقوق محفوظة.",
       builtWith: "تم بناؤه باستخدام React و Tailwind CSS و Framer Motion."
+    },
+    admin: {
+      title: "محرر الملف الشخصي",
+      subtitle: "قم بتخصيص محتوى ملفك الشخصي",
+      exportJson: "تصدير JSON",
+      resetConfirm: "هل أنت متأكد من أنك تريد إعادة تعيين جميع البيانات إلى الافتراضيات؟",
+      resetTitle: "إعادة التعيين للافتراضيات",
+      sections: {
+        hero: "البداية",
+        about: "عني",
+        skills: "المهارات",
+        projects: "المشاريع",
+        contact: "اتصل بي"
+      },
+      fields: {
+        fullName: "الاسم الكامل",
+        profTitle: "المسمى الوظيفي",
+        shortBio: "نبذة قصيرة / العنوان الفرعي",
+        exploreBtn: "نص زر الاستكشاف",
+        contactBtn: "نص زر التواصل",
+        secTitle: "عنوان القسم",
+        detailedBio: "السيرة الذاتية المفصلة",
+        personalTouchTitle: "عنوان اللمسة الشخصية",
+        personalTouchBio: "وصف اللمسة الشخصية",
+        categories: "الفئات",
+        frontend: "فئة الواجهة الأمامية",
+        backend: "فئة سطح المكتب والخلفية",
+        architecture: "فئة الهندسة والاختبار",
+        cicd: "فئة التكامل المستمر",
+        project1: "المشروع 1",
+        project2: "المشروع 2",
+        pTitle: "العنوان",
+        pDesc: "الوصف",
+        subtitle: "العنوان الفرعي",
+        emailLabel: "تسمية البريد الإلكتروني",
+        displayEmail: "البريد الإلكتروني المعروض",
+        namePlaceholder: "مكان الاسم",
+        emailPlaceholder: "مكان البريد الإلكتروني",
+        messagePlaceholder: "مكان الرسالة",
+        submitBtn: "نص زر الإرسال"
+      }
     }
   }
 };
