@@ -53,7 +53,7 @@ const ProjectCard = ({ project, idx }) => {
         hidden: { opacity: 0, y: 60, rotateX: 10 },
         visible: { opacity: 1, y: 0, rotateX: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
       }}
-      className="group bg-white dark:bg-slate-950 rounded-[3.5rem] overflow-hidden border border-slate-100 dark:border-slate-800 shadow-xl hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.35)] transition-shadow duration-500 flex flex-col h-full relative"
+      className="group bg-white dark:bg-slate-950 card-3d-shadow rounded-[3.5rem] overflow-hidden border border-slate-100 dark:border-slate-800 shadow-xl hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.35)] transition-shadow duration-500 flex flex-col h-full relative"
     >
       {/* Glare Layer */}
       <motion.div

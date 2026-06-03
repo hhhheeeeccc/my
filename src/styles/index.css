@@ -76,3 +76,49 @@ body {
   90% { transform: translate(10%,5%) }
   100% { transform: translate(5%,0) }
 }
+
+/* Professional 3D & Visual Effects */
+.glow-effect {
+  position: relative;
+}
+
+.glow-effect::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(45deg, #3b82f6, #6366f1, #06b6d4, #3b82f6);
+  background-size: 400%;
+  z-index: -1;
+  filter: blur(10px);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  border-radius: inherit;
+}
+
+.glow-effect:hover::after {
+  opacity: 0.4;
+  animation: glow-pulse 20s linear infinite;
+}
+
+@keyframes glow-pulse {
+  0% { background-position: 0% 50% }
+  50% { background-position: 100% 50% }
+  100% { background-position: 0% 50% }
+}
+
+.bloom-container {
+  filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.3));
+}
+
+.card-3d-shadow {
+  box-shadow:
+    0 20px 50px -10px rgba(0, 0, 0, 0.3),
+    0 10px 20px -5px rgba(0, 0, 0, 0.2);
+  transition: box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-3d-shadow:hover {
+  box-shadow:
+    0 40px 100px -20px rgba(0, 0, 0, 0.4),
+    0 20px 40px -10px rgba(59, 130, 246, 0.2);
+}
