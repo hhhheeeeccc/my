@@ -41,18 +41,25 @@ const SkillCard = ({ group, idx }) => {
           opacity: 1,
           y: 0,
           rotateX: 0,
-          transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
+          transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: idx * 0.1 }
         }
       }}
-      whileHover={{ y: -10 }}
-      className="group p-10 rounded-[3rem] bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-300 relative overflow-hidden perspective-[1000px]"
+      whileHover={{
+        y: -15,
+        rotateY: 5,
+        rotateX: -5,
+        scale: 1.02,
+        transition: { type: "spring", stiffness: 300, damping: 20 }
+      }}
+      className="group p-10 rounded-[3rem] bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-300 relative overflow-hidden perspective-[1000px] card-3d-shadow"
       style={{ transformStyle: "preserve-3d" }}
     >
       <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-blue-600 to-cyan-500 transform scale-y-0 group-hover:scale-y-100 transition-transform duration-500 origin-top" />
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-blue-500/0 group-hover:from-blue-500/5 group-hover:to-cyan-500/5 transition-all duration-500" />
 
       <motion.div
         style={{ translateZ: "40px" }}
-        className="mb-8 p-5 bg-white dark:bg-slate-800 rounded-2xl w-fit shadow-xl group-hover:shadow-blue-500/20 transition-all"
+        className="mb-8 p-5 bg-white dark:bg-slate-800 rounded-2xl w-fit shadow-xl group-hover:shadow-blue-500/20 transition-all group-hover:translate-z-[60px]"
       >
         {group.icon}
       </motion.div>
@@ -73,7 +80,8 @@ const SkillCard = ({ group, idx }) => {
           <motion.div
             key={sIdx}
             variants={itemVariants}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 group-hover:border-blue-200 dark:group-hover:border-blue-900/50 transition-all"
+            whileHover={{ scale: 1.1, backgroundColor: "rgba(59, 130, 246, 0.1)" }}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 group-hover:border-blue-200 dark:group-hover:border-blue-900/50 transition-all cursor-default"
           >
             {skill.icon && <skill.icon size={18} />}
             <span className="text-sm font-bold">{skill.name}</span>
@@ -145,9 +153,9 @@ const Skills = () => {
           />
           <motion.div
             initial={{ width: 0 }}
-            whileInView={{ width: 150 }}
-            transition={{ duration: 1, ease: "circOut" }}
-            className="h-2 bg-gradient-to-r from-blue-600 via-cyan-500 to-indigo-600 rounded-full mt-2"
+            whileInView={{ width: 250 }}
+            transition={{ duration: 1.5, ease: "circOut" }}
+            className="h-2.5 bg-gradient-to-r from-blue-600 via-cyan-500 to-indigo-600 rounded-full mt-2"
           />
         </div>
 

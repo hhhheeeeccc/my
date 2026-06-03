@@ -11,18 +11,18 @@ const Hero = () => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  const springX = useSpring(mouseX, { stiffness: 100, damping: 30 });
-  const springY = useSpring(mouseY, { stiffness: 100, damping: 30 });
+  const springX = useSpring(mouseX, { stiffness: 80, damping: 25 });
+  const springY = useSpring(mouseY, { stiffness: 80, damping: 25 });
 
-  const rotateX = useTransform(springY, [-0.5, 0.5], ["10deg", "-10deg"]);
-  const rotateY = useTransform(springX, [-0.5, 0.5], ["-10deg", "10deg"]);
+  const rotateX = useTransform(springY, [-0.5, 0.5], ["15deg", "-15deg"]);
+  const rotateY = useTransform(springX, [-0.5, 0.5], ["-15deg", "15deg"]);
 
   // Parallax elements transforms
-  const p1X = useTransform(springX, [-0.5, 0.5], ["-40px", "40px"]);
-  const p1Y = useTransform(springY, [-0.5, 0.5], ["-40px", "40px"]);
+  const p1X = useTransform(springX, [-0.5, 0.5], ["-60px", "60px"]);
+  const p1Y = useTransform(springY, [-0.5, 0.5], ["-60px", "60px"]);
 
-  const p2X = useTransform(springX, [-0.5, 0.5], ["60px", "-60px"]);
-  const p2Y = useTransform(springY, [-0.5, 0.5], ["60px", "-60px"]);
+  const p2X = useTransform(springX, [-0.5, 0.5], ["80px", "-80px"]);
+  const p2Y = useTransform(springY, [-0.5, 0.5], ["80px", "-80px"]);
 
   const handleMouseMove = (e) => {
     if (!containerRef.current) return;
@@ -50,12 +50,13 @@ const Hero = () => {
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 30, translateZ: -100 },
+    hidden: { opacity: 0, y: 50, translateZ: -200, rotateX: 30 },
     visible: {
       opacity: 1,
       y: 0,
       translateZ: 0,
-      transition: { duration: 1, ease: [0.16, 1, 0.3, 1] },
+      rotateX: 0,
+      transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] },
     },
   };
 
@@ -67,16 +68,16 @@ const Hero = () => {
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden bg-white dark:bg-slate-950 transition-colors duration-500 perspective-[2000px]"
+      className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden bg-white dark:bg-slate-950 transition-colors duration-700 perspective-[3000px]"
     >
       {/* Parallax Background Elements */}
       <motion.div
-        style={{ x: p1X, y: p1Y }}
-        className="absolute top-[20%] left-[15%] w-64 h-64 rounded-full bg-blue-500/10 blur-[80px] pointer-events-none"
+        style={{ x: p1X, y: p1Y, translateZ: "-200px" }}
+        className="absolute top-[15%] left-[10%] w-80 h-80 rounded-full bg-blue-500/15 blur-[100px] pointer-events-none"
       />
       <motion.div
-        style={{ x: p2X, y: p2Y }}
-        className="absolute bottom-[20%] right-[15%] w-96 h-96 rounded-full bg-indigo-500/10 blur-[100px] pointer-events-none"
+        style={{ x: p2X, y: p2Y, translateZ: "-300px" }}
+        className="absolute bottom-[10%] right-[10%] w-[30rem] h-[30rem] rounded-full bg-indigo-500/15 blur-[120px] pointer-events-none"
       />
 
       <motion.div
@@ -91,31 +92,31 @@ const Hero = () => {
         >
           <motion.div
             variants={itemVariants}
-            style={{ translateZ: "50px" }}
-            className="inline-block mb-8 px-6 py-2 rounded-2xl bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/50 backdrop-blur-md"
+            style={{ translateZ: "80px" }}
+            className="inline-block mb-10 px-8 py-3 rounded-2xl bg-blue-50/60 dark:bg-blue-900/15 border border-blue-100/50 dark:border-blue-800/30 backdrop-blur-xl shadow-lg"
           >
-            <span className="text-xs md:text-sm font-black text-blue-600 dark:text-blue-400 tracking-[0.3em] uppercase">
+            <span className="text-xs md:text-sm font-black text-blue-600 dark:text-blue-400 tracking-[0.4em] uppercase">
               {t('hero.welcome', 'Welcome to my world')}
             </span>
           </motion.div>
 
           <motion.h1
-            style={{ translateZ: "100px", transformStyle: "preserve-3d" }}
-            className="text-6xl md:text-[10rem] font-black tracking-[-0.04em] mb-10 flex flex-wrap justify-center leading-[0.9]"
+            style={{ translateZ: "180px", transformStyle: "preserve-3d" }}
+            className="text-7xl md:text-[12rem] font-black tracking-[-0.05em] mb-12 flex flex-wrap justify-center leading-[0.85] drop-shadow-[0_20px_50px_rgba(0,0,0,0.1)]"
           >
             <span className="sr-only">{name}</span>
-            <span className="flex flex-wrap justify-center bg-gradient-to-r from-blue-600 via-cyan-500 to-indigo-600 bg-clip-text text-transparent" aria-hidden="true">
+            <span className="flex flex-wrap justify-center bg-gradient-to-r from-blue-600 via-cyan-500 to-indigo-600 bg-clip-text text-transparent pb-4" aria-hidden="true">
               {name.split("").map((letter, index) => (
                 <motion.span
                   key={index}
-                  initial={{ opacity: 0, y: 50, rotateX: -90 }}
-                  animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                  initial={{ opacity: 0, y: 100, rotateX: -90, translateZ: -200 }}
+                  animate={{ opacity: 1, y: 0, rotateX: 0, translateZ: 0 }}
                   transition={{
-                    duration: 0.8,
-                    delay: 0.5 + index * 0.05,
+                    duration: 1,
+                    delay: 0.6 + index * 0.04,
                     ease: [0.16, 1, 0.3, 1]
                   }}
-                  className="inline-block origin-bottom"
+                  className="inline-block origin-bottom transition-all duration-500 hover:text-blue-500 hover:scale-110 cursor-default"
                 >
                   {letter === " " ? "\u00A0" : letter}
                 </motion.span>
@@ -125,42 +126,42 @@ const Hero = () => {
 
           <motion.h2
             variants={itemVariants}
-            style={{ translateZ: "70px" }}
-            className="text-3xl md:text-6xl font-extrabold text-slate-900 dark:text-slate-100 mb-12 max-w-5xl mx-auto leading-tight"
+            style={{ translateZ: "120px" }}
+            className="text-4xl md:text-7xl font-black text-slate-900 dark:text-slate-100 mb-14 max-w-5xl mx-auto leading-[1.1] tracking-tight"
           >
             {t('hero.title')}
           </motion.h2>
 
           <motion.p
             variants={itemVariants}
-            style={{ translateZ: "40px" }}
-            className="text-xl md:text-3xl text-slate-600 dark:text-slate-400 mb-16 max-w-4xl mx-auto leading-relaxed font-medium opacity-80"
+            style={{ translateZ: "70px" }}
+            className="text-xl md:text-3xl text-slate-600 dark:text-slate-400 mb-20 max-w-4xl mx-auto leading-relaxed font-semibold opacity-90"
           >
             {t('hero.subtitle')}
           </motion.p>
 
           <motion.div
             variants={itemVariants}
-            style={{ translateZ: "60px" }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-8"
+            style={{ translateZ: "100px" }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-10"
           >
             <Magnetic>
               <motion.a
                 href="#projects"
-                whileHover={{ scale: 1.05, y: -5, translateZ: 20 }}
+                whileHover={{ scale: 1.08, y: -8, translateZ: 40 }}
                 whileTap={{ scale: 0.98 }}
-                className="group relative w-full sm:w-auto px-14 py-6 bg-blue-600 text-white font-black rounded-[2rem] transition-all overflow-hidden shadow-2xl shadow-blue-500/30"
+                className="group relative w-full sm:w-auto px-16 py-7 glow-effect bg-blue-600 text-white font-black rounded-[2.5rem] transition-all overflow-hidden shadow-[0_20px_50px_-10px_rgba(37,99,235,0.4)]"
               >
-                <div className="absolute inset-0 w-full h-full bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 skew-x-[-20deg]" />
-                <span className="relative z-10 text-lg">{t('hero.ctaWork')}</span>
+                <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-150%] group-hover:translate-x-[150%] transition-transform duration-1000 skew-x-[-25deg]" />
+                <span className="relative z-10 text-xl">{t('hero.ctaWork')}</span>
               </motion.a>
             </Magnetic>
             <Magnetic>
               <motion.a
                 href="#contact"
-                whileHover={{ scale: 1.05, y: -5, translateZ: 20 }}
+                whileHover={{ scale: 1.08, y: -8, translateZ: 40 }}
                 whileTap={{ scale: 0.98 }}
-                className="w-full sm:w-auto px-14 py-6 border-2 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 font-black rounded-[2rem] hover:bg-slate-50 dark:hover:bg-slate-900 transition-all hover:border-blue-600/50 dark:hover:border-blue-500/50 text-lg"
+                className="w-full sm:w-auto px-16 py-7 border-2 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 font-black rounded-[2.5rem] hover:bg-slate-50 dark:hover:bg-slate-900 transition-all hover:border-blue-600/50 dark:hover:border-blue-500/50 text-xl backdrop-blur-md shadow-xl"
               >
                 {t('hero.ctaContact')}
               </motion.a>
@@ -170,52 +171,55 @@ const Hero = () => {
       </motion.div>
 
       {/* 3D Floating Decorations */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ perspective: "1000px" }}>
-        {[...Array(6)].map((_, i) => (
+      <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ perspective: "1500px" }}>
+        {[...Array(10)].map((_, i) => (
           <motion.div
             key={i}
             initial={{
               x: Math.random() * 100 + "%",
               y: Math.random() * 100 + "%",
-              z: Math.random() * -500 - 100,
+              z: Math.random() * -800 - 200,
               opacity: 0
             }}
             animate={{
-              y: ["-10%", "110%"],
-              opacity: [0, 1, 1, 0],
-              rotate: [0, 360],
+              y: ["-20%", "120%"],
+              opacity: [0, 0.8, 0.8, 0],
+              rotate: [0, 720],
+              scale: [0.5, 1.2, 0.5]
             }}
             transition={{
-              duration: 15 + Math.random() * 10,
+              duration: 20 + Math.random() * 15,
               repeat: Infinity,
-              delay: Math.random() * 5,
+              delay: Math.random() * 10,
               ease: "linear"
             }}
-            className="absolute w-4 h-4 md:w-8 md:h-8 border-2 border-blue-500/20 rounded-lg"
+            className="absolute w-6 h-6 md:w-12 md:h-12 border border-blue-500/10 rounded-xl"
           />
         ))}
       </div>
 
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2.5, duration: 1 }}
-        className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 3, duration: 1.5 }}
+        className="absolute bottom-16 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4"
       >
-        <div className="w-[32px] h-[54px] rounded-full border-2 border-slate-300 dark:border-slate-700 p-1.5">
+        <div className="w-[36px] h-[64px] rounded-full border-2 border-slate-200 dark:border-slate-800 p-2 backdrop-blur-sm shadow-inner">
           <motion.div
             animate={{
-              y: [0, 22, 0],
-              opacity: [1, 0.5, 1]
+              y: [0, 28, 0],
+              opacity: [1, 0.4, 1],
+              scale: [1, 0.8, 1]
             }}
             transition={{
-              duration: 2.5,
+              duration: 3,
               repeat: Infinity,
               ease: "easeInOut"
             }}
-            className="w-2.5 h-2.5 rounded-full bg-blue-600 mx-auto shadow-[0_0_12px_rgba(59,130,246,0.9)]"
+            className="w-3 h-3 rounded-full bg-blue-600 mx-auto shadow-[0_0_20px_rgba(59,130,246,1)]"
           />
         </div>
+        <span className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-400 dark:text-slate-600">{t('hero.scroll', 'Scroll')}</span>
       </motion.div>
     </section>
   );
