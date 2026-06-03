@@ -9,9 +9,17 @@ import {
   TailwindIcon,
   NodeIcon,
   GoIcon,
-  PythonIcon
+  PythonIcon,
+  DockerIcon,
+  GitIcon,
+  HtmlIcon,
+  CssIcon,
+  ElectronIcon,
+  BootstrapIcon,
+  GithubTechIcon
 } from '../../icons/TechIcons';
 import TextReveal3D from '../common/TextReveal3D';
+import ParallaxContainer from '../common/ParallaxContainer';
 
 const SkillCard = ({ group, idx }) => {
   const containerVariants = {
@@ -96,6 +104,9 @@ const Skills = () => {
         { name: 'JavaScript', icon: JavascriptIcon },
         { name: 'TypeScript', icon: TypescriptIcon },
         { name: 'Tailwind', icon: TailwindIcon },
+        { name: 'Bootstrap', icon: BootstrapIcon },
+        { name: 'HTML5', icon: HtmlIcon },
+        { name: 'CSS3', icon: CssIcon },
       ]
     },
     {
@@ -105,6 +116,7 @@ const Skills = () => {
         { name: 'Node.js', icon: NodeIcon },
         { name: 'Go', icon: GoIcon },
         { name: 'Python', icon: PythonIcon },
+        { name: 'Electron', icon: ElectronIcon },
       ]
     },
     {
@@ -120,9 +132,9 @@ const Skills = () => {
       title: t('skills.categories.cicd', 'DevOps'),
       icon: <ShieldCheck className="text-red-500" size={32} />,
       skills: [
-        { name: 'CI/CD', icon: null },
-        { name: 'Git', icon: null },
-        { name: 'Docker', icon: null },
+        { name: 'Docker', icon: DockerIcon },
+        { name: 'Git', icon: GitIcon },
+        { name: 'GitHub', icon: GithubTechIcon },
       ]
     }
   ];
@@ -130,37 +142,40 @@ const Skills = () => {
   return (
     <section id="skills" className="py-40 bg-white dark:bg-slate-950 transition-colors duration-500 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-32 flex flex-col items-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.5 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="inline-block px-6 py-2 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-black text-xs uppercase tracking-[0.3em] mb-6"
-          >
-            {t('skills.label', 'Expertise')}
-          </motion.div>
-          <TextReveal3D
-            text={t('skills.title', 'Capabilities')}
-            className="text-5xl md:text-8xl font-black text-slate-900 dark:text-white mb-10 tracking-tight text-center justify-center"
-          />
-          <motion.div
-            initial={{ width: 0 }}
-            whileInView={{ width: 150 }}
-            transition={{ duration: 1, ease: "circOut" }}
-            className="h-2 bg-gradient-to-r from-blue-600 via-cyan-500 to-indigo-600 rounded-full mt-2"
-          />
-        </div>
+        <ParallaxContainer className="flex flex-col items-center">
+          <div className="text-center mb-32 flex flex-col items-center" style={{ translateZ: "50px" }}>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.5 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="inline-block px-6 py-2 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-black text-xs uppercase tracking-[0.3em] mb-6"
+            >
+              {t('skills.label', 'Expertise')}
+            </motion.div>
+            <TextReveal3D
+              text={t('skills.title', 'Capabilities')}
+              className="text-5xl md:text-8xl font-black text-slate-900 dark:text-white mb-10 tracking-tight text-center justify-center"
+            />
+            <motion.div
+              initial={{ width: 0 }}
+              whileInView={{ width: 150 }}
+              transition={{ duration: 1, ease: "circOut" }}
+              className="h-2 bg-gradient-to-r from-blue-600 via-cyan-500 to-indigo-600 rounded-full mt-2"
+            />
+          </div>
 
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8"
-        >
-          {skillGroups.map((group, idx) => (
-            <SkillCard key={idx} group={group} idx={idx} />
-          ))}
-        </motion.div>
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 w-full"
+            style={{ translateZ: "20px" }}
+          >
+            {skillGroups.map((group, idx) => (
+              <SkillCard key={idx} group={group} idx={idx} />
+            ))}
+          </motion.div>
+        </ParallaxContainer>
       </div>
     </section>
   );
