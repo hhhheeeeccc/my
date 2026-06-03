@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../context/ThemeContext';
+import { useTheme } from '../../context/ThemeContext';
 import { Sun, Moon, Languages } from 'lucide-react';
 import { motion, useScroll, useTransform, useMotionTemplate } from 'framer-motion';
 

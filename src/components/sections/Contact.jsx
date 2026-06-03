@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Mail, Send, CheckCircle2 } from 'lucide-react';
-import { GithubIcon, LinkedinIcon, GitlabIcon } from '../icons/CustomIcons';
+import { GithubIcon, LinkedinIcon, GitlabIcon } from '../../icons/CustomIcons';
 
 const Contact = () => {
   const { t } = useTranslation();
