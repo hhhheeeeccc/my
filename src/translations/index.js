@@ -108,6 +108,9 @@ export const en = {
       exportJson: "Export JSON",
       resetConfirm: "Are you sure you want to reset all data to defaults?",
       resetTitle: "Reset to defaults",
+      loginTitle: "Admin Login",
+      login: "Login",
+      invalidCreds: "Invalid credentials",
       sections: {
         hero: "Hero",
         about: "About",
@@ -116,6 +119,8 @@ export const en = {
         contact: "Contact"
       },
       fields: {
+        username: "Username",
+        password: "Password",
         fullName: "Full Name",
         profTitle: "Professional Title",
         shortBio: "Short Bio / Subtitle",
@@ -256,6 +261,9 @@ export const ar = {
       exportJson: "تصدير JSON",
       resetConfirm: "هل أنت متأكد من أنك تريد إعادة تعيين جميع البيانات إلى الافتراضيات؟",
       resetTitle: "إعادة التعيين للافتراضيات",
+      loginTitle: "دخول المسؤول",
+      login: "تسجيل الدخول",
+      invalidCreds: "بيانات الاعتماد غير صالحة",
       sections: {
         hero: "البداية",
         about: "عني",
@@ -264,6 +272,8 @@ export const ar = {
         contact: "اتصل بي"
       },
       fields: {
+        username: "اسم المستخدم",
+        password: "كلمة المرور",
         fullName: "الاسم الكامل",
         profTitle: "المسمى الوظيفي",
         shortBio: "نبذة قصيرة / العنوان الفرعي",
