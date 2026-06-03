@@ -5,6 +5,7 @@ import { motion, useScroll, useSpring } from 'framer-motion';
 // Layout Components
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
+import SectionReveal from './components/layout/SectionReveal';
 
 // Section Components
 import Hero from './components/sections/Hero';
@@ -19,6 +20,7 @@ import AdminToggle from './components/admin/AdminToggle';
 
 // Common Components
 import CustomCursor from './components/common/CustomCursor';
+import Floating3DBackground from './components/common/Floating3DBackground';
 
 function App() {
   const { i18n } = useTranslation();
@@ -40,8 +42,10 @@ function App() {
   }, [i18n.language]);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-500">
+    <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-500 overflow-x-hidden relative">
+      <div className="noise-overlay" aria-hidden="true" />
       <CustomCursor />
+      <Floating3DBackground />
       <motion.div
         className="fixed top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 z-[60] shadow-[0_0_15px_rgba(59,130,246,0.5)]"
         style={{
@@ -50,12 +54,12 @@ function App() {
         }}
       />
       <Navbar />
-      <main className="relative">
+      <main className="relative z-10">
         <Hero />
-        <About />
-        <Skills />
-        <Projects />
-        <Contact />
+        <SectionReveal><About /></SectionReveal>
+        <SectionReveal><Skills /></SectionReveal>
+        <SectionReveal><Projects /></SectionReveal>
+        <SectionReveal><Contact /></SectionReveal>
       </main>
       <Footer />
 
