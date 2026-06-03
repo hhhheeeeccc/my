@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { ExternalLink, Github, ArrowRight } from 'lucide-react';
+import ParallaxContainer from '../common/ParallaxContainer';
 
 const ProjectCard = ({ project, idx }) => {
   const { t } = useTranslation();
@@ -165,52 +166,56 @@ const Projects = () => {
   return (
     <section id="projects" className="py-40 bg-slate-50 dark:bg-slate-900/30 transition-colors duration-500 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-32">
+        <ParallaxContainer className="flex flex-col items-center">
+          <div className="text-center mb-32" style={{ translateZ: "50px" }}>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="flex items-center justify-center gap-3 mb-6"
+            >
+              <div className="w-16 h-1.5 bg-blue-600 rounded-full" />
+              <span className="text-blue-600 font-black uppercase tracking-[0.3em] text-xs md:text-sm">{t('projects.subtitle', 'Portfolio')}</span>
+              <div className="w-16 h-1.5 bg-blue-600 rounded-full" />
+            </motion.div>
+            <h2 className="text-5xl md:text-8xl font-black text-slate-900 dark:text-white mb-10 tracking-tight">
+              {t('projects.title')}
+            </h2>
+            <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto font-semibold opacity-80 leading-relaxed">
+              {t('projects.intro', 'A selection of my most challenging and impactful engineering projects.')}
+            </p>
+          </div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            className="grid lg:grid-cols-3 gap-16 w-full"
+            style={{ translateZ: "20px" }}
+          >
+            {projects.map((project, idx) => (
+              <ProjectCard key={idx} project={project} idx={idx} />
+            ))}
+          </motion.div>
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="flex items-center justify-center gap-3 mb-6"
+            className="mt-32 text-center"
+            style={{ translateZ: "40px" }}
           >
-            <div className="w-16 h-1.5 bg-blue-600 rounded-full" />
-            <span className="text-blue-600 font-black uppercase tracking-[0.3em] text-xs md:text-sm">{t('projects.subtitle', 'Portfolio')}</span>
-            <div className="w-16 h-1.5 bg-blue-600 rounded-full" />
+             <motion.a
+               href="#"
+               whileHover={{ scale: 1.05, y: -5 }}
+               whileTap={{ scale: 0.95 }}
+               className="inline-flex items-center gap-4 px-14 py-6 rounded-[2rem] bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black hover:bg-blue-600 dark:hover:bg-blue-500 dark:hover:text-white transition-all group shadow-2xl"
+             >
+               <span className="text-lg">{t('projects.viewMore', 'View All Work')}</span>
+               <ArrowRight className="group-hover:translate-x-3 transition-transform duration-500" size={24} />
+             </motion.a>
           </motion.div>
-          <h2 className="text-5xl md:text-8xl font-black text-slate-900 dark:text-white mb-10 tracking-tight">
-            {t('projects.title')}
-          </h2>
-          <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto font-semibold opacity-80 leading-relaxed">
-            {t('projects.intro', 'A selection of my most challenging and impactful engineering projects.')}
-          </p>
-        </div>
-
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid lg:grid-cols-3 gap-16"
-        >
-          {projects.map((project, idx) => (
-            <ProjectCard key={idx} project={project} idx={idx} />
-          ))}
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mt-32 text-center"
-        >
-           <motion.a
-             href="#"
-             whileHover={{ scale: 1.05, y: -5 }}
-             whileTap={{ scale: 0.95 }}
-             className="inline-flex items-center gap-4 px-14 py-6 rounded-[2rem] bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black hover:bg-blue-600 dark:hover:bg-blue-500 dark:hover:text-white transition-all group shadow-2xl"
-           >
-             <span className="text-lg">{t('projects.viewMore', 'View All Work')}</span>
-             <ArrowRight className="group-hover:translate-x-3 transition-transform duration-500" size={24} />
-           </motion.a>
-        </motion.div>
+        </ParallaxContainer>
       </div>
     </section>
   );

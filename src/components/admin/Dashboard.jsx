@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePortfolio } from '../../context/PortfolioContext';
-import { RotateCcw, X, Edit3, Globe, Menu, Lock } from 'lucide-react';
+import { RotateCcw, X, Edit3, Globe, Menu } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Dashboard = ({ onClose }) => {
@@ -10,9 +10,6 @@ const Dashboard = ({ onClose }) => {
   const [activeLang, setActiveLang] = useState(i18n.language.startsWith('ar') ? 'ar' : 'en');
   const [activeSection, setActiveSection] = useState('hero');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [credentials, setCredentials] = useState({ username: '', password: '' });
-  const [error, setError] = useState('');
 
   const isRTL = i18n.dir() === 'rtl';
 
@@ -23,65 +20,6 @@ const Dashboard = ({ onClose }) => {
     { id: 'projects', label: t('admin.sections.projects') },
     { id: 'contact', label: t('admin.sections.contact') },
   ];
-
-  const handleLogin = (e) => {
-    e.preventDefault();
-    if (credentials.username === 'marwan' && credentials.password === '736187483') {
-      setIsAuthenticated(true);
-      setError('');
-    } else {
-      setError(t('admin.invalidCreds'));
-    }
-  };
-
-  if (!isAuthenticated) {
-    return (
-      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="bg-white dark:bg-slate-950 p-8 rounded-3xl shadow-2xl w-full max-w-md border border-slate-200 dark:border-slate-800"
-        >
-          <div className="flex flex-col items-center mb-8">
-            <div className="p-4 bg-blue-600 rounded-2xl text-white mb-4 shadow-lg shadow-blue-500/20">
-              <Lock size={32} />
-            </div>
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{t('admin.loginTitle')}</h2>
-          </div>
-
-          <form onSubmit={handleLogin} className="space-y-6">
-            <div>
-              <label htmlFor="admin-username" className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">{t('admin.fields.username')}</label>
-              <input
-                id="admin-username"
-                type="text"
-                className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:ring-2 focus:ring-blue-500 outline-none transition-all text-slate-900 dark:text-white"
-                value={credentials.username}
-                onChange={(e) => setCredentials({...credentials, username: e.target.value})}
-              />
-            </div>
-            <div>
-              <label htmlFor="admin-password" className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">{t('admin.fields.password')}</label>
-              <input
-                id="admin-password"
-                type="password"
-                className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:ring-2 focus:ring-blue-500 outline-none transition-all text-slate-900 dark:text-white"
-                value={credentials.password}
-                onChange={(e) => setCredentials({...credentials, password: e.target.value})}
-              />
-            </div>
-            {error && <p className="text-red-500 text-sm font-bold">{error}</p>}
-            <button type="submit" className="w-full py-4 bg-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition-all">
-              {t('admin.login')}
-            </button>
-            <button type="button" onClick={onClose} className="w-full py-2 text-slate-500 font-bold hover:text-slate-700 dark:hover:text-slate-300">
-              {t('common.cancel', 'Cancel')}
-            </button>
-          </form>
-        </motion.div>
-      </div>
-    );
-  }
 
   const handleReset = () => {
     if (window.confirm(t('admin.resetConfirm'))) {
@@ -96,16 +34,14 @@ const Dashboard = ({ onClose }) => {
       value = value?.[key];
     }
     value = value || '';
-    const fieldId = `field-${path}`;
 
     return (
       <div className="mb-6 relative z-[110]">
-        <label htmlFor={fieldId} className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+        <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
           {label}
         </label>
         {type === 'textarea' ? (
           <textarea
-            id={fieldId}
             className="editor-input w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
             rows="4"
             value={value}
@@ -113,7 +49,6 @@ const Dashboard = ({ onClose }) => {
           />
         ) : (
           <input
-            id={fieldId}
             type="text"
             className="editor-input w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
             value={value}
