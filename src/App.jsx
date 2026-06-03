@@ -32,17 +32,17 @@ function App() {
   }, [i18n.language]);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-300">
+    <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-500">
       <CustomCursor />
       <motion.div
-        className="fixed top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-600 to-cyan-500 z-[60]"
+        className="fixed top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 z-[60] shadow-[0_0_15px_rgba(59,130,246,0.5)]"
         style={{
           scaleX,
           transformOrigin: isAr ? "right" : "left"
         }}
       />
       <Navbar />
-      <main>
+      <main className="relative">
         <Hero />
         <About />
         <Skills />
