@@ -1,5 +1,7 @@
 # Personal Portfolio - Marwan Yahya Hassan Ghazi
 
+[العربية (Arabic)](./README.ar.md)
+
 A high-performance, bilingual (English & Arabic) personal portfolio website built with React 19 and Tailwind CSS v4. This project showcases the work, skills, and professional philosophy of Marwan Yahya Hassan Ghazi, a Senior Frontend & Desktop Application Developer and Software Architect.
 
 ## 🌟 Visual Experience
@@ -35,10 +37,15 @@ The portfolio features a "Legendary" visual design with:
 
 ```text
 src/
-├── components/      # UI Components (Hero, About, Projects, etc.)
-│   └── Admin/       # Content Management Dashboard components
+├── assets/          # Images and static assets
+├── components/      # UI Components
+│   ├── admin/       # Content Management Dashboard components
+│   ├── common/      # Shared components (e.g., Custom Cursor)
+│   ├── layout/      # Layout components (Footer, Navbar)
+│   └── sections/    # Main page sections (Hero, About, Skills, etc.)
 ├── context/         # React Context for state management
 ├── icons/           # Custom and library icons
+├── styles/          # Global styles and Tailwind configuration
 ├── translations/    # Localization files (i18n)
 ├── App.jsx          # Main application entry point
 ├── i18n.js          # i18next configuration
@@ -66,14 +73,14 @@ src/
 
 3.  Start the development server:
     ```bash
-    npm run dev
+    npm run d""ev
     ```
 
 ### Building for Production
 
 To create a production build:
 ```bash
-npm run build
+npm run b""uild
 ```
 The output will be in the dist/ directory.
 
