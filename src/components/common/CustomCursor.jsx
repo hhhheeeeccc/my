@@ -91,8 +91,17 @@ const CustomCursor = () => {
           backgroundColor: isHovering ? 'rgba(59, 130, 246, 0.15)' : 'transparent',
           mixBlendMode: isText ? 'difference' : 'normal',
           borderColor: isText ? 'white' : '#3b82f6',
+          boxShadow: isHovering ? '0 0 20px rgba(59, 130, 246, 0.4)' : 'none',
         }}
-      />
+      >
+        {isHovering && (
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            className="absolute inset-0 rounded-full bg-blue-500/20 blur-md"
+          />
+        )}
+      </motion.div>
       <motion.div
         className="fixed top-0 left-0 w-2 h-2 rounded-full bg-blue-600 pointer-events-none z-[9999] hidden md:block"
         style={{

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { motion, useScroll, useSpring } from 'framer-motion';
+import { ReactLenis } from 'lenis/react';
 
 // Layout Components
 import Navbar from './components/layout/Navbar';
@@ -20,8 +21,8 @@ import AdminToggle from './components/admin/AdminToggle';
 
 // Common Components
 import CustomCursor from './components/common/CustomCursor';
-import Floating3DBackground from './components/common/Floating3DBackground';
 import StoryBlobs from './components/common/StoryBlobs';
+import GlobalCanvas from './components/common/GlobalCanvas';
 
 function App() {
   const { i18n } = useTranslation();
@@ -30,19 +31,12 @@ function App() {
 
   const { scrollYProgress } = useScroll();
 
-  // High-end smooth progress for global interactions
   const smoothProgress = useSpring(scrollYProgress, {
     stiffness: 100,
     damping: 30,
     restDelta: 0.001
   });
 
-  // Global 3D scene distortion and scale
-  const sceneRotateX = useTransform(smoothProgress, [0, 0.5, 1], ["2deg", "0deg", "-2deg"]);
-  const sceneRotateY = useTransform(smoothProgress, [0, 1], [isAr ? "2deg" : "-2deg", isAr ? "-2deg" : "2deg"]);
-  const sceneScale = useTransform(smoothProgress, [0, 0.5, 1], [1, 0.98, 1]);
-
-  // Progress bar logic
   const scaleX = smoothProgress;
 
   useEffect(() => {
@@ -52,51 +46,38 @@ function App() {
   }, [i18n.language]);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-500 overflow-x-hidden relative">
-      <div className="noise-overlay" aria-hidden="true" />
-      <CustomCursor />
-      <StoryBlobs />
-      <Floating3DBackground />
+    <ReactLenis root>
+      <div className="min-h-screen bg-slate-950 transition-colors duration-500 overflow-x-hidden relative">
+        <div className="noise-overlay" aria-hidden="true" />
+        <CustomCursor />
+        <StoryBlobs />
 
-      <motion.div
-        className="fixed top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 z-[150] shadow-[0_0_15px_rgba(59,130,246,0.5)]"
-        style={{
-          scaleX,
-          transformOrigin: isAr ? "right" : "left"
-        }}
-      />
+        <GlobalCanvas />
 
-      <Navbar />
-
-      <motion.main
-        style={{
-          perspective: "2000px",
-          transformStyle: "preserve-3d"
-        }}
-        className="relative z-10"
-      >
         <motion.div
+          className="fixed top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 z-[150] shadow-[0_0_15px_rgba(59,130,246,0.5)]"
           style={{
-            rotateX: sceneRotateX,
-            rotateY: sceneRotateY,
-            scale: sceneScale,
-            transformStyle: "preserve-3d"
+            scaleX,
+            transformOrigin: isAr ? "right" : "left"
           }}
-          className="w-full origin-center transition-transform duration-1000 ease-out"
-        >
+        />
+
+        <Navbar />
+
+        <main className="relative z-10">
           <Hero />
           <SectionReveal><About /></SectionReveal>
           <SectionReveal><Skills /></SectionReveal>
           <SectionReveal><Projects /></SectionReveal>
           <SectionReveal><Contact /></SectionReveal>
-        </motion.div>
-      </motion.main>
+        </main>
 
-      <Footer />
+        <Footer />
 
-      <AdminToggle onClick={() => setIsAdminOpen(true)} />
-      {isAdminOpen && <Dashboard onClose={() => setIsAdminOpen(false)} />}
-    </div>
+        <AdminToggle onClick={() => setIsAdminOpen(true)} />
+        {isAdminOpen && <Dashboard onClose={() => setIsAdminOpen(false)} />}
+      </div>
+    </ReactLenis>
   );
 }
 

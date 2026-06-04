@@ -1,41 +1,30 @@
 import React, { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 
 const SectionReveal = ({ children }) => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: false, amount: 0.15 });
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"]
+  });
+
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
+
+  const opacity = useTransform(smoothProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
+  const y = useTransform(smoothProgress, [0, 0.15, 0.85, 1], [30, 0, 0, -30]);
 
   return (
     <motion.div
       ref={ref}
-      initial={{
-        opacity: 0,
-        y: 60,
-        scale: 0.96,
-        rotateX: 10,
-        z: -50
-      }}
-      animate={isInView ? {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        rotateX: 0,
-        z: 0
-      } : {
-        opacity: 0,
-        y: 60,
-        scale: 0.96,
-        rotateX: 10,
-        z: -50
-      }}
-      transition={{
-        duration: 0.8,
-        ease: [0.16, 1, 0.3, 1],
-      }}
       style={{
-        transformStyle: "preserve-3d",
-        perspective: "1200px"
+        opacity,
+        y,
       }}
+      className="will-change-transform"
     >
       {children}
     </motion.div>

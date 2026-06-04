@@ -2,8 +2,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Gem, Sparkles } from 'lucide-react';
-import TextReveal3D from '../common/TextReveal3D';
-import ParallaxContainer from '../common/ParallaxContainer';
 
 const About = () => {
   const { t } = useTranslation();
@@ -17,15 +15,14 @@ const About = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <ParallaxContainer className="grid md:grid-cols-2 gap-20 items-center">
+        <div className="grid md:grid-cols-2 gap-20 items-center">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            style={{ transformStyle: "preserve-3d" }}
           >
-            <div className="flex items-center gap-3 mb-6 " style={{ translateZ: "20px" }}>
+            <div className="flex items-center gap-3 mb-6 ">
               <motion.div
                 animate={{ y: [-5, 5, -5], rotate: [0, 10, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -36,11 +33,10 @@ const About = () => {
                 {t('about.subtitle', 'My Journey')}
               </span>
             </div>
-            <div className="mb-8" style={{ translateZ: "40px" }}>
-              <TextReveal3D
-                text={t('about.title')}
-                className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white leading-tight"
-              />
+            <div className="mb-8">
+              <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white leading-tight">
+                {t('about.title')}
+              </h2>
               <motion.div
                 initial={{ width: 0 }}
                 whileInView={{ width: 100 }}
@@ -53,26 +49,23 @@ const About = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.8 }}
               className="space-y-6 text-xl text-slate-700 dark:text-slate-300 leading-relaxed font-medium"
-              style={{ translateZ: "30px" }}
             >
               <p>{t('about.bio')}</p>
             </motion.div>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, rotateY: -10 }}
-            whileInView={{ opacity: 1, scale: 1, rotateY: 0 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 1, type: "spring", stiffness: 100, damping: 20 }}
-            className="relative perspective-1000"
-            style={{ transformStyle: "preserve-3d" }}
+            className="relative"
           >
             <motion.div
-              whileHover={{ scale: 1.02, rotateY: 5, rotateX: -2 }}
+              whileHover={{ scale: 1.02 }}
               className="relative z-10 p-10 bg-white dark:bg-slate-950 rounded-[3rem] shadow-2xl border border-slate-100 dark:border-slate-800 transition-all duration-500"
-              style={{ translateZ: "60px", transformStyle: "preserve-3d" }}
             >
-              <div className="flex items-center gap-6 mb-8" style={{ translateZ: "40px" }}>
+              <div className="flex items-center gap-6 mb-8">
                 <motion.div
                   animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}
                   transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
@@ -84,11 +77,11 @@ const About = () => {
                   {t('about.personalTouchTitle')}
                 </h3>
               </div>
-              <p className="text-2xl text-slate-700 dark:text-slate-300 leading-relaxed italic font-serif opacity-90" style={{ translateZ: "30px" }}>
+              <p className="text-2xl text-slate-700 dark:text-slate-300 leading-relaxed italic font-serif opacity-90">
                 "{t('about.personalTouchBio')}"
               </p>
 
-              <div className="mt-10 flex gap-3" style={{ translateZ: "20px" }}>
+              <div className="mt-10 flex gap-3">
                 {[1, 2, 3].map(i => (
                    <div key={i} className="flex-1 h-2 rounded-full bg-blue-50 dark:bg-slate-800 overflow-hidden">
                       <motion.div
@@ -102,21 +95,19 @@ const About = () => {
               </div>
             </motion.div>
 
-            {/* Legendary Decorative Frame */}
+            {/* Decorative Frame */}
             <motion.div
               animate={{ x: [0, 10, 0], y: [0, -10, 0] }}
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
               className="absolute -z-10 -top-10 -right-10 w-full h-full border-4 border-blue-600/20 rounded-[3.5rem]"
-              style={{ translateZ: "-20px" }}
             />
             <motion.div
               animate={{ x: [0, -10, 0], y: [0, 10, 0] }}
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
               className="absolute -z-10 -bottom-10 -left-10 w-full h-full border-4 border-cyan-500/10 rounded-[3.5rem]"
-              style={{ translateZ: "-30px" }}
             />
           </motion.div>
-        </ParallaxContainer>
+        </div>
       </div>
     </section>
   );
