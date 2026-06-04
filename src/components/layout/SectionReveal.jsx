@@ -14,25 +14,15 @@ const SectionReveal = ({ children }) => {
     restDelta: 0.001
   });
 
-  const opacity = useTransform(smoothProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
-  const scale = useTransform(smoothProgress, [0, 0.2, 0.8, 1], [0.8, 1, 1, 0.8]);
-  const y = useTransform(smoothProgress, [0, 0.2, 0.8, 1], [100, 0, 0, -100]);
-  const rotateX = useTransform(smoothProgress, [0, 0.2, 0.8, 1], [20, 0, 0, -20]);
+  const opacity = useTransform(smoothProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
+  const y = useTransform(smoothProgress, [0, 0.15, 0.85, 1], [30, 0, 0, -30]);
 
   return (
     <motion.div
       ref={ref}
       style={{
         opacity,
-        scale,
         y,
-        rotateX,
-        transformStyle: "preserve-3d",
-        perspective: "1200px"
-      }}
-      transition={{
-        duration: 0.8,
-        ease: [0.16, 1, 0.3, 1],
       }}
       className="will-change-transform"
     >

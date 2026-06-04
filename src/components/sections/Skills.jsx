@@ -1,93 +1,49 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { Code2, Terminal, Layers, ShieldCheck } from 'lucide-react';
-import {
-  ReactIcon,
-  JavascriptIcon,
-  TypescriptIcon,
-  TailwindIcon,
-  NodeIcon,
-  GoIcon,
-  PythonIcon,
-  DockerIcon,
-  GitIcon,
-  HtmlIcon,
-  CssIcon,
-  ElectronIcon,
-  BootstrapIcon,
-  GithubTechIcon
-} from '../../icons/TechIcons';
-import TextReveal3D from '../common/TextReveal3D';
-import ParallaxContainer from '../common/ParallaxContainer';
+import * as Icons from 'lucide-react';
+import TechIcons from '../../icons/TechIcons';
 
-const SkillCard = ({ group, idx }) => {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] }
-    }
-  };
+const SkillCard = ({ skill, idx }) => {
+  const Icon = Icons[skill.icon] || Icons.Code;
 
   return (
     <motion.div
       variants={{
-        hidden: { opacity: 0, y: 50, rotateX: 15 },
+        hidden: { opacity: 0, y: 30 },
         visible: {
           opacity: 1,
           y: 0,
-          rotateX: 0,
-          transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
+          transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] }
         }
       }}
-      whileHover={{ y: -10 }}
-      className="group p-10 rounded-[3rem] bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-300 relative overflow-hidden perspective-[1000px]"
-      style={{ transformStyle: "preserve-3d" }}
+      className="group p-10 rounded-[3rem] bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-300 relative overflow-hidden"
     >
-      <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-blue-600 to-cyan-500 transform scale-y-0 group-hover:scale-y-100 transition-transform duration-500 origin-top" />
+      <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
+         <Icon size={120} />
+      </div>
 
-      <motion.div
-        style={{ translateZ: "40px" }}
-        className="mb-8 p-5 bg-white dark:bg-slate-800 rounded-2xl w-fit shadow-xl group-hover:shadow-blue-500/20 transition-all"
-      >
-        {group.icon}
-      </motion.div>
+      <div className="relative z-10">
+        <div
+          className="mb-8 p-5 bg-white dark:bg-slate-950 rounded-2xl w-fit shadow-lg"
+        >
+          <TechIcons name={skill.techIcon} className="w-10 h-10" />
+        </div>
 
-      <h3
-        style={{ translateZ: "30px" }}
-        className="text-2xl font-black text-slate-900 dark:text-white mb-8 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
-      >
-        {group.title}
-      </h3>
+        <h3
+          className="text-2xl font-black text-slate-900 dark:text-white mb-4"
+        >
+          {skill.name}
+        </h3>
 
-      <motion.div
-        style={{ translateZ: "20px" }}
-        className="flex flex-wrap gap-4"
-        variants={containerVariants}
-      >
-        {group.skills.map((skill, sIdx) => (
-          <motion.div
-            key={sIdx}
-            variants={itemVariants}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 group-hover:border-blue-200 dark:group-hover:border-blue-900/50 transition-all"
-          >
-            {skill.icon && <skill.icon size={18} />}
-            <span className="text-sm font-bold">{skill.name}</span>
-          </motion.div>
-        ))}
-      </motion.div>
+        <p
+          className="text-slate-600 dark:text-slate-400 font-medium leading-relaxed"
+        >
+          {skill.description}
+        </p>
+      </div>
+
+      <div className="absolute bottom-0 left-0 w-full h-1.5 bg-blue-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
     </motion.div>
   );
 };
@@ -95,87 +51,47 @@ const SkillCard = ({ group, idx }) => {
 const Skills = () => {
   const { t } = useTranslation();
 
-  const skillGroups = [
-    {
-      title: t('skills.categories.frontend', 'Frontend'),
-      icon: <Code2 className="text-blue-500" size={32} />,
-      skills: [
-        { name: 'React', icon: ReactIcon },
-        { name: 'JavaScript', icon: JavascriptIcon },
-        { name: 'TypeScript', icon: TypescriptIcon },
-        { name: 'Tailwind', icon: TailwindIcon },
-        { name: 'Bootstrap', icon: BootstrapIcon },
-        { name: 'HTML5', icon: HtmlIcon },
-        { name: 'CSS3', icon: CssIcon },
-      ]
-    },
-    {
-      title: t('skills.categories.backend', 'Backend'),
-      icon: <Terminal className="text-emerald-500" size={32} />,
-      skills: [
-        { name: 'Node.js', icon: NodeIcon },
-        { name: 'Go', icon: GoIcon },
-        { name: 'Python', icon: PythonIcon },
-        { name: 'Electron', icon: ElectronIcon },
-      ]
-    },
-    {
-      title: t('skills.categories.architecture', 'Systems'),
-      icon: <Layers className="text-amber-500" size={32} />,
-      skills: [
-        { name: 'Microservices', icon: null },
-        { name: 'Architecture', icon: null },
-        { name: 'Performance', icon: null },
-      ]
-    },
-    {
-      title: t('skills.categories.cicd', 'DevOps'),
-      icon: <ShieldCheck className="text-red-500" size={32} />,
-      skills: [
-        { name: 'Docker', icon: DockerIcon },
-        { name: 'Git', icon: GitIcon },
-        { name: 'GitHub', icon: GithubTechIcon },
-      ]
-    }
+  const skillList = [
+    { name: t('skills.items.frontend.name'), description: t('skills.items.frontend.desc'), icon: 'Monitor', techIcon: 'react' },
+    { name: t('skills.items.backend.name'), description: t('skills.items.backend.desc'), icon: 'Server', techIcon: 'go' },
+    { name: t('skills.items.desktop.name'), description: t('skills.items.desktop.desc'), icon: 'Laptop', techIcon: 'electron' },
+    { name: t('skills.items.arch.name'), description: t('skills.items.arch.desc'), icon: 'Layers', techIcon: 'cleanArch' },
+    { name: t('skills.items.optimization.name'), description: t('skills.items.optimization.desc'), icon: 'Zap', techIcon: 'performance' },
+    { name: t('skills.items.localization.name'), description: t('skills.items.localization.desc'), icon: 'Globe', techIcon: 'i18next' },
   ];
 
   return (
-    <section id="skills" className="py-40 bg-white dark:bg-slate-950 transition-colors duration-500 relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <ParallaxContainer className="flex flex-col items-center">
-          <div className="text-center mb-32 flex flex-col items-center" style={{ translateZ: "50px" }}>
+    <section id="skills" className="py-40 bg-white dark:bg-slate-950 transition-colors duration-500 relative">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-32 flex flex-col items-center">
             <motion.div
-              initial={{ opacity: 0, scale: 0.5 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="inline-block px-6 py-2 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-black text-xs uppercase tracking-[0.3em] mb-6"
+              className="flex items-center gap-3 mb-6"
             >
-              {t('skills.label', 'Expertise')}
+              <div className="w-12 h-1 bg-blue-600 rounded-full" />
+              <span className="text-blue-600 font-black uppercase tracking-[0.3em] text-xs md:text-sm">{t('skills.subtitle', 'Expertise')}</span>
+              <div className="w-12 h-1 bg-blue-600 rounded-full" />
             </motion.div>
-            <TextReveal3D
-              text={t('skills.title', 'Capabilities')}
-              className="text-5xl md:text-8xl font-black text-slate-900 dark:text-white mb-10 tracking-tight text-center justify-center"
-            />
-            <motion.div
-              initial={{ width: 0 }}
-              whileInView={{ width: 150 }}
-              transition={{ duration: 1, ease: "circOut" }}
-              className="h-2 bg-gradient-to-r from-blue-600 via-cyan-500 to-indigo-600 rounded-full mt-2"
-            />
+            <h2 className="text-5xl md:text-8xl font-black text-slate-900 dark:text-white mb-10 tracking-tight">
+              {t('skills.title')}
+            </h2>
+            <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-400 max-w-3xl font-semibold opacity-80 leading-relaxed">
+              {t('skills.intro', 'Crafting high-performance digital experiences with cutting-edge technologies.')}
+            </p>
           </div>
 
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
-            className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 w-full"
-            style={{ translateZ: "20px" }}
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-10"
           >
-            {skillGroups.map((group, idx) => (
-              <SkillCard key={idx} group={group} idx={idx} />
+            {skillList.map((skill, idx) => (
+              <SkillCard key={idx} skill={skill} idx={idx} />
             ))}
           </motion.div>
-        </ParallaxContainer>
       </div>
     </section>
   );

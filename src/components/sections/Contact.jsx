@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Mail, Send, CheckCircle2 } from 'lucide-react';
 import { GithubIcon, LinkedinIcon, GitlabIcon } from '../../icons/CustomIcons';
-import TextReveal3D from '../common/TextReveal3D';
 import Magnetic from '../common/Magnetic';
 
 const Contact = () => {
@@ -44,10 +43,9 @@ const Contact = () => {
             viewport={{ once: true }}
             className="text-center mb-20 flex flex-col items-center"
           >
-            <TextReveal3D
-              text={t('contact.title')}
-              className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white mb-6 justify-center"
-            />
+            <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white mb-6 justify-center">
+              {t('contact.title')}
+            </h2>
             <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-medium opacity-80">
               {t('contact.subtitle')}
             </p>
