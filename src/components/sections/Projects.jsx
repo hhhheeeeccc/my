@@ -13,12 +13,16 @@ const ProjectCard = ({ project, idx }) => {
   const mouseXSpring = useSpring(x, { stiffness: 150, damping: 20 });
   const mouseYSpring = useSpring(y, { stiffness: 150, damping: 20 });
 
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["15deg", "-15deg"]);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-15deg", "15deg"]);
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["20deg", "-20deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-20deg", "20deg"]);
 
   // Glare effect
   const glareX = useTransform(mouseXSpring, [-0.5, 0.5], ["0%", "100%"]);
   const glareY = useTransform(mouseYSpring, [-0.5, 0.5], ["0%", "100%"]);
+  const glareOpacity = useTransform(
+    [mouseXSpring, mouseYSpring],
+    ([x, y]) => Math.max(0, 0.4 - Math.sqrt(x*x + y*y))
+  );
 
   const handleMouseMove = (e) => {
     if (!ref.current) return;
@@ -58,8 +62,9 @@ const ProjectCard = ({ project, idx }) => {
       {/* Glare Layer */}
       <motion.div
         style={{
-          background: useTransform(() => `radial-gradient(circle at ${glareX.get()} ${glareY.get()}, rgba(255,255,255,0.15) 0%, transparent 80%)`),
-          translateZ: "1px"
+          background: useTransform(() => `radial-gradient(circle at ${glareX.get()} ${glareY.get()}, rgba(255,255,255,0.2) 0%, transparent 80%)`),
+          opacity: glareOpacity,
+          translateZ: "50px"
         }}
         className="absolute inset-0 z-20 pointer-events-none"
       />

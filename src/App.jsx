@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { ReactLenis } from 'lenis/react';
 
 // Layout Components
 import Navbar from './components/layout/Navbar';
@@ -20,7 +21,7 @@ import AdminToggle from './components/admin/AdminToggle';
 
 // Common Components
 import CustomCursor from './components/common/CustomCursor';
-import Floating3DBackground from './components/common/Floating3DBackground';
+import Experience3D from './components/common/Experience3D';
 import StoryBlobs from './components/common/StoryBlobs';
 
 function App() {
@@ -52,51 +53,53 @@ function App() {
   }, [i18n.language]);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-500 overflow-x-hidden relative">
-      <div className="noise-overlay" aria-hidden="true" />
-      <CustomCursor />
-      <StoryBlobs />
-      <Floating3DBackground />
+    <ReactLenis root>
+      <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-500 overflow-x-hidden relative">
+        <div className="noise-overlay" aria-hidden="true" />
+        <CustomCursor />
+        <StoryBlobs />
+        <Experience3D />
 
-      <motion.div
-        className="fixed top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 z-[150] shadow-[0_0_15px_rgba(59,130,246,0.5)]"
-        style={{
-          scaleX,
-          transformOrigin: isAr ? "right" : "left"
-        }}
-      />
-
-      <Navbar />
-
-      <motion.main
-        style={{
-          perspective: "2000px",
-          transformStyle: "preserve-3d"
-        }}
-        className="relative z-10"
-      >
         <motion.div
+          className="fixed top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 z-[150] shadow-[0_0_15px_rgba(59,130,246,0.5)]"
           style={{
-            rotateX: sceneRotateX,
-            rotateY: sceneRotateY,
-            scale: sceneScale,
+            scaleX,
+            transformOrigin: isAr ? "right" : "left"
+          }}
+        />
+
+        <Navbar />
+
+        <motion.main
+          style={{
+            perspective: "2000px",
             transformStyle: "preserve-3d"
           }}
-          className="w-full origin-center transition-transform duration-1000 ease-out"
+          className="relative z-10"
         >
-          <Hero />
-          <SectionReveal><About /></SectionReveal>
-          <SectionReveal><Skills /></SectionReveal>
-          <SectionReveal><Projects /></SectionReveal>
-          <SectionReveal><Contact /></SectionReveal>
-        </motion.div>
-      </motion.main>
+          <motion.div
+            style={{
+              rotateX: sceneRotateX,
+              rotateY: sceneRotateY,
+              scale: sceneScale,
+              transformStyle: "preserve-3d"
+            }}
+            className="w-full origin-center transition-transform duration-1000 ease-out"
+          >
+            <Hero />
+            <SectionReveal><About /></SectionReveal>
+            <SectionReveal><Skills /></SectionReveal>
+            <SectionReveal><Projects /></SectionReveal>
+            <SectionReveal><Contact /></SectionReveal>
+          </motion.div>
+        </motion.main>
 
-      <Footer />
+        <Footer />
 
-      <AdminToggle onClick={() => setIsAdminOpen(true)} />
-      {isAdminOpen && <Dashboard onClose={() => setIsAdminOpen(false)} />}
-    </div>
+        <AdminToggle onClick={() => setIsAdminOpen(true)} />
+        {isAdminOpen && <Dashboard onClose={() => setIsAdminOpen(false)} />}
+      </div>
+    </ReactLenis>
   );
 }
 

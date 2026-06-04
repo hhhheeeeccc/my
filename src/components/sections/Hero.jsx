@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import Magnetic from '../common/Magnetic';
+import HeroCanvas from './HeroCanvas';
 
 const Hero = () => {
   const { t } = useTranslation();
@@ -69,6 +70,7 @@ const Hero = () => {
       onMouseLeave={handleMouseLeave}
       className="relative min-h-screen flex items-center justify-center pt-48 pb-20 overflow-visible bg-white dark:bg-slate-950 transition-colors duration-500 perspective-[2000px]"
     >
+      <HeroCanvas />
       {/* Parallax Background Elements */}
       <motion.div
         style={{ x: p1X, y: p1Y }}
@@ -100,7 +102,7 @@ const Hero = () => {
           </motion.div>
 
           <motion.h1
-            style={{ translateZ: "100px", transformStyle: "preserve-3d" }}
+            style={{ translateZ: "150px", transformStyle: "preserve-3d" }}
             className="text-6xl md:text-[10rem] font-black tracking-[-0.04em] mb-10 flex flex-wrap justify-center leading-[0.9]"
           >
             <span className="sr-only">{name}</span>
@@ -108,14 +110,21 @@ const Hero = () => {
               {name.split("").map((letter, index) => (
                 <motion.span
                   key={index}
-                  initial={{ opacity: 0, y: 50, rotateX: -90 }}
-                  animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                  initial={{ opacity: 0, y: 100, rotateX: -110, rotateY: 10, z: -100 }}
+                  animate={{ opacity: 1, y: 0, rotateX: 0, rotateY: 0, z: 0 }}
+                  whileHover={{
+                    scale: 1.1,
+                    z: 50,
+                    rotateX: -10,
+                    color: "#3b82f6",
+                    transition: { duration: 0.2 }
+                  }}
                   transition={{
-                    duration: 0.8,
-                    delay: 0.5 + index * 0.05,
+                    duration: 1.2,
+                    delay: 0.5 + index * 0.03,
                     ease: [0.16, 1, 0.3, 1]
                   }}
-                  className="inline-block origin-bottom"
+                  className="inline-block origin-bottom cursor-default"
                 >
                   {letter === " " ? "\u00A0" : letter}
                 </motion.span>
