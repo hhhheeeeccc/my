@@ -1,31 +1,21 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
 import TechIcons from '../../icons/TechIcons';
+import TextReveal3D from '../layout/TextReveal3D';
 
 const SkillCard = ({ skill, idx }) => {
-  const Icon = Icons[skill.icon] || Icons.Code;
-
   return (
     <motion.div
       variants={{
         hidden: { opacity: 0, y: 30 },
-        visible: {
-          opacity: 1,
-          y: 0,
-          transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] }
-        }
+        visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: idx * 0.05 } }
       }}
-      className="group p-10 rounded-[3rem] bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700 transition-all duration-300 relative overflow-hidden"
+      className="group relative p-10 rounded-[2.5rem] bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800 hover:border-blue-500/50 transition-all duration-500 hover:shadow-2xl hover:shadow-blue-500/10 overflow-hidden"
     >
-      <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
-         <Icon size={120} />
-      </div>
-
       <div className="relative z-10">
         <div
-          className="mb-8 p-5 bg-white dark:bg-slate-950 rounded-2xl w-fit shadow-lg"
+          className="mb-8 p-4 bg-white dark:bg-slate-950 rounded-2xl w-fit shadow-lg"
         >
           <TechIcons name={skill.techIcon} className="w-10 h-10" />
         </div>
@@ -74,9 +64,11 @@ const Skills = () => {
               <span className="text-blue-600 font-black uppercase tracking-[0.3em] text-xs md:text-sm">{t('skills.subtitle', 'Expertise')}</span>
               <div className="w-12 h-1 bg-blue-600 rounded-full" />
             </motion.div>
-            <h2 className="text-5xl md:text-8xl font-black text-slate-900 dark:text-white mb-10 tracking-tight">
-              {t('skills.title')}
-            </h2>
+
+            <div className="text-5xl md:text-8xl font-black text-slate-900 dark:text-white mb-10 tracking-tight leading-[0.9]">
+              <TextReveal3D text={t('skills.title')} />
+            </div>
+
             <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-400 max-w-3xl font-semibold opacity-80 leading-relaxed">
               {t('skills.intro', 'Crafting high-performance digital experiences with cutting-edge technologies.')}
             </p>
