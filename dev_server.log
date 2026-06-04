@@ -5,8 +5,12 @@
 Port 5173 is in use, trying another one...
 Port 5174 is in use, trying another one...
 Port 5175 is in use, trying another one...
+Port 5176 is in use, trying another one...
 
-  VITE v6.4.3  ready in 405 ms
+  VITE v6.4.3  ready in 407 ms
 
-  ➜  Local:   http://localhost:5176/
+  ➜  Local:   http://localhost:5177/
   ➜  Network: use --host to expose
+1:48:22 AM [vite] (client) hmr update /src/components/common/CustomCursor.jsx, /src/styles/index.css
+1:49:19 AM [vite] (client) hmr update /src/styles/index.css
+1:50:05 AM [vite] (client) hmr update /src/components/common/Floating3DBackground.jsx, /src/styles/index.css

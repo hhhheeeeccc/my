@@ -9,114 +9,47 @@ const About = () => {
   const { t } = useTranslation();
 
   return (
-    <section id="about" className="py-32 bg-slate-50 dark:bg-slate-900/50 transition-colors duration-500 relative overflow-hidden">
-      {/* Decorative background */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20">
-        <div className="absolute top-1/4 -left-20 w-80 h-80 bg-blue-500 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/4 -right-20 w-80 h-80 bg-cyan-500 rounded-full blur-[120px]" />
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <ParallaxContainer className="grid md:grid-cols-2 gap-20 items-center">
+    <section id="about" className="py-40 bg-slate-50 dark:bg-slate-900/50 transition-colors duration-500 relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <div className="grid md:grid-cols-2 gap-24 items-center">
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
+            initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            style={{ transformStyle: "preserve-3d" }}
           >
-            <div className="flex items-center gap-3 mb-6 " style={{ translateZ: "20px" }}>
-              <motion.div
-                animate={{ y: [-5, 5, -5], rotate: [0, 10, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              >
-                <Sparkles className="text-blue-600" size={28} />
-              </motion.div>
-              <span className="text-blue-600 font-bold uppercase tracking-[0.2em] text-sm">
-                {t('about.subtitle', 'My Journey')}
+            <div className="flex items-center gap-3 mb-8">
+              <Sparkles className="text-blue-600" size={24} />
+              <span className="text-blue-600 font-black uppercase tracking-[0.3em] text-[10px]">
+                {t('about.subtitle')}
               </span>
             </div>
-            <div className="mb-8" style={{ translateZ: "40px" }}>
-              <TextReveal3D
-                text={t('about.title')}
-                className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white leading-tight"
-              />
-              <motion.div
-                initial={{ width: 0 }}
-                whileInView={{ width: 100 }}
-                transition={{ delay: 0.5, duration: 0.8 }}
-                className="h-2 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-full mt-4"
-              />
-            </div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.8 }}
-              className="space-y-6 text-xl text-slate-700 dark:text-slate-300 leading-relaxed font-medium"
-              style={{ translateZ: "30px" }}
-            >
+
+            <h2 className="text-4xl md:text-7xl font-black mb-10 text-slate-900 dark:text-white tracking-tight leading-tight">
+              {t('about.title')}
+            </h2>
+
+            <div className="space-y-8 text-lg md:text-xl text-slate-600 dark:text-slate-400 leading-relaxed font-medium opacity-90">
               <p>{t('about.bio')}</p>
-            </motion.div>
+            </div>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, rotateY: -10 }}
-            whileInView={{ opacity: 1, scale: 1, rotateY: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 1, type: "spring", stiffness: 100, damping: 20 }}
-            className="relative perspective-1000"
-            style={{ transformStyle: "preserve-3d" }}
-          >
-            <motion.div
-              whileHover={{ scale: 1.02, rotateY: 5, rotateX: -2 }}
-              className="relative z-10 p-10 bg-white dark:bg-slate-950 rounded-[3rem] shadow-2xl border border-slate-100 dark:border-slate-800 transition-all duration-500"
-              style={{ translateZ: "60px", transformStyle: "preserve-3d" }}
-            >
-              <div className="flex items-center gap-6 mb-8" style={{ translateZ: "40px" }}>
-                <motion.div
-                  animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}
-                  transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                  className="p-5 bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30 rounded-2xl shadow-inner"
-                >
-                  <Gem className="text-blue-600 dark:text-blue-400" size={36} />
-                </motion.div>
-                <h3 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white leading-none">
+          <ParallaxContainer className="relative">
+            <div className="p-12 bg-white dark:bg-slate-950 rounded-[3rem] shadow-2xl border border-slate-100 dark:border-slate-800">
+              <div className="flex items-center gap-6 mb-10">
+                <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-2xl">
+                  <Gem className="text-blue-600 dark:text-blue-400" size={32} />
+                </div>
+                <h3 className="text-2xl font-black text-slate-900 dark:text-white">
                   {t('about.personalTouchTitle')}
                 </h3>
               </div>
-              <p className="text-2xl text-slate-700 dark:text-slate-300 leading-relaxed italic font-serif opacity-90" style={{ translateZ: "30px" }}>
+              <p className="text-xl text-slate-700 dark:text-slate-300 italic font-serif leading-relaxed">
                 "{t('about.personalTouchBio')}"
               </p>
-
-              <div className="mt-10 flex gap-3" style={{ translateZ: "20px" }}>
-                {[1, 2, 3].map(i => (
-                   <div key={i} className="flex-1 h-2 rounded-full bg-blue-50 dark:bg-slate-800 overflow-hidden">
-                      <motion.div
-                        initial={{ x: "-100%" }}
-                        whileInView={{ x: "0%" }}
-                        transition={{ delay: 0.6 + (i * 0.15), duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                        className="w-full h-full bg-gradient-to-r from-blue-600 to-cyan-500"
-                      />
-                   </div>
-                ))}
-              </div>
-            </motion.div>
-
-            {/* Legendary Decorative Frame */}
-            <motion.div
-              animate={{ x: [0, 10, 0], y: [0, -10, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -z-10 -top-10 -right-10 w-full h-full border-4 border-blue-600/20 rounded-[3.5rem]"
-              style={{ translateZ: "-20px" }}
-            />
-            <motion.div
-              animate={{ x: [0, -10, 0], y: [0, 10, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-              className="absolute -z-10 -bottom-10 -left-10 w-full h-full border-4 border-cyan-500/10 rounded-[3.5rem]"
-              style={{ translateZ: "-30px" }}
-            />
-          </motion.div>
-        </ParallaxContainer>
+            </div>
+          </ParallaxContainer>
+        </div>
       </div>
     </section>
   );
