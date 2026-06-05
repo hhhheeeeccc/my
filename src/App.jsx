@@ -62,7 +62,7 @@ function App() {
           }}
         />
 
-        <Navbar />
+        <Navbar isAdminOpen={isAdminOpen} />
 
         <main className="relative z-10">
           <Hero />

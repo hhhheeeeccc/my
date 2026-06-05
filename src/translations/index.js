@@ -7,53 +7,74 @@ export const en = {
       contact: "Contact"
     },
     hero: {
+      welcome: "Welcome to my world",
       name: "Marwan Yahya Hassan Ghazi",
-      title: "Senior Frontend & Desktop Application Developer | Software Architect",
-      subtitle: "Computer Science Student passionate about SOLID principles, Clean Code, and building production-ready, highly optimized web and desktop software.",
+      title: "Senior Frontend & Desktop Developer | Software Engineer",
+      subtitle: "Passionate Computer Science student with a focus on SOLID principles, Clean Code, and building highly optimized, production-ready web and desktop software.",
       ctaWork: "Explore My Work",
-      ctaContact: "Contact Me"
+      ctaContact: "Get in Touch"
     },
     about: {
-      title: "About Me",
-      bio: "I am a software developer with deep expertise in the React and JavaScript/TypeScript ecosystems, specializing in building complex web and desktop applications. I have extensive experience customizing and scaling large enterprise codebases (like the Mattermost open-source project), which involves working heavily with React, TypeScript, Go, and advanced styling architectures. I strictly follow a \"Zero-Bug\" policy, ensuring that every piece of code is modular, robust, and optimized for maximum performance.",
+      subtitle: "Our Story",
+      title: "Who Am I",
+      intro: "I am a software developer with a deep background in the React and JavaScript/TypeScript ecosystem, specializing in building complex web and desktop applications.",
+      bio: "I have extensive experience in customizing and extending large-scale enterprise codebases (like the Mattermost open-source project), which involves working heavily with React, TypeScript, Go, and advanced styling architectures. I strictly follow a \"Zero-Bug\" policy, ensuring every piece of code is modular, robust, and optimized for maximum performance.",
       personalTouchTitle: "Personal Touch",
-      personalTouchBio: "Outside of software engineering, I have a deep interest in gemology, specifically identifying and assessing rare types of Yemeni Agate (العقيق اليمني)."
+      personalTouchBio: "Beyond software engineering, I have a deep interest in gemology, specifically identifying and evaluating rare types of Yemeni Agate.",
+      features: {
+        code: {
+          title: "Clean Code",
+          desc: "Writing modular, maintainable, and testable code following SOLID principles."
+        },
+        rocket: {
+          title: "High Performance",
+          desc: "Optimizing every byte to ensure lightning-fast execution and smooth UX."
+        }
+      }
     },
     skills: {
-      title: "Technical Skills",
+      subtitle: "Expertise",
+      title: "Technical Arsenal",
+      intro: "Crafting high-performance digital experiences with cutting-edge technologies.",
       categories: {
-        frontend: "Frontend Technologies",
+        frontend: "Frontend Tech",
         backend: "Desktop & Backend",
         architecture: "Architecture & Testing",
         cicd: "CI/CD & Code Quality"
       },
       items: {
-        react: "React",
-        js: "JavaScript (ES6+)",
-        ts: "TypeScript",
-        tailwind: "Tailwind CSS",
-        bootstrap: "Bootstrap",
-        html: "HTML5",
-        css: "CSS3/SCSS",
-        electron: "Electron.js",
-        go: "Go (Golang)",
-        node: "Node.js",
-        microservices: "Microservices",
-        unitTesting: "Unit Testing",
-        e2e: "E2E Testing",
-        uiAuto: "UI Automation",
-        eventCoalescing: "Event Coalescing",
-        ghActions: "GitHub Actions",
-        gitlab: "GitLab",
-        gitLfs: "Git LFS",
-        codacy: "Codacy",
-        sonar: "SonarQube",
-        deepSource: "DeepSource"
+        frontend: {
+          name: "Modern Frontend",
+          desc: "Expertise in React 19, TypeScript, and Tailwind CSS v4 for cinematic UI/UX."
+        },
+        backend: {
+          name: "Core Systems",
+          desc: "Building robust backends and desktop apps with Go, Node.js, and Electron."
+        },
+        desktop: {
+          name: "Desktop Apps",
+          desc: "Cross-platform desktop development with deep system integrations."
+        },
+        arch: {
+          name: "Clean Architecture",
+          desc: "Implementing enterprise-level design patterns and SOLID principles."
+        },
+        optimization: {
+          name: "Performance",
+          desc: "Advanced event coalescing and non-blocking I/O strategies."
+        },
+        localization: {
+          name: "Global Reach",
+          desc: "Full i18n support with RTL-safe 3D animations and layouts."
+        }
       }
     },
     projects: {
+      subtitle: "Portfolio",
       title: "Featured Projects",
+      intro: "A selection of my most challenging and impactful engineering projects.",
       viewProject: "View Project",
+      viewMore: "View All Work",
       sourceCode: "Source",
       liveDemo: "Demo",
       tags: {
@@ -95,16 +116,25 @@ export const en = {
       messageLabel: "Message",
       messagePlaceholder: "Tell me about your project...",
       sendButton: "Send Message",
+      messageSent: "Message Sent!",
+      messageSentSuccess: "Message sent successfully!",
       success: "Message sent successfully!",
       error: "Something went wrong. Please try again."
     },
     footer: {
       rights: "© {{year}} Marwan Yahya Hassan Ghazi. All rights reserved.",
-      builtWith: "Built with React, Tailwind CSS, and Framer Motion."
+      builtWith: "Built with React, Tailwind CSS, and Framer Motion.",
+      privacy: "Privacy",
+      terms: "Terms"
     },
     admin: {
       title: "Portfolio Editor",
       subtitle: "Customize your portfolio content",
+      loginTitle: "Admin Access",
+      username: "Username",
+      password: "Password",
+      loginBtn: "Login",
+      error: "Invalid credentials",
       exportJson: "Export JSON",
       resetConfirm: "Are you sure you want to reset all data to defaults?",
       resetTitle: "Reset to defaults",
@@ -155,6 +185,7 @@ export const ar = {
       contact: "اتصل بي"
     },
     hero: {
+      welcome: "مرحباً بك في عالمي",
       name: "مروان يحيى حسن غازي",
       title: "مطور واجهات أمامية وتطبيقات سطح مكتب أول | مهندس برمجيات",
       subtitle: "طالب علوم حاسوب شغوف بمبادئ SOLID، الكود النظيف، وبناء برمجيات ويب وسطح مكتب عالية التحسين وجاهزة للإنتاج.",
@@ -162,13 +193,27 @@ export const ar = {
       ctaContact: "تواصل معي"
     },
     about: {
+      subtitle: "قصتنا",
       title: "من أنا",
+      intro: "أنا مطور برمجيات لدي خبرة عميقة في بيئة العمل الخاصة بـ React و JavaScript/TypeScript، متخصص في بناء تطبيقات الويب وسطح المكتب المعقدة.",
       bio: "أنا مطور برمجيات لدي خبرة عميقة في بيئة العمل الخاصة بـ React و JavaScript/TypeScript، متخصص في بناء تطبيقات الويب وسطح المكتب المعقدة. لدي خبرة واسعة في تخصيص وتوسيع قواعد الأكواد الضخمة للمؤسسات (مثل مشروع Mattermost مفتوح المصدر)، والذي يتضمن العمل المكثف مع React و TypeScript و Go وهياكل التنسيق المتقدمة. أتبع بصرامة سياسة \"خالٍ من الأخطاء\" (Zero-Bug)، مما يضمن أن كل جزء من الكود معياري وقوي ومحسن لتحقيق أقصى قدر من الأداء.",
       personalTouchTitle: "لمسة شخصية",
-      personalTouchBio: "بعيداً عن هندسة البرمجيات، لدي اهتمام عميق بعلم الأحجار الكريمة، وتحديداً تحديد وتقييم الأنواع النادرة من العقيق اليمني."
+      personalTouchBio: "بعيداً عن هندسة البرمجيات، لدي اهتمام عميق بعلم الأحجار الكريمة، وتحديداً تحديد وتقييم الأنواع النادرة من العقيق اليمني.",
+      features: {
+        code: {
+          title: "كود نظيف",
+          desc: "كتابة كود معياري وقابل للصيانة والاختبار باتباع مبادئ SOLID."
+        },
+        rocket: {
+          title: "أداء عالٍ",
+          desc: "تحسين كل بايت لضمان تنفيذ بسرعة البرق وتجربة مستخدم سلسة."
+        }
+      }
     },
     skills: {
-      title: "المهارات التقنية",
+      subtitle: "الخبرة",
+      title: "الترسانة التقنية",
+      intro: "صناعة تجارب رقمية عالية الأداء بأحدث التقنيات.",
       categories: {
         frontend: "تقنيات الواجهة الأمامية",
         backend: "سطح المكتب والخلفية",
@@ -176,32 +221,38 @@ export const ar = {
         cicd: "التكامل المستمر وجودة الكود"
       },
       items: {
-        react: "React",
-        js: "JavaScript (ES6+)",
-        ts: "TypeScript",
-        tailwind: "Tailwind CSS",
-        bootstrap: "Bootstrap",
-        html: "HTML5",
-        css: "CSS3/SCSS",
-        electron: "Electron.js",
-        go: "Go (Golang)",
-        node: "Node.js",
-        microservices: "البنية المجهرية (Microservices)",
-        unitTesting: "اختبار الوحدات",
-        e2e: "اختبار (E2E)",
-        uiAuto: "أتمتة واجهة المستخدم",
-        eventCoalescing: "دمج الأحداث (Event Coalescing)",
-        ghActions: "GitHub Actions",
-        gitlab: "GitLab",
-        gitLfs: "Git LFS",
-        codacy: "Codacy",
-        sonar: "SonarQube",
-        deepSource: "DeepSource"
+        frontend: {
+          name: "واجهات حديثة",
+          desc: "خبرة في React 19 و TypeScript و Tailwind CSS v4 لتجربة مستخدم سينمائية."
+        },
+        backend: {
+          name: "الأنظمة الأساسية",
+          desc: "بناء خلفيات قوية وتطبيقات سطح مكتب باستخدام Go و Node.js و Electron."
+        },
+        desktop: {
+          name: "تطبيقات سطح المكتب",
+          desc: "تطوير تطبيقات سطح المكتب عبر المنصات مع تكامل عميق للنظام."
+        },
+        arch: {
+          name: "هندسة نظيفة",
+          desc: "تنفيذ أنماط تصميم على مستوى المؤسسات ومبادئ SOLID."
+        },
+        optimization: {
+          name: "تحسين الأداء",
+          desc: "استراتيجيات دمج الأحداث المتقدمة والمدخلات/المخرجات غير المحظورة."
+        },
+        localization: {
+          name: "الوصول العالمي",
+          desc: "دعم i18n كامل مع رسوم متحركة وتخطيطات ثلاثية الأبعاد آمنة لـ RTL."
+        }
       }
     },
     projects: {
+      subtitle: "معرض الأعمال",
       title: "المشاريع المميزة",
+      intro: "مجموعة مختارة من أكثر مشاريعي الهندسية تحدياً وتأثيراً.",
       viewProject: "عرض المشروع",
+      viewMore: "عرض كل الأعمال",
       sourceCode: "الكود",
       liveDemo: "العرض المباشر",
       tags: {
@@ -243,16 +294,25 @@ export const ar = {
       messageLabel: "الرسالة",
       messagePlaceholder: "أخبرني عن مشروعك...",
       sendButton: "إرسال الرسالة",
+      messageSent: "تم الإرسال!",
+      messageSentSuccess: "تم إرسال الرسالة بنجاح!",
       success: "تم إرسال الرسالة بنجاح!",
       error: "حدث خطأ ما. يرجى المحاولة مرة أخرى."
     },
     footer: {
       rights: "© {{year}} مروان يحيى حسن غازي. جميع الحقوق محفوظة.",
-      builtWith: "تم بناؤه باستخدام React و Tailwind CSS و Framer Motion."
+      builtWith: "تم بناؤه باستخدام React و Tailwind CSS و Framer Motion.",
+      privacy: "الخصوصية",
+      terms: "الشروط"
     },
     admin: {
       title: "محرر الملف الشخصي",
       subtitle: "قم بتخصيص محتوى ملفك الشخصي",
+      loginTitle: "دخول المسؤول",
+      username: "اسم المستخدم",
+      password: "كلمة المرور",
+      loginBtn: "تسجيل الدخول",
+      error: "بيانات الاعتماد غير صالحة",
       exportJson: "تصدير JSON",
       resetConfirm: "هل أنت متأكد من أنك تريد إعادة تعيين جميع البيانات إلى الافتراضيات؟",
       resetTitle: "إعادة التعيين للافتراضيات",

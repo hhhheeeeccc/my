@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePortfolio } from '../../context/PortfolioContext';
-import { RotateCcw, X, Edit3, Globe, Menu } from 'lucide-react';
+import {
+  RotateCcw, X, Edit3, Globe, Menu, Lock, User, KeyRound,
+  Layout, Settings, Mail, Briefcase, Info,
+  Zap, Save, Trash2, ArrowRight
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Dashboard = ({ onClose }) => {
@@ -11,14 +15,37 @@ const Dashboard = ({ onClose }) => {
   const [activeSection, setActiveSection] = useState('hero');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  // Auth state
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loginData, setLoginData] = useState({ username: '', password: '' });
+  const [loginError, setLoginError] = useState('');
+
   const isRTL = i18n.dir() === 'rtl';
 
+  useEffect(() => {
+    const auth = sessionStorage.getItem('admin_auth');
+    if (auth === 'true') {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (loginData.username === 'marwan' && loginData.password === '736187483') {
+      setIsAuthenticated(true);
+      sessionStorage.setItem('admin_auth', 'true');
+      setLoginError('');
+    } else {
+      setLoginError(t('admin.error'));
+    }
+  };
+
   const sections = [
-    { id: 'hero', label: t('admin.sections.hero') },
-    { id: 'about', label: t('admin.sections.about') },
-    { id: 'skills', label: t('admin.sections.skills') },
-    { id: 'projects', label: t('admin.sections.projects') },
-    { id: 'contact', label: t('admin.sections.contact') },
+    { id: 'hero', label: t('admin.sections.hero'), icon: <Layout size={18} /> },
+    { id: 'about', label: t('admin.sections.about'), icon: <Info size={18} /> },
+    { id: 'skills', label: t('admin.sections.skills'), icon: <Zap size={18} /> },
+    { id: 'projects', label: t('admin.sections.projects'), icon: <Briefcase size={18} /> },
+    { id: 'contact', label: t('admin.sections.contact'), icon: <Mail size={18} /> },
   ];
 
   const handleReset = () => {
@@ -36,100 +63,239 @@ const Dashboard = ({ onClose }) => {
     value = value || '';
 
     return (
-      <div className="mb-6 relative z-[110]">
-        <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
-          {label}
-        </label>
+      <motion.div
+        layout
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-8 relative z-[110]"
+      >
+        <div className="flex items-center justify-between mb-3 ms-1">
+          <label className="text-xs font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
+            {label}
+          </label>
+        </div>
         {type === 'textarea' ? (
           <textarea
-            className="editor-input w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-            rows="4"
+            className="editor-input w-full px-6 py-5 rounded-[1.5rem] bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 text-slate-900 dark:text-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all font-medium text-lg min-h-[140px] shadow-sm resize-none"
             value={value}
             onChange={(e) => updateContent(activeLang, path, e.target.value)}
           />
         ) : (
           <input
-            type="text"
-            className="editor-input w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+            className="editor-input w-full px-6 py-5 rounded-[1.5rem] bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 text-slate-900 dark:text-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all font-bold text-lg shadow-sm"
+            type={type}
             value={value}
             onChange={(e) => updateContent(activeLang, path, e.target.value)}
           />
         )}
-      </div>
+      </motion.div>
     );
   };
 
+  if (!isAuthenticated) {
+    return (
+      <div className="fixed inset-0 z-[300] flex items-center justify-center p-4">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="absolute inset-0 bg-slate-950/90 backdrop-blur-3xl"
+          onClick={onClose}
+        />
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0, y: 40 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          className="relative w-full max-w-lg bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-[3.5rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] border border-white/20 dark:border-slate-800 p-10 sm:p-16 overflow-hidden"
+        >
+          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-600 via-cyan-500 to-indigo-600" />
+
+          <button
+            onClick={onClose}
+            className="absolute top-10 end-10 p-3 text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-2xl transition-all"
+          >
+            <X size={24} />
+          </button>
+
+          <div className="text-center mb-12">
+            <motion.div
+              animate={{
+                rotate: [0, 5, -5, 0],
+                scale: [1, 1.05, 1]
+              }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              className="inline-flex p-6 rounded-[2.5rem] bg-blue-600 text-white shadow-2xl shadow-blue-500/40 mb-10"
+            >
+              <Lock size={48} />
+            </motion.div>
+            <h2 className="text-5xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">
+              {t('admin.loginTitle')}
+            </h2>
+            <p className="text-xl text-slate-500 dark:text-slate-400 font-medium opacity-80">
+              {t('admin.subtitle')}
+            </p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-8">
+            <div className="space-y-3">
+              <label className="block text-xs font-black uppercase tracking-[0.3em] text-slate-400 mb-2 ms-4">
+                {t('admin.username')}
+              </label>
+              <div className="relative group">
+                <User className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={24} />
+                <input
+                  type="text"
+                  required
+                  className="w-full pl-16 pr-8 py-6 bg-slate-50 dark:bg-slate-800/50 border-2 border-transparent focus:border-blue-500 rounded-[2rem] text-slate-900 dark:text-white outline-none transition-all font-bold text-xl shadow-inner"
+                  value={loginData.username}
+                  onChange={(e) => setLoginData({ ...loginData, username: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <label className="block text-xs font-black uppercase tracking-[0.3em] text-slate-400 mb-2 ms-4">
+                {t('admin.password')}
+              </label>
+              <div className="relative group">
+                <KeyRound className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={24} />
+                <input
+                  type="password"
+                  required
+                  className="w-full pl-16 pr-8 py-6 bg-slate-50 dark:bg-slate-800/50 border-2 border-transparent focus:border-blue-500 rounded-[2rem] text-slate-900 dark:text-white outline-none transition-all font-bold text-xl shadow-inner"
+                  value={loginData.password}
+                  onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                />
+              </div>
+            </div>
+
+            {loginError && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="bg-red-500/10 p-5 rounded-3xl border border-red-500/20"
+              >
+                <p className="text-red-500 text-lg font-black text-center">
+                  {loginError}
+                </p>
+              </motion.div>
+            )}
+
+            <button
+              type="submit"
+              className="w-full py-7 bg-blue-600 text-white font-black rounded-[2rem] shadow-2xl shadow-blue-600/40 hover:bg-blue-700 hover:scale-[1.02] active:scale-[0.98] transition-all text-xl uppercase tracking-widest"
+            >
+              {t('admin.loginBtn')}
+            </button>
+          </form>
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-0 sm:p-4">
+    <div className="fixed inset-0 z-[300] flex items-center justify-center p-0 sm:p-6 md:p-12 lg:p-16">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="bg-slate-50 dark:bg-slate-950 w-full max-w-6xl h-full sm:h-[90vh] sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-200 dark:border-slate-800 relative z-[101]"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+        className="absolute inset-0 bg-slate-950/60 backdrop-blur-2xl"
+      />
+
+      <motion.div
+        initial={{ y: 100, opacity: 0, scale: 0.9 }}
+        animate={{ y: 0, opacity: 1, scale: 1 }}
+        exit={{ y: 100, opacity: 0, scale: 0.9 }}
+        transition={{ type: 'spring', damping: 35, stiffness: 200 }}
+        className="relative w-full h-full bg-white dark:bg-slate-950 sm:rounded-[4rem] shadow-[0_60px_120px_-20px_rgba(0,0,0,0.5)] border border-white/20 dark:border-slate-800 overflow-hidden flex flex-col"
       >
         {/* Header */}
-        <div className="px-4 sm:px-8 py-4 sm:py-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
-          <div className="flex items-center gap-3 sm:gap-4">
+        <div className="flex items-center justify-between px-10 sm:px-16 py-10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/50 relative z-[110]">
+          <div className="flex items-center gap-8">
             <button
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="p-2 lg:hidden text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"
+              onClick={() => setIsSidebarOpen(true)}
+              className="lg:hidden p-4 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-[1.5rem] transition-colors"
             >
-              <Menu size={20} />
+              <Menu size={32} />
             </button>
-            <div className="p-2 sm:p-3 bg-blue-600 rounded-xl sm:rounded-2xl text-white shadow-lg shadow-blue-500/20">
-              <Edit3 size={20} className="sm:w-6 sm:h-6" />
-            </div>
-            <div>
-              <h2 className="text-lg sm:text-2xl font-bold text-slate-900 dark:text-white leading-tight">{t('admin.title')}</h2>
-              <p className="text-slate-500 dark:text-slate-400 text-[10px] sm:text-sm">{t('admin.subtitle')}</p>
+            <div className="flex items-center gap-6">
+              <div className="p-5 bg-blue-600 rounded-[2rem] text-white shadow-2xl shadow-blue-500/40">
+                <Edit3 size={32} />
+              </div>
+              <div>
+                <h2 className="text-3xl font-black text-slate-900 dark:text-white leading-tight tracking-tight">
+                  {t('admin.title')}
+                </h2>
+                <div className="flex items-center gap-3">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.8)]" />
+                  <p className="text-sm font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em]">
+                    {activeSection} Editor
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-1 sm:gap-3">
-            <button
+          <div className="flex items-center gap-6">
+            <motion.button
+              whileHover={{ rotate: -180, scale: 1.15 }}
               onClick={handleReset}
-              className="p-2 sm:p-3 text-slate-400 hover:text-red-500 transition-colors rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10"
+              className="p-5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-3xl transition-all"
               title={t('admin.resetTitle')}
             >
-              <RotateCcw size={18} sm:size={20} />
-            </button>
-            <button
+              <RotateCcw size={28} />
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.15 }}
+              whileTap={{ scale: 0.9 }}
               onClick={onClose}
-              className="p-2 sm:p-3 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-300 dark:hover:bg-slate-700 transition-all"
+              className="p-5 bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-3xl transition-all shadow-sm"
             >
-              <X size={18} sm:size={20} />
-            </button>
+              <X size={28} />
+            </motion.button>
           </div>
         </div>
 
-        <div className="flex flex-1 overflow-hidden relative">
+        <div className="flex flex-1 overflow-hidden">
           {/* Sidebar - Desktop */}
-          <div className="hidden lg:flex w-64 border-e border-slate-200 dark:border-slate-800 flex-col p-6 gap-2 bg-slate-50/50 dark:bg-slate-950/50">
-            <div className="flex bg-slate-200 dark:bg-slate-900 p-1 rounded-xl mb-6 shadow-inner">
+          <div className="hidden lg:flex w-96 flex-col p-10 bg-white dark:bg-slate-900 border-e border-slate-200/50 dark:border-slate-800/50 gap-4 relative z-[105]">
+            <div className="flex bg-slate-100/50 dark:bg-slate-950 p-2 rounded-[2rem] mb-10 border border-slate-200/50 dark:border-slate-800/50 shadow-inner">
               <button
                 onClick={() => setActiveLang('en')}
-                className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${activeLang === 'en' ? 'bg-white dark:bg-slate-800 text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+                className={`flex-1 py-4 rounded-[1.5rem] text-sm font-black transition-all uppercase tracking-[0.3em] ${activeLang === 'en' ? 'bg-white dark:bg-slate-800 text-blue-600 shadow-2xl' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
               >
-                English
+                EN
               </button>
               <button
                 onClick={() => setActiveLang('ar')}
-                className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${activeLang === 'ar' ? 'bg-white dark:bg-slate-800 text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+                className={`flex-1 py-4 rounded-[1.5rem] text-sm font-black transition-all uppercase tracking-[0.3em] ${activeLang === 'ar' ? 'bg-white dark:bg-slate-800 text-blue-600 shadow-2xl' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
               >
-                العربية
+                AR
               </button>
             </div>
 
-            {sections.map(section => (
-              <button
-                key={section.id}
-                onClick={() => setActiveSection(section.id)}
-                className={`w-full text-start px-4 py-3 rounded-xl font-bold transition-all ${activeSection === section.id ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25 scale-[1.02]' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-900'}`}
-              >
-                {section.label}
-              </button>
-            ))}
+            <div className="space-y-3 flex-1 overflow-y-auto pr-2 custom-scrollbar">
+              {sections.map(section => (
+                <button
+                  key={section.id}
+                  onClick={() => setActiveSection(section.id)}
+                  className={`w-full flex items-center gap-5 px-8 py-6 rounded-[2rem] font-black transition-all group relative overflow-hidden ${activeSection === section.id ? 'bg-blue-600 text-white shadow-[0_20px_40px_-10px_rgba(37,99,235,0.4)] scale-[1.05]' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 border border-transparent hover:border-slate-200/50 dark:hover:border-slate-700/50'}`}
+                >
+                  <span className={`transition-all duration-500 ${activeSection === section.id ? 'text-white scale-110' : 'text-blue-600 dark:text-blue-400 group-hover:scale-125'}`}>
+                    {section.icon}
+                  </span>
+                  <span className="text-lg tracking-tight">{section.label}</span>
+                  {activeSection === section.id && (
+                    <motion.div
+                      layoutId="sidebar-indicator"
+                      className="absolute end-0 top-0 bottom-0 w-2 bg-white/20"
+                    />
+                  )}
+                </button>
+              ))}
+            </div>
 
-            <div className="mt-auto pt-6 border-t border-slate-200 dark:border-slate-800">
+            <div className="mt-8 pt-8 border-t border-slate-200/50 dark:border-slate-800/50">
                 <button
                     onClick={() => {
                         const data = JSON.stringify(content, null, 2);
@@ -140,135 +306,140 @@ const Dashboard = ({ onClose }) => {
                         a.download = 'portfolio-config.json';
                         a.click();
                     }}
-                    className="w-full py-3 border-2 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 rounded-xl hover:border-blue-500 hover:text-blue-600 transition-all text-sm font-bold flex items-center justify-center gap-2 group"
+                    className="w-full py-5 bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-[2rem] hover:border-blue-500 hover:text-blue-600 transition-all text-xs font-black uppercase tracking-[0.3em] flex items-center justify-center gap-4 group shadow-sm hover:shadow-xl"
                 >
-                    <Globe size={16} className="group-hover:rotate-12 transition-transform" />
+                    <Globe size={20} className="group-hover:rotate-[360deg] transition-transform duration-1000" />
                     {t('admin.exportJson')}
                 </button>
             </div>
           </div>
 
-          {/* Sidebar - Mobile Overlay */}
-          <AnimatePresence>
-            {isSidebarOpen && (
-              <>
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  onClick={() => setIsSidebarOpen(false)}
-                  className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[110] lg:hidden"
-                />
-                <motion.div
-                  initial={{ x: isRTL ? '100%' : '-100%' }}
-                  animate={{ x: 0 }}
-                  exit={{ x: isRTL ? '100%' : '-100%' }}
-                  transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                  className="fixed inset-y-0 start-0 w-72 bg-white dark:bg-slate-950 z-[120] lg:hidden p-6 flex flex-col gap-2 shadow-2xl"
-                >
-                  <div className="flex items-center justify-between mb-8">
-                    <h3 className="font-bold text-slate-900 dark:text-white">{t('admin.sections.hero')}</h3>
-                    <button onClick={() => setIsSidebarOpen(false)} className="p-2 text-slate-500"><X size={20} /></button>
-                  </div>
-
-                  <div className="flex bg-slate-100 dark:bg-slate-900 p-1 rounded-xl mb-6">
-                    <button
-                      onClick={() => { setActiveLang('en'); setIsSidebarOpen(false); }}
-                      className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${activeLang === 'en' ? 'bg-white dark:bg-slate-800 text-blue-600 shadow-sm' : 'text-slate-500'}`}
-                    >
-                      English
-                    </button>
-                    <button
-                      onClick={() => { setActiveLang('ar'); setIsSidebarOpen(false); }}
-                      className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${activeLang === 'ar' ? 'bg-white dark:bg-slate-800 text-blue-600 shadow-sm' : 'text-slate-500'}`}
-                    >
-                      العربية
-                    </button>
-                  </div>
-
-                  {sections.map(section => (
-                    <button
-                      key={section.id}
-                      onClick={() => { setActiveSection(section.id); setIsSidebarOpen(false); }}
-                      className={`w-full text-start px-4 py-3 rounded-xl font-bold transition-all ${activeSection === section.id ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900'}`}
-                    >
-                      {section.label}
-                    </button>
-                  ))}
-                </motion.div>
-              </>
-            )}
-          </AnimatePresence>
-
           {/* Main Content */}
-          <div className="flex-1 overflow-y-auto p-4 sm:p-8 bg-white dark:bg-slate-900/30 relative z-[105] scroll-smooth">
-            <div className="max-w-2xl mx-auto lg:mx-0">
-              {activeSection === 'hero' && (
-                <div className="space-y-1 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                  {renderField(t('admin.fields.fullName'), 'hero.name')}
-                  {renderField(t('admin.fields.profTitle'), 'hero.title')}
-                  {renderField(t('admin.fields.shortBio'), 'hero.subtitle', 'textarea')}
-                  {renderField(t('admin.fields.exploreBtn'), 'hero.ctaWork')}
-                  {renderField(t('admin.fields.contactBtn'), 'hero.ctaContact')}
-                </div>
-              )}
+          <div className="flex-1 overflow-y-auto p-12 sm:p-20 lg:p-24 relative z-[105] scroll-smooth bg-slate-50/30 dark:bg-slate-900/10">
+            <div className="max-w-4xl mx-auto">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeSection + activeLang}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -30 }}
+                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  <div className="mb-20">
+                     <div className="flex items-center gap-4 mb-6">
+                        <span className="h-1.5 w-20 bg-blue-600 rounded-full" />
+                        <span className="text-xs font-black text-blue-600 uppercase tracking-[0.5em]">{activeLang} version</span>
+                     </div>
+                     <h1 className="text-7xl font-black text-slate-900 dark:text-white mb-6 tracking-tight leading-[0.9]">
+                        {sections.find(s => s.id === activeSection)?.label}
+                     </h1>
+                     <p className="text-2xl font-semibold text-slate-500 dark:text-slate-400 opacity-70 leading-relaxed max-w-2xl">
+                        Refine every detail of your {activeSection} section to build a world-class engineering portfolio.
+                     </p>
+                  </div>
 
-              {activeSection === 'about' && (
-                <div className="space-y-1 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                  {renderField(t('admin.fields.secTitle'), 'about.title')}
-                  {renderField(t('admin.fields.detailedBio'), 'about.bio', 'textarea')}
-                  {renderField(t('admin.fields.personalTouchTitle'), 'about.personalTouchTitle')}
-                  {renderField(t('admin.fields.personalTouchBio'), 'about.personalTouchBio', 'textarea')}
-                </div>
-              )}
+                  <div className="space-y-4">
+                    {activeSection === 'hero' && (
+                      <div className="space-y-6">
+                        {renderField("Welcome Tagline", 'hero.welcome')}
+                        {renderField(t('admin.fields.fullName'), 'hero.name')}
+                        {renderField(t('admin.fields.profTitle'), 'hero.title')}
+                        {renderField(t('admin.fields.shortBio'), 'hero.subtitle', 'textarea')}
+                        <div className="grid sm:grid-cols-2 gap-8">
+                          {renderField(t('admin.fields.exploreBtn'), 'hero.ctaWork')}
+                          {renderField(t('admin.fields.contactBtn'), 'hero.ctaContact')}
+                        </div>
+                      </div>
+                    )}
 
-              {activeSection === 'skills' && (
-                <div className="space-y-1 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                  {renderField(t('admin.fields.secTitle'), 'skills.title')}
-                  <h4 className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-6 mt-10 flex items-center gap-2">
-                    <span className="h-px bg-slate-200 dark:bg-slate-800 flex-1"></span>
-                    {t('admin.fields.categories')}
-                    <span className="h-px bg-slate-200 dark:bg-slate-800 flex-1"></span>
-                  </h4>
-                  {renderField(t('admin.fields.frontend'), 'skills.categories.frontend')}
-                  {renderField(t('admin.fields.backend'), 'skills.categories.backend')}
-                  {renderField(t('admin.fields.architecture'), 'skills.categories.architecture')}
-                  {renderField(t('admin.fields.cicd'), 'skills.categories.cicd')}
-                </div>
-              )}
+                    {activeSection === 'about' && (
+                      <div className="space-y-6">
+                        {renderField("Section Label", 'about.subtitle')}
+                        {renderField(t('admin.fields.secTitle'), 'about.title')}
+                        {renderField("Introduction", 'about.intro', 'textarea')}
+                        {renderField(t('admin.fields.detailedBio'), 'about.bio', 'textarea')}
+                        <div className="py-12 flex items-center gap-8">
+                           <span className="text-xs font-black text-slate-300 dark:text-slate-700 uppercase tracking-[0.5em]">Experience Highlights</span>
+                           <div className="h-px bg-slate-200 dark:bg-slate-800 flex-1" />
+                        </div>
+                        <div className="grid sm:grid-cols-2 gap-8">
+                           <div className="p-8 rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800">
+                              <h4 className="text-xs font-black text-blue-600 mb-6 uppercase tracking-widest">Feature 1</h4>
+                              {renderField("Title", 'about.features.code.title')}
+                              {renderField("Description", 'about.features.code.desc', 'textarea')}
+                           </div>
+                           <div className="p-8 rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800">
+                              <h4 className="text-xs font-black text-blue-600 mb-6 uppercase tracking-widest">Feature 2</h4>
+                              {renderField("Title", 'about.features.rocket.title')}
+                              {renderField("Description", 'about.features.rocket.desc', 'textarea')}
+                           </div>
+                        </div>
+                        <div className="h-px bg-slate-200 dark:bg-slate-800 my-16" />
+                        {renderField(t('admin.fields.personalTouchTitle'), 'about.personalTouchTitle')}
+                        {renderField(t('admin.fields.personalTouchBio'), 'about.personalTouchBio', 'textarea')}
+                      </div>
+                    )}
 
-              {activeSection === 'projects' && (
-                <div className="space-y-1 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                  {renderField(t('admin.fields.secTitle'), 'projects.title')}
-                  <h4 className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-6 mt-10 flex items-center gap-2">
-                    <span className="h-px bg-slate-200 dark:bg-slate-800 flex-1"></span>
-                    {t('admin.fields.project1')}
-                    <span className="h-px bg-slate-200 dark:bg-slate-800 flex-1"></span>
-                  </h4>
-                  {renderField(t('admin.fields.pTitle'), 'projects.project1.title')}
-                  {renderField(t('admin.fields.pDesc'), 'projects.project1.description', 'textarea')}
-                  <h4 className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-6 mt-10 flex items-center gap-2">
-                    <span className="h-px bg-slate-200 dark:bg-slate-800 flex-1"></span>
-                    {t('admin.fields.project2')}
-                    <span className="h-px bg-slate-200 dark:bg-slate-800 flex-1"></span>
-                  </h4>
-                  {renderField(t('admin.fields.pTitle'), 'projects.project2.title')}
-                  {renderField(t('admin.fields.pDesc'), 'projects.project2.description', 'textarea')}
-                </div>
-              )}
+                    {activeSection === 'skills' && (
+                      <div className="space-y-6">
+                        {renderField("Section Label", 'skills.subtitle')}
+                        {renderField(t('admin.fields.secTitle'), 'skills.title')}
+                        {renderField("Intro Description", 'skills.intro', 'textarea')}
+                        <div className="py-12 flex items-center gap-8">
+                           <span className="text-xs font-black text-slate-300 dark:text-slate-700 uppercase tracking-[0.5em]">Categories</span>
+                           <div className="h-px bg-slate-200 dark:bg-slate-800 flex-1" />
+                        </div>
+                        <div className="grid sm:grid-cols-2 gap-8">
+                          {renderField(t('admin.fields.frontend'), 'skills.categories.frontend')}
+                          {renderField(t('admin.fields.backend'), 'skills.categories.backend')}
+                          {renderField(t('admin.fields.architecture'), 'skills.categories.architecture')}
+                          {renderField(t('admin.fields.cicd'), 'skills.categories.cicd')}
+                        </div>
+                      </div>
+                    )}
 
-              {activeSection === 'contact' && (
-                <div className="space-y-1 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                  {renderField(t('admin.fields.secTitle'), 'contact.title')}
-                  {renderField(t('admin.fields.subtitle'), 'contact.subtitle', 'textarea')}
-                  {renderField(t('admin.fields.emailLabel'), 'contact.emailMe')}
-                  {renderField(t('admin.fields.displayEmail'), 'contact.emailAddress')}
-                  {renderField(t('admin.fields.namePlaceholder'), 'contact.namePlaceholder')}
-                  {renderField(t('admin.fields.emailPlaceholder'), 'contact.emailPlaceholder')}
-                  {renderField(t('admin.fields.messagePlaceholder'), 'contact.messagePlaceholder')}
-                  {renderField(t('admin.fields.submitBtn'), 'contact.sendButton')}
-                </div>
-              )}
+                    {activeSection === 'projects' && (
+                      <div className="space-y-6">
+                        {renderField("Section Label", 'projects.subtitle')}
+                        {renderField(t('admin.fields.secTitle'), 'projects.title')}
+                        {renderField("Intro Description", 'projects.intro', 'textarea')}
+                        {renderField("CTA Button", 'projects.viewMore')}
+
+                        <div className="mt-16 space-y-16">
+                          {[1, 2, 3].map(i => (
+                            <div key={i} className="p-12 rounded-[3.5rem] bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-xl group transition-all">
+                               <h4 className="text-sm font-black text-blue-600 uppercase tracking-[0.4em] mb-12 flex items-center gap-4">
+                                  <span className="w-12 h-12 rounded-[1.2rem] bg-blue-600 text-white flex items-center justify-center text-lg shadow-lg shadow-blue-500/20">0{i}</span>
+                                  {t(`admin.fields.project${i}`, `Project ${i}`)}
+                               </h4>
+                               {renderField(t('admin.fields.pTitle'), `projects.project${i}.title`)}
+                               {renderField(t('admin.fields.pDesc'), `projects.project${i}.description`, 'textarea')}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {activeSection === 'contact' && (
+                      <div className="space-y-6">
+                        {renderField(t('admin.fields.secTitle'), 'contact.title')}
+                        {renderField(t('admin.fields.subtitle'), 'contact.subtitle', 'textarea')}
+                        <div className="h-px bg-slate-200 dark:bg-slate-800 my-16" />
+                        <div className="grid sm:grid-cols-2 gap-8">
+                          {renderField(t('admin.fields.emailLabel'), 'contact.emailMe')}
+                          {renderField(t('admin.fields.displayEmail'), 'contact.emailAddress')}
+                        </div>
+                        <div className="grid sm:grid-cols-2 gap-8">
+                          {renderField(t('admin.fields.namePlaceholder'), 'contact.namePlaceholder')}
+                          {renderField(t('admin.fields.emailPlaceholder'), 'contact.emailPlaceholder')}
+                        </div>
+                        {renderField(t('admin.fields.messagePlaceholder'), 'contact.messagePlaceholder')}
+                        {renderField(t('admin.fields.submitBtn'), 'contact.sendButton')}
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              </AnimatePresence>
             </div>
           </div>
         </div>
