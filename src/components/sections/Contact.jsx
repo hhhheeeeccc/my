@@ -158,7 +158,7 @@ const Contact = () => {
                     ) : isSent ? (
                       <>
                         <CheckCircle2 size={24} />
-                        <span>Message Sent!</span>
+                        <span>{t('contact.sentButton')}</span>
                       </>
                     ) : (
                       <>

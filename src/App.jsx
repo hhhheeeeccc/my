@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion, useScroll, useSpring } from 'framer-motion';
+import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
 import { ReactLenis } from 'lenis/react';
 
 // Layout Components
@@ -18,6 +18,7 @@ import Contact from './components/sections/Contact';
 // Admin Components
 import Dashboard from './components/admin/Dashboard';
 import AdminToggle from './components/admin/AdminToggle';
+import AdminLogin from './components/admin/AdminLogin';
 
 // Common Components
 import CustomCursor from './components/common/CustomCursor';
@@ -27,6 +28,7 @@ import GlobalCanvas from './components/common/GlobalCanvas';
 function App() {
   const { i18n } = useTranslation();
   const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
   const isAr = i18n.language?.startsWith('ar');
 
   const { scrollYProgress } = useScroll();
@@ -74,8 +76,24 @@ function App() {
 
         <Footer />
 
-        <AdminToggle onClick={() => setIsAdminOpen(true)} />
-        {isAdminOpen && <Dashboard onClose={() => setIsAdminOpen(false)} />}
+        <AdminToggle onClick={() => setIsLoginOpen(true)} />
+
+        <AnimatePresence>
+          {isLoginOpen && (
+            <AdminLogin
+              key="admin-login"
+              onClose={() => setIsLoginOpen(false)}
+              onSuccess={() => {
+                setIsLoginOpen(false);
+                setIsAdminOpen(true);
+              }}
+            />
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {isAdminOpen && <Dashboard key="admin-dashboard" onClose={() => setIsAdminOpen(false)} />}
+        </AnimatePresence>
       </div>
     </ReactLenis>
   );

@@ -63,6 +63,14 @@ body {
   display: block;
 }
 
+@keyframes admin-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-12px); }
+  40% { transform: translateX(12px); }
+  60% { transform: translateX(-8px); }
+  80% { transform: translateX(8px); }
+}
+
 @keyframes noise-anim {
   0% { transform: translate(0,0) }
   10% { transform: translate(-5%,-5%) }
