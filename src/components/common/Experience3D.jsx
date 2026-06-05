@@ -1,6 +1,7 @@
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useState, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Float, MeshDistortMaterial, Sphere } from '@react-three/drei';
+import { useScroll } from 'framer-motion';
 import * as THREE from 'three';
 
 const seededRandom = (seed) => {
@@ -52,6 +53,19 @@ const ParticleField = ({ count = 500 }) => {
 const InteractiveBlob = ({ position, color, speed, distort, radius = 1 }) => {
   const mesh = useRef();
   const mouse = useThree((state) => state.mouse);
+  const { scrollYProgress } = useScroll();
+  const [pulse, setPulse] = useState(1);
+
+  useEffect(() => {
+    const handleDown = () => setPulse(1.5);
+    const handleUp = () => setPulse(1);
+    window.addEventListener('mousedown', handleDown);
+    window.addEventListener('mouseup', handleUp);
+    return () => {
+      window.removeEventListener('mousedown', handleDown);
+      window.removeEventListener('mouseup', handleUp);
+    };
+  }, []);
 
   useFrame((state) => {
     const time = state.clock.getElapsedTime();
@@ -62,6 +76,18 @@ const InteractiveBlob = ({ position, color, speed, distort, radius = 1 }) => {
       // Subtle mouse interaction
       mesh.current.rotation.x = THREE.MathUtils.lerp(mesh.current.rotation.x, mouse.y * 0.2, 0.1);
       mesh.current.rotation.y = THREE.MathUtils.lerp(mesh.current.rotation.y, mouse.x * 0.2, 0.1);
+
+      // Scroll reactive scale and pulse
+      const scrollScale = 1 + scrollYProgress.get() * 0.5;
+      const targetScale = scrollScale * pulse;
+      mesh.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.1);
+
+      // Reactive distortion
+      mesh.current.material.distort = THREE.MathUtils.lerp(
+        mesh.current.material.distort,
+        distort + (pulse > 1 ? 0.4 : 0),
+        0.1
+      );
     }
   });
 
@@ -117,7 +143,6 @@ const Experience3D = () => {
         radius={1.2}
       />
 
-      {/* Large central hero-like background blob */}
       <InteractiveBlob
         position={[0, 0, -6]}
         color="#1e3a8a"

@@ -2,32 +2,13 @@ import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import Magnetic from '../common/Magnetic';
+import TextReveal3D from '../layout/TextReveal3D';
+import ParallaxContainer from '../common/ParallaxContainer';
 
 const Hero = () => {
   const { t, i18n } = useTranslation();
   const isAr = i18n.language?.startsWith('ar');
   const containerRef = useRef(null);
-
-  // Mouse tracking for subtle 2D parallax
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const springX = useSpring(mouseX, { stiffness: 100, damping: 30 });
-  const springY = useSpring(mouseY, { stiffness: 100, damping: 30 });
-
-  const handleMouseMove = (e) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    mouseX.set(x);
-    mouseY.set(y);
-  };
-
-  const handleMouseLeave = () => {
-    mouseX.set(0);
-    mouseY.set(0);
-  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -55,13 +36,9 @@ const Hero = () => {
     <section
       id="hero"
       ref={containerRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
       className="relative min-h-screen flex items-center justify-center pt-48 pb-20 overflow-hidden bg-white dark:bg-slate-950 transition-colors duration-500"
     >
-      <motion.div
-        className="relative z-10 max-w-7xl mx-auto px-4 text-center"
-      >
+      <ParallaxContainer intensity={30} className="relative z-10 max-w-7xl mx-auto px-4 text-center">
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -76,28 +53,12 @@ const Hero = () => {
             </span>
           </motion.div>
 
-          <motion.h1
-            className="text-6xl md:text-[10rem] font-black tracking-[-0.04em] mb-10 flex flex-wrap justify-center leading-[0.9]"
-          >
-            <span className="sr-only">{name}</span>
-            <span className="flex flex-wrap justify-center bg-gradient-to-r from-blue-600 via-cyan-500 to-indigo-600 bg-clip-text text-transparent" aria-hidden="true">
-              {name.split(" ").map((word, index) => (
-                <motion.span
-                  key={index}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: 1,
-                    delay: 0.4 + index * 0.1,
-                    ease: [0.16, 1, 0.3, 1]
-                  }}
-                  className={`inline-block cursor-default ${isAr ? 'ml-[0.2em] last:ml-0' : 'mr-[0.2em] last:mr-0'}`}
-                >
-                  {word}
-                </motion.span>
-              ))}
-            </span>
-          </motion.h1>
+          <div className="text-6xl md:text-[10rem] font-black tracking-[-0.04em] mb-10 flex flex-wrap justify-center leading-[0.9]">
+            <TextReveal3D
+              text={name}
+              className="bg-gradient-to-r from-blue-600 via-cyan-500 to-indigo-600 bg-clip-text text-transparent"
+            />
+          </div>
 
           <motion.h2
             variants={itemVariants}
@@ -140,7 +101,7 @@ const Hero = () => {
             </Magnetic>
           </motion.div>
         </motion.div>
-      </motion.div>
+      </ParallaxContainer>
 
       <motion.div
         initial={{ opacity: 0 }}
