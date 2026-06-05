@@ -8,7 +8,11 @@ const TextReveal3D = ({ text, className = "" }) => {
     hidden: { opacity: 0 },
     visible: (i = 1) => ({
       opacity: 1,
-      transition: { staggerChildren: 0.12, delayChildren: 0.04 * i },
+      transition: {
+        staggerChildren: 0.08,
+        delayChildren: 0.1 * i,
+        ease: [0.16, 1, 0.3, 1]
+      },
     }),
   };
 
@@ -17,38 +21,41 @@ const TextReveal3D = ({ text, className = "" }) => {
       opacity: 1,
       y: 0,
       rotateX: 0,
+      z: 0,
       transition: {
         type: "spring",
-        damping: 12,
-        stiffness: 100,
+        damping: 20,
+        stiffness: 80,
+        mass: 1,
       },
     },
     hidden: {
       opacity: 0,
-      y: 20,
-      rotateX: 90,
+      y: 100,
+      rotateX: 45,
+      z: -50,
       transition: {
         type: "spring",
-        damping: 12,
-        stiffness: 100,
+        damping: 20,
+        stiffness: 80,
       },
     },
   };
 
   return (
     <motion.div
-      style={{ perspective: "1000px" }}
+      style={{ perspective: "1500px", transformStyle: "preserve-3d" }}
       className={`flex flex-wrap ${className}`}
       variants={container}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: "-100px" }}
+      viewport={{ once: true, margin: "-10% 0px" }}
     >
       {words.map((word, index) => (
-        <span key={index} className="inline-block overflow-hidden pb-2 mr-[0.2em] last:mr-0">
+        <span key={index} className="inline-block overflow-hidden py-4 mr-[0.25em] last:mr-0 transform-gpu">
           <motion.span
             variants={child}
-            className="inline-block transform-gpu origin-bottom"
+            className="inline-block transform-gpu origin-top"
           >
             {word}
           </motion.span>

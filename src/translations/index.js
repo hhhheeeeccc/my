@@ -146,12 +146,15 @@ export const en = {
         contact: "Contact"
       },
       fields: {
+        welcomeTag: "Welcome Tagline",
         fullName: "Full Name",
         profTitle: "Professional Title",
         shortBio: "Short Bio / Subtitle",
         exploreBtn: "Explore Button Text",
         contactBtn: "Contact Button Text",
+        secLabel: "Section Label",
         secTitle: "Section Title",
+        intro: "Introduction",
         detailedBio: "Detailed Bio",
         personalTouchTitle: "Personal Touch Title",
         personalTouchBio: "Personal Touch Description",
@@ -162,15 +165,19 @@ export const en = {
         cicd: "CI/CD Category",
         project1: "Project 1",
         project2: "Project 2",
+        project3: "Project 3",
         pTitle: "Title",
         pDesc: "Description",
+        viewMore: "View More Button",
         subtitle: "Subtitle",
         emailLabel: "Email Label",
         displayEmail: "Display Email",
         namePlaceholder: "Name Placeholder",
         emailPlaceholder: "Email Placeholder",
         messagePlaceholder: "Message Placeholder",
-        submitBtn: "Submit Button Text"
+        submitBtn: "Submit Button Text",
+        highlights: "Experience Highlights",
+        feature: "Feature"
       }
     }
   }
@@ -324,12 +331,15 @@ export const ar = {
         contact: "اتصل بي"
       },
       fields: {
+        welcomeTag: "شعار الترحيب",
         fullName: "الاسم الكامل",
         profTitle: "المسمى الوظيفي",
         shortBio: "نبذة قصيرة / العنوان الفرعي",
         exploreBtn: "نص زر الاستكشاف",
         contactBtn: "نص زر التواصل",
+        secLabel: "تسمية القسم",
         secTitle: "عنوان القسم",
+        intro: "مقدمة",
         detailedBio: "السيرة الذاتية المفصلة",
         personalTouchTitle: "عنوان اللمسة الشخصية",
         personalTouchBio: "وصف اللمسة الشخصية",
@@ -340,15 +350,19 @@ export const ar = {
         cicd: "فئة التكامل المستمر",
         project1: "المشروع 1",
         project2: "المشروع 2",
+        project3: "المشروع 3",
         pTitle: "العنوان",
         pDesc: "الوصف",
+        viewMore: "زر عرض المزيد",
         subtitle: "العنوان الفرعي",
         emailLabel: "تسمية البريد الإلكتروني",
         displayEmail: "البريد الإلكتروني المعروض",
         namePlaceholder: "مكان الاسم",
         emailPlaceholder: "مكان البريد الإلكتروني",
         messagePlaceholder: "مكان الرسالة",
-        submitBtn: "نص زر الإرسال"
+        submitBtn: "نص زر الإرسال",
+        highlights: "أبرز الخبرات",
+        feature: "ميزة"
       }
     }
   }

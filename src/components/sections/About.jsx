@@ -7,6 +7,11 @@ import TextReveal3D from '../layout/TextReveal3D';
 const About = () => {
   const { t } = useTranslation();
 
+  const handleInteraction = (focus, click = false) => {
+    const event = new CustomEvent('ui-focus', { detail: { focus, click } });
+    window.dispatchEvent(event);
+  };
+
   return (
     <section id="about" className="py-40 bg-slate-50 dark:bg-slate-900/20 transition-colors duration-500 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -19,7 +24,7 @@ const About = () => {
           >
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-1 bg-blue-600 rounded-full" />
-              <span className="text-blue-600 font-black uppercase tracking-[0.3em] text-xs md:text-sm">{t('about.subtitle', 'Our Story')}</span>
+              <span className="text-blue-600 font-black uppercase tracking-[0.3em] text-xs md:text-sm">{t('about.subtitle')}</span>
             </div>
 
             <div className="text-5xl md:text-8xl font-black text-slate-900 dark:text-white mb-10 leading-[0.9]">
@@ -52,6 +57,9 @@ const About = () => {
             viewport={{ once: true }}
             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
             className="relative"
+            onMouseEnter={() => handleInteraction(true)}
+            onClick={() => handleInteraction(true, true)}
+            onMouseLeave={() => handleInteraction(false)}
           >
             <motion.div
               whileHover={{ scale: 1.02 }}

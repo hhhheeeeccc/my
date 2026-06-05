@@ -8,6 +8,11 @@ import ParallaxContainer from '../common/ParallaxContainer';
 const ProjectCard = ({ project, idx }) => {
   const { t } = useTranslation();
 
+  const handleInteraction = (focus, click = false) => {
+    const event = new CustomEvent('ui-focus', { detail: { focus, click } });
+    window.dispatchEvent(event);
+  };
+
   return (
     <ParallaxContainer intensity={15} className="h-full">
       <motion.div
@@ -15,11 +20,14 @@ const ProjectCard = ({ project, idx }) => {
           hidden: { opacity: 0, y: 40 },
           visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
         }}
-        className="group bg-white dark:bg-slate-950 rounded-[3.5rem] overflow-hidden border border-slate-100 dark:border-slate-800 shadow-xl hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.15)] transition-all duration-500 flex flex-col h-full relative"
+        onMouseEnter={() => handleInteraction(true)}
+        onClick={() => handleInteraction(true, true)}
+        onMouseLeave={() => handleInteraction(false)}
+        className="group bg-white dark:bg-slate-950 rounded-[3.5rem] overflow-hidden border border-slate-100 dark:border-slate-800 shadow-xl hover:shadow-[0_40px_80px_-20px_rgba(37,99,235,0.25)] transition-all duration-700 flex flex-col h-full relative"
       >
         <div className={`h-80 w-full relative overflow-hidden bg-gradient-to-br ${project.iconColor} opacity-90`}>
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-             <div className="text-white/20 font-black text-[12rem] select-none group-hover:scale-110 transition-transform duration-1000">0{idx + 1}</div>
+             <div className="text-white/20 font-black text-[12rem] select-none group-hover:scale-125 group-hover:rotate-6 transition-transform duration-1000">0{idx + 1}</div>
           </div>
           <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors duration-500" />
         </div>
@@ -117,7 +125,7 @@ const Projects = () => {
               className="flex items-center justify-center gap-3 mb-6"
             >
               <div className="w-16 h-1.5 bg-blue-600 rounded-full" />
-              <span className="text-blue-600 font-black uppercase tracking-[0.3em] text-xs md:text-sm">{t('projects.subtitle', 'Portfolio')}</span>
+              <span className="text-blue-600 font-black uppercase tracking-[0.3em] text-xs md:text-sm">{t('projects.subtitle')}</span>
               <div className="w-16 h-1.5 bg-blue-600 rounded-full" />
             </motion.div>
 
@@ -126,7 +134,7 @@ const Projects = () => {
             </div>
 
             <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto font-semibold opacity-80 leading-relaxed">
-              {t('projects.intro', 'A selection of my most challenging and impactful engineering projects.')}
+              {t('projects.intro')}
             </p>
           </div>
 
@@ -153,7 +161,7 @@ const Projects = () => {
                whileTap={{ scale: 0.95 }}
                className="inline-flex items-center gap-4 px-14 py-6 rounded-[2rem] bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black hover:bg-blue-600 dark:hover:bg-blue-500 dark:hover:text-white transition-all group shadow-2xl"
              >
-               <span className="text-lg">{t('projects.viewMore', 'View All Work')}</span>
+               <span className="text-lg">{t('projects.viewMore')}</span>
                <ArrowRight className="group-hover:translate-x-3 transition-transform duration-500" size={24} />
              </motion.a>
           </motion.div>

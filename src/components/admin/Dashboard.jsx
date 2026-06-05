@@ -209,22 +209,22 @@ const Dashboard = ({ onClose }) => {
                   <div className="space-y-4">
                     {activeSection === 'hero' && (
                       <div className="space-y-6">
-                        {[ ['Welcome Tagline', 'hero.welcome'], [t('admin.fields.fullName'), 'hero.name'], [t('admin.fields.profTitle'), 'hero.title'] ].map(([l, p]) => renderField(l, p))}
+                        {[ [t('admin.fields.welcomeTag'), 'hero.welcome'], [t('admin.fields.fullName'), 'hero.name'], [t('admin.fields.profTitle'), 'hero.title'] ].map(([l, p]) => renderField(l, p))}
                         {renderField(t('admin.fields.shortBio'), 'hero.subtitle', 'textarea')}
                         <div className="grid sm:grid-cols-2 gap-8">{ [[t('admin.fields.exploreBtn'), 'hero.ctaWork'], [t('admin.fields.contactBtn'), 'hero.ctaContact']].map(([l, p]) => renderField(l, p)) }</div>
                       </div>
                     )}
                     {activeSection === 'about' && (
                       <div className="space-y-6">
-                        {[['Section Label', 'about.subtitle'], [t('admin.fields.secTitle'), 'about.title']].map(([l, p]) => renderField(l, p))}
-                        {[['Introduction', 'about.intro'], [t('admin.fields.detailedBio'), 'about.bio']].map(([l, p]) => renderField(l, p, 'textarea'))}
-                        <div className="py-12 flex items-center gap-8"><span className="text-xs font-black text-slate-300 dark:text-slate-700 uppercase tracking-[0.5em]">Experience Highlights</span><div className="h-px bg-slate-200 dark:bg-slate-800 flex-1" /></div>
+                        {[[t('admin.fields.secLabel'), 'about.subtitle'], [t('admin.fields.secTitle'), 'about.title']].map(([l, p]) => renderField(l, p))}
+                        {[[t('admin.fields.intro'), 'about.intro'], [t('admin.fields.detailedBio'), 'about.bio']].map(([l, p]) => renderField(l, p, 'textarea'))}
+                        <div className="py-12 flex items-center gap-8"><span className="text-xs font-black text-slate-300 dark:text-slate-700 uppercase tracking-[0.5em]">{t('admin.fields.highlights')}</span><div className="h-px bg-slate-200 dark:bg-slate-800 flex-1" /></div>
                         <div className="grid sm:grid-cols-2 gap-8">
                            {['code', 'rocket'].map((f, i) => (
                               <div key={f} className="p-8 rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800">
-                                 <h4 className="text-xs font-black text-blue-600 mb-6 uppercase tracking-widest">Feature {i+1}</h4>
-                                 {renderField("Title", `about.features.${f}.title`)}
-                                 {renderField("Description", `about.features.${f}.desc`, 'textarea')}
+                                 <h4 className="text-xs font-black text-blue-600 mb-6 uppercase tracking-widest">{t('admin.fields.feature')} {i+1}</h4>
+                                 {renderField(t('admin.fields.pTitle'), `about.features.${f}.title`)}
+                                 {renderField(t('admin.fields.pDesc'), `about.features.${f}.desc`, 'textarea')}
                               </div>
                            ))}
                         </div>
@@ -235,22 +235,22 @@ const Dashboard = ({ onClose }) => {
                     )}
                     {activeSection === 'skills' && (
                       <div className="space-y-6">
-                        {renderField("Section Label", 'skills.subtitle')}
+                        {renderField(t('admin.fields.secLabel'), 'skills.subtitle')}
                         {renderField(t('admin.fields.secTitle'), 'skills.title')}
-                        {renderField("Intro Description", 'skills.intro', 'textarea')}
-                        <div className="py-12 flex items-center gap-8"><span className="text-xs font-black text-slate-300 dark:text-slate-700 uppercase tracking-[0.5em]">Categories</span><div className="h-px bg-slate-200 dark:bg-slate-800 flex-1" /></div>
+                        {renderField(t('admin.fields.intro'), 'skills.intro', 'textarea')}
+                        <div className="py-12 flex items-center gap-8"><span className="text-xs font-black text-slate-300 dark:text-slate-700 uppercase tracking-[0.5em]">{t('admin.fields.categories')}</span><div className="h-px bg-slate-200 dark:bg-slate-800 flex-1" /></div>
                         <div className="grid sm:grid-cols-2 gap-8">{['frontend', 'backend', 'architecture', 'cicd'].map(c => renderField(t(`admin.fields.${c}`), `skills.categories.${c}`))}</div>
                       </div>
                     )}
                     {activeSection === 'projects' && (
                       <div className="space-y-6">
-                        {[['Section Label', 'projects.subtitle'], [t('admin.fields.secTitle'), 'projects.title']].map(([l, p]) => renderField(l, p))}
-                        {renderField("Intro Description", 'projects.intro', 'textarea')}
-                        {renderField("CTA Button", 'projects.viewMore')}
+                        {[[t('admin.fields.secLabel'), 'projects.subtitle'], [t('admin.fields.secTitle'), 'projects.title']].map(([l, p]) => renderField(l, p))}
+                        {renderField(t('admin.fields.intro'), 'projects.intro', 'textarea')}
+                        {renderField(t('admin.fields.viewMore'), 'projects.viewMore')}
                         <div className="mt-16 space-y-16">
                           {[1, 2, 3].map(i => (
                             <div key={i} className="p-12 rounded-[3.5rem] bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-xl group transition-all">
-                               <h4 className="text-sm font-black text-blue-600 uppercase tracking-[0.4em] mb-12 flex items-center gap-4"><span className="w-12 h-12 rounded-[1.2rem] bg-blue-600 text-white flex items-center justify-center text-lg shadow-lg shadow-blue-500/20">0{i}</span>{t(`admin.fields.project${i}`, `Project ${i}`)}</h4>
+                               <h4 className="text-sm font-black text-blue-600 uppercase tracking-[0.4em] mb-12 flex items-center gap-4"><span className="w-12 h-12 rounded-[1.2rem] bg-blue-600 text-white flex items-center justify-center text-lg shadow-lg shadow-blue-500/20">0{i}</span>{t(`admin.fields.project${i}`)}</h4>
                                {renderField(t('admin.fields.pTitle'), `projects.project${i}.title`)}
                                {renderField(t('admin.fields.pDesc'), `projects.project${i}.description`, 'textarea')}
                             </div>
