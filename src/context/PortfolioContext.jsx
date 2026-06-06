@@ -8,7 +8,7 @@ export const usePortfolio = () => useContext(PortfolioContext);
 
 export const PortfolioProvider = ({ children }) => {
   const [content, setContent] = useState(() => {
-    const saved = localStorage.getItem('portfolio_content');
+    const saved = globalThis.localStorage?.getItem('portfolio_content');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -20,13 +20,10 @@ export const PortfolioProvider = ({ children }) => {
     return { en: initialEn.translation, ar: initialAr.translation };
   });
 
-  // Effect to sync state with i18next and localStorage
   useEffect(() => {
     i18n.addResourceBundle('en', 'translation', content.en, true, true);
     i18n.addResourceBundle('ar', 'translation', content.ar, true, true);
-    localStorage.setItem('portfolio_content', JSON.stringify(content));
-
-    // Most reliable way to trigger re-render in react-i18next components
+    globalThis.localStorage?.setItem('portfolio_content', JSON.stringify(content));
     i18n.changeLanguage(i18n.language);
   }, [content]);
 
@@ -35,22 +32,18 @@ export const PortfolioProvider = ({ children }) => {
       const newContent = JSON.parse(JSON.stringify(prev));
       const keys = path.split('.');
       let current = newContent[lang];
-
       for (let i = 0; i < keys.length - 1; i++) {
         if (!current[keys[i]]) current[keys[i]] = {};
         current = current[keys[i]];
       }
-
       current[keys[keys.length - 1]] = value;
       return newContent;
     });
   };
 
   const resetContent = () => {
-    if (window.confirm('Are you sure you want to reset all data to defaults?')) {
-      const defaultContent = { en: initialEn.translation, ar: initialAr.translation };
-      setContent(defaultContent);
-    }
+    const defaultContent = { en: initialEn.translation, ar: initialAr.translation };
+    setContent(defaultContent);
   };
 
   return (

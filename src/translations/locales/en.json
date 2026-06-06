@@ -1,0 +1,184 @@
+{
+  "nav": {
+    "about": "About",
+    "skills": "Skills",
+    "projects": "Projects",
+    "contact": "Contact"
+  },
+  "hero": {
+    "welcome": "Welcome to my world",
+    "name": "Marwan Yahya Hassan Ghazi",
+    "title": "Senior Frontend & Desktop Developer | Software Engineer",
+    "subtitle": "Passionate Computer Science student with a focus on SOLID principles, Clean Code, and building highly optimized, production-ready web and desktop software.",
+    "ctaWork": "Explore My Work",
+    "ctaContact": "Get in Touch"
+  },
+  "about": {
+    "subtitle": "Our Story",
+    "title": "Who Am I",
+    "intro": "I am a software developer with a deep background in the React and JavaScript/TypeScript ecosystem, specializing in building complex web and desktop applications.",
+    "bio": "I have extensive experience in customizing and extending large-scale enterprise codebases (like the Mattermost open-source project), which involves working heavily with React, TypeScript, Go, and advanced styling architectures. I strictly follow a \"Zero-Bug\" policy, ensuring every piece of code is modular, robust, and optimized for maximum performance.",
+    "personalTouchTitle": "Personal Touch",
+    "personalTouchBio": "Beyond software engineering, I have a deep interest in gemology, specifically identifying and evaluating rare types of Yemeni Agate.",
+    "features": {
+      "code": {
+        "title": "Clean Code",
+        "desc": "Writing modular, maintainable, and testable code following SOLID principles."
+      },
+      "rocket": {
+        "title": "High Performance",
+        "desc": "Optimizing every byte to ensure lightning-fast execution and smooth UX."
+      }
+    }
+  },
+  "skills": {
+    "subtitle": "Expertise",
+    "title": "Technical Arsenal",
+    "intro": "Crafting high-performance digital experiences with cutting-edge technologies.",
+    "categories": {
+      "frontend": "Frontend Tech",
+      "backend": "Desktop & Backend",
+      "architecture": "Architecture & Testing",
+      "cicd": "CI/CD & Code Quality"
+    },
+    "items": {
+      "frontend": {
+        "name": "Modern Frontend",
+        "desc": "Expertise in React 19, TypeScript, and Tailwind CSS v4 for cinematic UI/UX."
+      },
+      "backend": {
+        "name": "Core Systems",
+        "desc": "Building robust backends and desktop apps with Go, Node.js, and Electron."
+      },
+      "desktop": {
+        "name": "Desktop Apps",
+        "desc": "Cross-platform desktop development with deep system integrations."
+      },
+      "arch": {
+        "name": "Clean Architecture",
+        "desc": "Implementing enterprise-level design patterns and SOLID principles."
+      },
+      "optimization": {
+        "name": "Performance",
+        "desc": "Advanced event coalescing and non-blocking I/O strategies."
+      },
+      "localization": {
+        "name": "Global Reach",
+        "desc": "Full i18n support with RTL-safe 3D animations and layouts."
+      }
+    }
+  },
+  "projects": {
+    "subtitle": "Portfolio",
+    "title": "Featured Projects",
+    "intro": "A selection of my most challenging and impactful engineering projects.",
+    "viewProject": "View Project",
+    "viewMore": "View All Work",
+    "sourceCode": "Source",
+    "liveDemo": "Demo",
+    "tags": {
+      "react": "React",
+      "ts": "TypeScript",
+      "go": "Go",
+      "tailwind": "Tailwind CSS",
+      "arch": "Enterprise Architecture",
+      "electron": "Electron.js",
+      "js": "JavaScript",
+      "node": "Node.js",
+      "networking": "Networking",
+      "proxy": "Proxy Engine",
+      "uiohook": "uiohook-napi",
+      "perf": "Performance Optimization"
+    },
+    "project1": {
+      "title": "Mattermost",
+      "description": "A customized, highly optimized workspace platform based on the Mattermost open-source project. This required deep architectural changes, frontend rebranding, and optimizing plugins using Mattermost's core languages: React, TypeScript, Go, and custom CSS."
+    },
+    "project2": {
+      "title": "WiFi Share Pro",
+      "description": "An Electron.js desktop application designed to circumvent strict EDR (SentinelOne) network policies and share internet securely on restricted Windows systems."
+    },
+    "project3": {
+      "title": "High-Performance Remote Control System",
+      "description": "Engineered a solution for screen freezing during remote sessions by migrating to 'uiohook-napi' and implementing an asynchronous event coalescing strategy with non-blocking queues."
+    }
+  },
+  "contact": {
+    "title": "Get In Touch",
+    "subtitle": "I'm always open to discussing new projects, creative ideas, or opportunities to be part of your visions.",
+    "emailMe": "Email Me",
+    "emailAddress": "marwan.yahya@example.com",
+    "nameLabel": "Name",
+    "namePlaceholder": "John Doe",
+    "emailLabel": "Email",
+    "emailPlaceholder": "john@example.com",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Tell me about your project...",
+    "sendButton": "Send Message",
+    "messageSent": "Message Sent!",
+    "messageSentSuccess": "Message sent successfully!",
+    "success": "Message sent successfully!",
+    "error": "Something went wrong. Please try again."
+  },
+  "footer": {
+    "rights": "© {{year}} Marwan Yahya Hassan Ghazi. All rights reserved.",
+    "builtWith": "Built with React, Tailwind CSS, and Framer Motion.",
+    "privacy": "Privacy",
+    "terms": "Terms"
+  },
+  "admin": {
+    "title": "Portfolio Editor",
+    "subtitle": "Customize your portfolio content",
+    "loginTitle": "Admin Access",
+    "username": "Username",
+    "password": "Password",
+    "loginBtn": "Login",
+    "error": "Invalid credentials",
+    "exportJson": "Export JSON",
+    "resetConfirm": "Are you sure you want to reset all data to defaults?",
+    "resetTitle": "Reset to defaults",
+    "version": "version",
+    "refineDetail": "Refine every detail of your {{section}} section.",
+    "sections": {
+      "hero": "Hero",
+      "about": "About",
+      "skills": "Skills",
+      "projects": "Projects",
+      "contact": "Contact"
+    },
+    "fields": {
+      "welcomeTag": "Welcome Tagline",
+      "fullName": "Full Name",
+      "profTitle": "Professional Title",
+      "shortBio": "Short Bio / Subtitle",
+      "exploreBtn": "Explore Button Text",
+      "contactBtn": "Contact Button Text",
+      "secLabel": "Section Label",
+      "secTitle": "Section Title",
+      "intro": "Introduction",
+      "detailedBio": "Detailed Bio",
+      "personalTouchTitle": "Personal Touch Title",
+      "personalTouchBio": "Personal Touch Description",
+      "categories": "Categories",
+      "frontend": "Frontend Category",
+      "backend": "Backend/Desktop Category",
+      "architecture": "Architecture Category",
+      "cicd": "CI/CD Category",
+      "project1": "Project 1",
+      "project2": "Project 2",
+      "project3": "Project 3",
+      "pTitle": "Title",
+      "pDesc": "Description",
+      "viewMore": "View More Button",
+      "subtitle": "Subtitle",
+      "emailLabel": "Email Label",
+      "displayEmail": "Display Email",
+      "namePlaceholder": "Name Placeholder",
+      "emailPlaceholder": "Email Placeholder",
+      "messagePlaceholder": "Message Placeholder",
+      "submitBtn": "Submit Button Text",
+      "highlights": "Experience Highlights",
+      "feature": "Feature"
+    }
+  }
+}

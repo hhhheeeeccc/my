@@ -1,155 +1,50 @@
-import { useRef, useMemo, useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { Float, MeshDistortMaterial, Sphere } from '@react-three/drei';
-import { useScroll } from 'framer-motion';
+import { useScroll, useVelocity, useSpring } from 'framer-motion';
 import * as THREE from 'three';
-
-const seededRandom = (seed) => {
-  const x = Math.sin(seed++) * 10000;
-  return x - Math.floor(x);
-};
-
-const ParticleField = ({ count = 500 }) => {
-  const points = useMemo(() => {
-    const p = new Float32Array(count * 3);
-    let seed = 42;
-    for (let i = 0; i < count; i++) {
-      p[i * 3] = (seededRandom(seed++) - 0.5) * 20;
-      p[i * 3 + 1] = (seededRandom(seed++) - 0.5) * 20;
-      p[i * 3 + 2] = (seededRandom(seed++) - 0.5) * 20;
-    }
-    return p;
-  }, [count]);
-
-  const ref = useRef();
-
-  useFrame((state) => {
-    const time = state.clock.getElapsedTime();
-    ref.current.rotation.y = time * 0.02;
-    ref.current.rotation.x = time * 0.01;
-  });
-
-  return (
-    <points ref={ref}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          count={count}
-          array={points}
-          itemSize={3}
-        />
-      </bufferGeometry>
-      <pointsMaterial
-        size={0.025}
-        color="#3b82f6"
-        transparent
-        opacity={0.3}
-        sizeAttenuation
-      />
-    </points>
-  );
-};
-
-const InteractiveBlob = ({ position, color, speed, distort, radius = 1 }) => {
-  const mesh = useRef();
-  const mouse = useThree((state) => state.mouse);
-  const { scrollYProgress } = useScroll();
-  const [pulse, setPulse] = useState(1);
-
-  useEffect(() => {
-    const handleDown = () => setPulse(1.5);
-    const handleUp = () => setPulse(1);
-    window.addEventListener('mousedown', handleDown);
-    window.addEventListener('mouseup', handleUp);
-    return () => {
-      window.removeEventListener('mousedown', handleDown);
-      window.removeEventListener('mouseup', handleUp);
-    };
-  }, []);
-
-  useFrame((state) => {
-    const time = state.clock.getElapsedTime();
-    if (mesh.current) {
-      // Gentle floating
-      mesh.current.position.y = position[1] + Math.sin(time * speed) * 0.3;
-
-      // Subtle mouse interaction
-      mesh.current.rotation.x = THREE.MathUtils.lerp(mesh.current.rotation.x, mouse.y * 0.2, 0.1);
-      mesh.current.rotation.y = THREE.MathUtils.lerp(mesh.current.rotation.y, mouse.x * 0.2, 0.1);
-
-      // Scroll reactive scale and pulse
-      const scrollScale = 1 + scrollYProgress.get() * 0.5;
-      const targetScale = scrollScale * pulse;
-      mesh.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.1);
-
-      // Reactive distortion
-      mesh.current.material.distort = THREE.MathUtils.lerp(
-        mesh.current.material.distort,
-        distort + (pulse > 1 ? 0.4 : 0),
-        0.1
-      );
-    }
-  });
-
-  return (
-    <Float speed={speed * 2} rotationIntensity={0.5} floatIntensity={1}>
-      <Sphere ref={mesh} args={[radius, 64, 64]} position={position}>
-        <MeshDistortMaterial
-          color={color}
-          speed={speed}
-          distort={distort}
-          radius={radius}
-          transparent
-          opacity={0.2}
-          metalness={0.8}
-          roughness={0.2}
-        />
-      </Sphere>
-    </Float>
-  );
-};
+import ParticleField from './three/ParticleField';
+import InteractiveBlob from './three/InteractiveBlob';
+import { BLOBS_CONFIG } from '../../utils/constants.jsx';
+import { createColor, createFog } from '../../utils/three-utils';
 
 const Experience3D = () => {
+  const { camera } = useThree();
+  const [focus, setFocus] = useState({ active: false, pulse: false });
+  const { scrollY } = useScroll();
+  const smoothVelocity = useSpring(useVelocity(scrollY), { stiffness: 50, damping: 20 });
+  const velFactor = useMemo(() => ({ get: () => Math.min(Math.abs(smoothVelocity.get() / 1000), 1) }), [smoothVelocity]);
+
+  useEffect(() => {
+    const target = globalThis;
+    const h = (e) => {
+      setFocus(prev => ({ active: e.detail.focus, pulse: e.detail.click || prev.pulse }));
+      if (e.detail.click) setTimeout(() => setFocus(p => ({ ...p, pulse: false })), 800);
+    };
+    target.addEventListener('ui-focus', h);
+    return () => target.removeEventListener('ui-focus', h);
+  }, []);
+
+  useFrame(() => {
+    camera.position.z = THREE.MathUtils.lerp(camera.position.z, focus.pulse ? 3 : (focus.active ? 4 : 5), 0.05);
+    camera.rotation.x = THREE.MathUtils.lerp(camera.rotation.x, focus.active ? -0.1 : 0, 0.05);
+    camera.fov = THREE.MathUtils.lerp(camera.fov, 75 + velFactor.get() * 20 + (focus.pulse ? 25 : 0), 0.1);
+    camera.updateProjectionMatrix();
+  });
+
+  const bg = useMemo(() => createColor('#020617'), []);
+  const fog = useMemo(() => createFog('#020617', 5, 15), []);
+
   return (
     <>
-      <color attach="background" args={['#020617']} />
-      <fog attach="fog" args={['#020617', 5, 15]} />
-
-      <ambientLight intensity={0.4} />
-      <pointLight position={[10, 10, 10]} intensity={1} color="#3b82f6" />
-      <spotLight position={[-10, 10, 10]} angle={0.15} penumbra={1} intensity={1} color="#6366f1" />
-
-      <ParticleField count={800} />
-
-      <InteractiveBlob
-        position={[-4, 2, -3]}
-        color="#1d4ed8"
-        speed={1.5}
-        distort={0.4}
-        radius={1.5}
-      />
-      <InteractiveBlob
-        position={[4, -3, -4]}
-        color="#4338ca"
-        speed={1}
-        distort={0.5}
-        radius={2}
-      />
-      <InteractiveBlob
-        position={[2, 4, -5]}
-        color="#0e7490"
-        speed={1.2}
-        distort={0.3}
-        radius={1.2}
-      />
-
-      <InteractiveBlob
-        position={[0, 0, -6]}
-        color="#1e3a8a"
-        speed={0.8}
-        distort={0.5}
-        radius={4}
-      />
+      <primitive object={bg} attach="background" />
+      <primitive object={fog} attach="fog" />
+      <ambientLight args={['#ffffff', focus.active ? 0.6 : 0.4]} />
+      <pointLight args={['#3b82f6', focus.active ? 2 : 1]} position={[10, 10, 10]} />
+      <spotLight args={['#6366f1', focus.active ? 2 : 1]} position={[-10, 10, 10]} angle={0.15} penumbra={1} />
+      <ParticleField count={800} focusMode={focus.active} velocityFactor={velFactor} />
+      {BLOBS_CONFIG.map((b, i) => (
+        <InteractiveBlob key={i} position={b.pos} color={focus.active ? b.col[0] : b.col[1]} speed={b.s} distort={b.d} radius={b.r} focusMode={focus.active} velocityFactor={velFactor} clickPulse={focus.pulse} />
+      ))}
     </>
   );
 };
