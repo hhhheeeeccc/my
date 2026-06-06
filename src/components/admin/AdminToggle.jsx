@@ -1,10 +1,10 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { Settings } from 'lucide-react';
 
 const AdminToggle = ({ onClick }) => {
   const { t } = useTranslation();
-
   return (
     <button
       onClick={onClick}
@@ -14,6 +14,10 @@ const AdminToggle = ({ onClick }) => {
       <Settings size={20} className="sm:w-6 sm:h-6 group-hover:rotate-90 transition-transform duration-500" />
     </button>
   );
+};
+
+AdminToggle.propTypes = {
+  onClick: PropTypes.func.isRequired
 };
 
 export default AdminToggle;

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { motion } from 'framer-motion';
 import { Edit3, Menu, RotateCcw, X } from 'lucide-react';
 
@@ -20,5 +21,13 @@ const DashboardHeader = ({ t, activeSection, setIsSidebarOpen, onReset, onClose 
     </div>
   </div>
 );
+
+DashboardHeader.propTypes = {
+  t: PropTypes.func.isRequired,
+  activeSection: PropTypes.string.isRequired,
+  setIsSidebarOpen: PropTypes.func.isRequired,
+  onReset: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired
+};
 
 export default DashboardHeader;

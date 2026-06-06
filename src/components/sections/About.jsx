@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { User, Code2, Rocket, Heart } from 'lucide-react';
-import TextReveal3D from '../layout/TextReveal3D';
+import SectionHeader from '../layout/SectionHeader';
 import { useSectionInteraction } from '../../hooks/useSectionInteraction';
 
 const About = () => {
@@ -13,9 +13,7 @@ const About = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-20 items-center">
           <motion.div initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}>
-            <div className="flex items-center gap-3 mb-6"><div className="w-12 h-1 bg-blue-600 rounded-full" /><span className="text-blue-600 font-black uppercase tracking-[0.3em] text-xs md:text-sm">{t('about.subtitle')}</span></div>
-            <div className="text-5xl md:text-8xl font-black text-slate-900 dark:text-white mb-10 leading-[0.9]"><TextReveal3D text={t('about.title')} /></div>
-            <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-400 mb-12 leading-relaxed font-semibold opacity-80">{t('about.intro')}</p>
+            <SectionHeader center={false} subtitle={t('about.subtitle')} title={t('about.title')} intro={t('about.intro')} />
             <div className="grid sm:grid-cols-2 gap-8">
               {[ { icon: <Code2 className="text-blue-600" />, key: 'code' }, { icon: <Rocket className="text-cyan-500" />, key: 'rocket' } ].map((item, idx) => (
                 <div key={idx} className="p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all duration-500 group">

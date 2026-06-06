@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { motion } from 'framer-motion';
 
 const DashboardField = ({ label, value, onChange, type = 'text' }) => (
@@ -22,5 +23,12 @@ const DashboardField = ({ label, value, onChange, type = 'text' }) => (
     )}
   </motion.div>
 );
+
+DashboardField.propTypes = {
+  label: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  type: PropTypes.string
+};
 
 export default DashboardField;

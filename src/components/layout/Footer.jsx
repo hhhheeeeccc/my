@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
+import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { NAV_LINKS } from '../../utils/constants';
+import { NAV_LINKS } from '../../utils/constants.jsx';
 
 const Footer = () => {
   const { t } = useTranslation();

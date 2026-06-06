@@ -1,10 +1,11 @@
 import React, { useMemo } from 'react';
+import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../context/ThemeContext';
 import { Sun, Moon, Languages } from 'lucide-react';
 import { motion, useScroll, useTransform, useMotionTemplate, AnimatePresence } from 'framer-motion';
 import Magnetic from '../common/Magnetic';
-import { NAV_LINKS } from '../../utils/constants';
+import { NAV_LINKS } from '../../utils/constants.jsx';
 
 const Navbar = ({ isAdminOpen }) => {
   const { t, i18n } = useTranslation();
@@ -13,25 +14,24 @@ const Navbar = ({ isAdminOpen }) => {
 
   const isArabic = i18n.language?.startsWith('ar') || i18n.resolvedLanguage?.startsWith('ar');
 
-  const navStyles = {
-    height: useTransform(scrollY, [0, 150], ["6.5rem", "5rem"]),
-    bgOpacity: useTransform(scrollY, [0, 150], [0, 0.8]),
-    borderOpacity: useTransform(scrollY, [0, 150], [0, 1]),
-    blur: useTransform(scrollY, [0, 150], [0, 25]),
-    scale: useTransform(scrollY, [0, 150], [1, 0.98])
-  };
+  const h = useTransform(scrollY, [0, 150], ["6.5rem", "5rem"]);
+  const bo = useTransform(scrollY, [0, 150], [0, 0.8]);
+  const bro = useTransform(scrollY, [0, 150], [0, 1]);
+  const bl = useTransform(scrollY, [0, 150], [0, 25]);
+  const s = useTransform(scrollY, [0, 150], [1, 0.98]);
 
-  const backgroundColor = useMotionTemplate`rgba(${theme === 'dark' ? '15, 23, 42' : '255, 255, 255'}, ${navStyles.bgOpacity})`;
-  const borderColor = useMotionTemplate`rgba(${theme === 'dark' ? '30, 41, 59' : '226, 232, 240'}, ${navStyles.borderOpacity})`;
-  const backdropBlur = useMotionTemplate`blur(${navStyles.blur}px)`;
+  const bc = useMotionTemplate`rgba(${theme === 'dark' ? '15, 23, 42' : '255, 255, 255'}, ${bo})`;
+  const brc = useMotionTemplate`rgba(${theme === 'dark' ? '30, 41, 59' : '226, 232, 240'}, ${bro})`;
+  const bbl = useMotionTemplate`blur(${bl}px)`;
 
   const links = useMemo(() => NAV_LINKS.map(link => ({ ...link, label: t(link.labelKey) })), [t]);
 
   const onToggleLang = () => {
     const nl = isArabic ? 'en' : 'ar';
+    const target = globalThis;
     i18n.changeLanguage(nl).then(() => {
-      document.documentElement.dir = nl === 'ar' ? 'rtl' : 'ltr';
-      document.documentElement.lang = nl;
+      target.document.documentElement.dir = nl === 'ar' ? 'rtl' : 'ltr';
+      target.document.documentElement.lang = nl;
     });
   };
 
@@ -44,7 +44,7 @@ const Navbar = ({ isAdminOpen }) => {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -100, opacity: 0 }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            style={{ height: navStyles.height, backgroundColor, borderColor, backdropFilter: backdropBlur, WebkitBackdropFilter: backdropBlur, scale: navStyles.scale }}
+            style={{ height: h, backgroundColor: bc, borderColor: brc, backdropFilter: bbl, WebkitBackdropFilter: bbl, scale: s }}
             className="w-full max-w-7xl border rounded-[2.5rem] shadow-2xl pointer-events-auto transition-[background-color] duration-300 px-8"
           >
             <div className="flex justify-between items-center h-full">
@@ -79,6 +79,10 @@ const Navbar = ({ isAdminOpen }) => {
       )}
     </AnimatePresence>
   );
+};
+
+Navbar.propTypes = {
+  isAdminOpen: PropTypes.bool.isRequired
 };
 
 export default Navbar;

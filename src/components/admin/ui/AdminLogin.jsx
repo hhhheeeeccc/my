@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { motion } from 'framer-motion';
 import { Lock, User, KeyRound, X } from 'lucide-react';
 
@@ -14,7 +15,7 @@ const AdminLogin = ({ loginData, setLoginData, handleLogin, loginError, t, onClo
         <p className="text-xl text-slate-500 dark:text-slate-400 font-medium">{t('admin.subtitle')}</p>
       </div>
       <form onSubmit={handleLogin} className="space-y-8">
-        {[ ['username', <User size={24} />], ['password', <KeyRound size={24} />, 'password'] ].map(([id, icon, type]) => (
+        {[ ['username', <User key="u" size={24} />], ['password', <KeyRound key="p" size={24} />, 'password'] ].map(([id, icon, type]) => (
           <div key={id} className="space-y-3">
             <label className="block text-xs font-black uppercase tracking-[0.3em] text-slate-400 ms-4">{t(`admin.${id}`)}</label>
             <div className="relative group">
@@ -29,5 +30,14 @@ const AdminLogin = ({ loginData, setLoginData, handleLogin, loginError, t, onClo
     </motion.div>
   </div>
 );
+
+AdminLogin.propTypes = {
+  loginData: PropTypes.object.isRequired,
+  setLoginData: PropTypes.func.isRequired,
+  handleLogin: PropTypes.func.isRequired,
+  loginError: PropTypes.string,
+  t: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired
+};
 
 export default AdminLogin;

@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Float, MeshDistortMaterial, Sphere } from '@react-three/drei';
 import { useScroll } from 'framer-motion';
@@ -13,11 +14,12 @@ const InteractiveBlob = ({ position, color, speed, distort, radius = 1, focusMod
   useEffect(() => {
     const handleDown = () => setPulse(1.8);
     const handleUp = () => setPulse(1);
-    window.addEventListener('mousedown', handleDown);
-    window.addEventListener('mouseup', handleUp);
+    const target = globalThis;
+    target.addEventListener('mousedown', handleDown);
+    target.addEventListener('mouseup', handleUp);
     return () => {
-      window.removeEventListener('mousedown', handleDown);
-      window.removeEventListener('mouseup', handleUp);
+      target.removeEventListener('mousedown', handleDown);
+      target.removeEventListener('mouseup', handleUp);
     };
   }, []);
 
@@ -26,25 +28,14 @@ const InteractiveBlob = ({ position, color, speed, distort, radius = 1, focusMod
     if (mesh.current) {
       const targetY = focusMode ? position[1] * 0.5 : position[1] + Math.sin(time * speed) * 0.3;
       mesh.current.position.y = THREE.MathUtils.lerp(mesh.current.position.y, targetY, 0.05);
-
       const rotFactor = focusMode ? 0.8 : 0.2;
       mesh.current.rotation.x = THREE.MathUtils.lerp(mesh.current.rotation.x, mouse.y * rotFactor, 0.1);
       mesh.current.rotation.y = THREE.MathUtils.lerp(mesh.current.rotation.y, mouse.x * rotFactor, 0.1);
-
-      const scrollScale = 1 + scrollYProgress.get() * 0.5;
-      const focusScale = focusMode ? 1.5 : 1;
-      const clickEffect = clickPulse ? 1.4 : 1;
-      const stretch = 1 + velocityFactor.get() * 0.3;
-
-      const targetScaleVal = scrollScale * pulse * focusScale * clickEffect;
-      mesh.current.scale.set(
-        THREE.MathUtils.lerp(mesh.current.scale.x, targetScaleVal, 0.1),
-        THREE.MathUtils.lerp(mesh.current.scale.y, targetScaleVal * stretch, 0.1),
-        THREE.MathUtils.lerp(mesh.current.scale.z, targetScaleVal, 0.1)
-      );
-
-      const targetDistort = focusMode ? distort + 0.6 : distort + (pulse > 1 ? 0.6 : 0) + velocityFactor.get() * 0.8 + (clickPulse ? 1.2 : 0);
-      mesh.current.material.distort = THREE.MathUtils.lerp(mesh.current.material.distort, targetDistort, 0.1);
+      const scl = (1 + scrollYProgress.get() * 0.5) * pulse * (focusMode ? 1.5 : 1) * (clickPulse ? 1.4 : 1);
+      const str = 1 + velocityFactor.get() * 0.3;
+      mesh.current.scale.set(THREE.MathUtils.lerp(mesh.current.scale.x, scl, 0.1), THREE.MathUtils.lerp(mesh.current.scale.y, scl * str, 0.1), THREE.MathUtils.lerp(mesh.current.scale.z, scl, 0.1));
+      const td = focusMode ? distort + 0.6 : distort + (pulse > 1 ? 0.6 : 0) + velocityFactor.get() * 0.8 + (clickPulse ? 1.2 : 0);
+      mesh.current.material.distort = THREE.MathUtils.lerp(mesh.current.material.distort, td, 0.1);
       mesh.current.material.opacity = THREE.MathUtils.lerp(mesh.current.material.opacity, focusMode || clickPulse ? 0.5 : 0.2, 0.1);
     }
   });
@@ -56,6 +47,17 @@ const InteractiveBlob = ({ position, color, speed, distort, radius = 1, focusMod
       </Sphere>
     </Float>
   );
+};
+
+InteractiveBlob.propTypes = {
+  position: PropTypes.arrayOf(PropTypes.number).isRequired,
+  color: PropTypes.string.isRequired,
+  speed: PropTypes.number.isRequired,
+  distort: PropTypes.number.isRequired,
+  radius: PropTypes.number,
+  focusMode: PropTypes.bool.isRequired,
+  velocityFactor: PropTypes.shape({ get: PropTypes.func.isRequired }).isRequired,
+  clickPulse: PropTypes.bool.isRequired
 };
 
 export default InteractiveBlob;
