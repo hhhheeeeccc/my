@@ -1,51 +1,48 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import FadeIn from '../common/FadeIn';
 
-interface Service {
-  num: string;
-  name: string;
-  desc: string;
-}
-
-const services: Service[] = [
-  {
-    num: "01",
-    name: "3D Modeling",
-    desc: "Creation of detailed objects, characters, or environments tailored to specific client needs, ideal for games, products, and visualizations."
-  },
-  {
-    num: "02",
-    name: "Rendering",
-    desc: "High-quality, photorealistic renders that showcase designs with custom lighting, textures, and materials to bring concepts to life."
-  },
-  {
-    num: "03",
-    name: "Motion Design",
-    desc: "Dynamic animations and motion graphics that add energy and storytelling to brands, products, and digital experiences."
-  },
-  {
-    num: "04",
-    name: "Branding",
-    desc: "Crafting cohesive visual identities -- from logos to full brand systems -- that communicate a clear and memorable presence."
-  },
-  {
-    num: "05",
-    name: "Web Design",
-    desc: "Designing clean, modern, and conversion-focused websites with attention to layout, typography, and user experience."
-  }
-];
-
 const ServicesSection = () => {
+  const { t } = useTranslation();
+
+  const services = [
+    {
+      num: "01",
+      name: t('skills.items.frontend.name'),
+      desc: t('skills.items.frontend.desc')
+    },
+    {
+      num: "02",
+      name: t('skills.items.backend.name'),
+      desc: t('skills.items.backend.desc')
+    },
+    {
+      num: "03",
+      name: t('skills.items.desktop.name'),
+      desc: t('skills.items.desktop.desc')
+    },
+    {
+      num: "04",
+      name: t('skills.items.arch.name'),
+      desc: t('skills.items.arch.desc')
+    },
+    {
+      num: "05",
+      name: t('skills.items.optimization.name'),
+      desc: t('skills.items.optimization.desc')
+    }
+  ];
+
   return (
-    <section className="rounded-t-[40px] bg-white px-5 py-20 sm:rounded-t-[50px] sm:px-8 sm:py-24 md:rounded-t-[60px] md:px-10 md:py-32">
+    <section id="skills" className="rounded-t-[40px] bg-white px-5 py-20 sm:rounded-t-[50px] sm:px-8 sm:py-24 md:rounded-t-[60px] md:px-10 md:py-32">
       <div className="mx-auto flex max-w-5xl flex-col items-center">
         <h2 className="mb-16 text-center text-[clamp(3rem,12vw,160px)] font-black uppercase leading-none tracking-tight text-[#0C0C0C] sm:mb-20 md:mb-28">
-          Services
+          {t('skills.title')}
         </h2>
 
         <div className="w-full">
-          {services.map((service) => (
-            <FadeIn key={service.num} delay={parseInt(service.num) * 0.1} y={20}>
+          {services.map((service, i) => (
+            <FadeIn key={i} delay={i * 0.1} y={20}>
               <div className="flex w-full flex-col border-b border-[#0C0C0C]/15 py-8 sm:flex-row sm:items-center sm:gap-10 sm:py-10 md:py-12">
                 <span className="text-[clamp(3rem,10vw,140px)] font-black leading-none text-[#0C0C0C] sm:min-w-[160px] md:min-w-[200px]">
                   {service.num}

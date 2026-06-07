@@ -1,9 +1,11 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import FadeIn from '../common/FadeIn';
 import AnimatedText from '../common/AnimatedText';
 import { ContactButton } from '../common/Buttons';
 
 const AboutSection = () => {
+  const { t } = useTranslation();
   return (
     <section id="about" className="relative min-h-screen w-full px-5 py-20 sm:px-8 md:px-10 flex flex-col items-center justify-center bg-[#0C0C0C]">
       {/* Decorative Images */}
@@ -42,14 +44,14 @@ const AboutSection = () => {
       <div className="relative z-10 flex flex-col items-center gap-10 sm:gap-14 md:gap-16">
         <FadeIn delay={0} y={40}>
           <h2 className="hero-heading text-center text-[clamp(3rem,12vw,160px)] font-black uppercase leading-none tracking-tight">
-            About me
+            {t('about.title')}
           </h2>
         </FadeIn>
 
         <div className="flex flex-col items-center gap-16 sm:gap-20 md:gap-24">
           <AnimatedText
-            text="With more than five years of experience in design, i focus on branding, web design, and user experience, i truly enjoy working with businesses that aim to stand out and present their best image. Let's build something incredible together!"
-            className="max-w-[560px] text-center text-[clamp(1rem,2vw,1.35rem)] font-medium leading-relaxed text-[#D7E2EA]"
+            text={t('about.bio')}
+            className="max-w-[800px] text-center text-[clamp(1rem,1.8vw,1.35rem)] font-medium leading-relaxed text-[#D7E2EA]"
           />
 
           <FadeIn delay={0.4} y={20}>
