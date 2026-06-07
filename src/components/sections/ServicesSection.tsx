@@ -1,7 +1,13 @@
 import React from 'react';
 import FadeIn from '../common/FadeIn';
 
-const services = [
+interface Service {
+  num: string;
+  name: string;
+  desc: string;
+}
+
+const services: Service[] = [
   {
     num: "01",
     name: "3D Modeling",
@@ -38,8 +44,8 @@ const ServicesSection = () => {
         </h2>
 
         <div className="w-full">
-          {services.map((service, i) => (
-            <FadeIn key={i} delay={i * 0.1} y={20}>
+          {services.map((service) => (
+            <FadeIn key={service.num} delay={parseInt(service.num) * 0.1} y={20}>
               <div className="flex w-full flex-col border-b border-[#0C0C0C]/15 py-8 sm:flex-row sm:items-center sm:gap-10 sm:py-10 md:py-12">
                 <span className="text-[clamp(3rem,10vw,140px)] font-black leading-none text-[#0C0C0C] sm:min-w-[160px] md:min-w-[200px]">
                   {service.num}

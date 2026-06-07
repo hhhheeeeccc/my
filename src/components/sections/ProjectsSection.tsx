@@ -1,8 +1,21 @@
 import React, { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, MotionValue } from 'framer-motion';
 import { LiveProjectButton } from '../common/Buttons';
 
-const projects = [
+interface ProjectImages {
+  col1_1: string;
+  col1_2: string;
+  col2: string;
+}
+
+interface Project {
+  num: string;
+  category: string;
+  name: string;
+  images: ProjectImages;
+}
+
+const projects: Project[] = [
   {
     num: "01",
     category: "Client",
@@ -35,7 +48,14 @@ const projects = [
   }
 ];
 
-const ProjectCard = ({ project, index, total, scrollYProgress }: { project: any, index: number, total: number, scrollYProgress: any }) => {
+interface ProjectCardProps {
+  project: Project;
+  index: number;
+  total: number;
+  scrollYProgress: MotionValue<number>;
+}
+
+const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, total, scrollYProgress }) => {
   const targetScale = 1 - (total - 1 - index) * 0.03;
   const range = [index * (1 / total), 1];
   const scale = useTransform(scrollYProgress, range, [1, targetScale]);
@@ -110,7 +130,7 @@ const ProjectsSection = () => {
       <div className="flex flex-col gap-20">
         {projects.map((project, i) => (
           <ProjectCard
-            key={i}
+            key={project.num}
             project={project}
             index={i}
             total={projects.length}

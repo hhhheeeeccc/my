@@ -58,7 +58,7 @@ const MarqueeSection = () => {
         >
           {row1Images.map((src, i) => (
             <img
-              key={i}
+              key={`row1-${i}`}
               src={src}
               alt="Work"
               loading="lazy"
@@ -77,7 +77,7 @@ const MarqueeSection = () => {
         >
           {row2Images.map((src, i) => (
             <img
-              key={i}
+              key={`row2-${i}`}
               src={src}
               alt="Work"
               loading="lazy"
