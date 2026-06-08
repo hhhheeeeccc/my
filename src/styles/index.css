@@ -2,7 +2,10 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-display: 'Instrument Serif', serif;
+  --font-body: 'Inter', sans-serif;
+
+  --color-navy: hsl(201, 100%, 13%);
 }
 
 :root {
@@ -16,9 +19,6 @@
   --accent: 0 0% 10%;
   --border: 0 0% 18%;
   --input: 0 0% 18%;
-
-  --font-display: 'Instrument Serif', serif;
-  --font-body: 'Inter', sans-serif;
 }
 
 /* Custom styles for smoother transitions */
@@ -96,16 +96,23 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-.animate-fade-rise { animation: fade-rise 0.8s ease-out both; }
-.animate-fade-rise-delay { animation: fade-rise 0.8s ease-out 0.2s both; }
-.animate-fade-rise-delay-2 { animation: fade-rise 0.8s ease-out 0.4s both; }
-
-/* Staggered text mask animation */
-.text-mask {
-  overflow: hidden;
-  display: block;
+.animate-fade-rise {
+  animation: fade-rise 0.8s ease-out both;
 }
 
-.text-mask span {
-  display: block;
+.animate-fade-rise-delay {
+  animation: fade-rise 0.8s ease-out 0.2s both;
+}
+
+.animate-fade-rise-delay-2 {
+  animation: fade-rise 0.8s ease-out 0.4s both;
+}
+
+/* Cinematic Typography Fixes */
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-body {
+  font-family: var(--font-body);
 }

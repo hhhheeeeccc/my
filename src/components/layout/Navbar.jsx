@@ -37,10 +37,9 @@ const Navbar = ({ isAdminOpen }) => {
                 className="flex items-center cursor-pointer"
               >
                 <span
-                  className="text-3xl tracking-tight text-foreground"
-                  style={{ fontFamily: "'Instrument Serif', serif" }}
+                  className="text-3xl tracking-tight text-foreground font-display"
                 >
-                  M.Y.H.G<sup className="text-xs">®</sup>
+                  Velorah<sup className="text-xs">®</sup>
                 </span>
               </motion.div>
             </Magnetic>
@@ -94,7 +93,7 @@ const Navbar = ({ isAdminOpen }) => {
                   whileTap={{ scale: 0.98 }}
                   className="liquid-glass rounded-full px-6 py-2.5 text-sm text-foreground transition-all duration-300 inline-block"
                 >
-                  {t('hero.ctaWork')}
+                  {t('hero.ctaContact')}
                 </motion.a>
               </Magnetic>
             </div>
