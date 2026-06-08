@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Globe, Instagram, Twitter, ArrowRight } from 'lucide-react';
+import Portrait3D from '../common/Portrait3D';
+import Magnetic from '../common/Magnetic';
 
 const Hero = () => {
   const { t } = useTranslation();
@@ -123,7 +125,13 @@ const Hero = () => {
         </nav>
 
         {/* Hero Content */}
-        <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 text-center -translate-y-[20%]">
+        <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 text-center -translate-y-[10%]">
+          <div className="mb-6">
+            <Magnetic>
+              <Portrait3D />
+            </Magnetic>
+          </div>
+
           <h1
             style={{ fontFamily: "'Instrument Serif', serif" }}
             className="text-5xl md:text-7xl lg:text-8xl text-white mb-8 tracking-tight"
