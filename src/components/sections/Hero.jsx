@@ -1,44 +1,131 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
 import Magnetic from '../common/Magnetic';
-import TextReveal3D from '../layout/TextReveal3D';
-import ParallaxContainer from '../common/ParallaxContainer';
-import { SECTION_ANIMATION_VARIANTS } from '../../utils/constants';
 
 const Hero = () => {
-  const { t } = useTranslation();
-  const name = t('hero.name') || "Developer";
-  const { container, item: iv } = SECTION_ANIMATION_VARIANTS;
+  const { t, i18n } = useTranslation();
+  const videoRef = useRef(null);
+  const isArabic = i18n.language?.startsWith('ar');
+
+  // 3D Parallax Mouse Effect
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const handleMouseMove = (e) => {
+    const { clientX, clientY } = e;
+    const { innerWidth, innerHeight } = window;
+    const x = (clientX - innerWidth / 2) / 30;
+    const y = (clientY - innerHeight / 2) / 30;
+    mouseX.set(x);
+    mouseY.set(y);
+  };
+
+  const springX = useSpring(mouseX, { stiffness: 120, damping: 25 });
+  const springY = useSpring(mouseY, { stiffness: 120, damping: 25 });
+
+  const { scrollY } = useScroll();
+  const videoScale = useTransform(scrollY, [0, 800], [1, 1.15]);
+  const contentOpacity = useTransform(scrollY, [0, 400], [1, 0]);
+  const contentY = useTransform(scrollY, [0, 400], [0, -50]);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.play().catch(error => {
+        console.warn("Video playback restricted:", error);
+      });
+    }
+  }, []);
 
   return (
-    <section id="hero" className="relative min-h-screen flex items-center justify-center pt-48 pb-20 overflow-hidden bg-white dark:bg-slate-950 transition-colors duration-500">
-      <ParallaxContainer intensity={30} className="relative z-10 max-w-7xl mx-auto px-4 text-center">
-        <motion.div initial="hidden" animate="visible" transition={container.transition}>
-          <motion.div variants={iv} className="inline-block mb-8 px-6 py-2 rounded-2xl bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/50 backdrop-blur-md">
-            <span className="text-xs md:text-sm font-black text-blue-600 dark:text-blue-400 tracking-[0.3em] uppercase">{t('hero.welcome')}</span>
-          </motion.div>
-          <div className="text-6xl md:text-[10rem] font-black tracking-[-0.04em] mb-10 flex flex-wrap justify-center leading-[0.9]">
-            <TextReveal3D text={name} className="bg-gradient-to-r from-blue-600 via-cyan-500 to-indigo-600 bg-clip-text text-transparent" />
-          </div>
-          <motion.h2 variants={iv} className="text-3xl md:text-6xl font-extrabold text-slate-900 dark:text-slate-100 mb-12 max-w-5xl mx-auto leading-tight">{t('hero.title')}</motion.h2>
-          <motion.p variants={iv} className="text-xl md:text-3xl text-slate-600 dark:text-slate-400 mb-16 max-w-4xl mx-auto leading-relaxed font-medium opacity-80">{t('hero.subtitle')}</motion.p>
-          <motion.div variants={iv} className="flex flex-col sm:flex-row items-center justify-center gap-8">
-            <Magnetic>
-              <motion.a href="#projects" whileHover={{ scale: 1.05, y: -5 }} whileTap={{ scale: 0.98 }} className="group relative w-full sm:w-auto px-14 py-6 bg-blue-600 text-white font-black rounded-[2rem] transition-all overflow-hidden shadow-2xl shadow-blue-500/30">
-                <div className="absolute inset-0 w-full h-full bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 skew-x-[-20deg]" /><span className="relative z-10 text-lg">{t('hero.ctaWork')}</span>
-              </motion.a>
-            </Magnetic>
-            <Magnetic>
-              <motion.a href="#contact" whileHover={{ scale: 1.05, y: -5 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto px-14 py-6 border-2 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 font-black rounded-[2rem] hover:bg-slate-50 dark:hover:bg-slate-900 transition-all hover:border-blue-600/50 dark:hover:border-blue-500/50 text-lg">
-                {t('hero.ctaContact')}
-              </motion.a>
-            </Magnetic>
-          </motion.div>
+    <section
+      id="hero"
+      onMouseMove={handleMouseMove}
+      className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-slate-950"
+    >
+      {/* Background Video - Pure Depth */}
+      <motion.div
+        style={{ scale: videoScale }}
+        className="absolute inset-0 w-full h-full z-0"
+      >
+        <video
+          ref={videoRef}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover z-0"
+        >
+          <source
+            src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260314_131748_f2ca2a28-fed7-44c8-b9a9-bd9acdd5ec31.mp4"
+            type="video/mp4"
+          />
+        </video>
+        {/* No overlays here as per prompt instructions "The video provides all visual depth" */}
+      </motion.div>
+
+      {/* Hero Content - Immersive 3D Motion */}
+      <motion.div
+        style={{
+          x: springX,
+          y: springY,
+          translateY: contentY,
+          opacity: contentOpacity
+        }}
+        className="relative z-20 flex flex-col items-center text-center px-6 pt-32 pb-40 max-w-7xl mx-auto pointer-events-none"
+      >
+        {/* H1: Cinematic & Dynamic */}
+        <motion.h1
+          initial={{ opacity: 0, y: 80, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+          className="text-5xl sm:text-7xl md:text-8xl leading-[0.95] tracking-[-0.03em] font-normal text-white font-display pointer-events-auto"
+        >
+          {t('hero.title')}
+        </motion.h1>
+
+        {/* Subtitle */}
+        <motion.p
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+          className="text-slate-200 text-base sm:text-lg max-w-2xl mt-10 leading-relaxed font-body pointer-events-auto opacity-70"
+        >
+          {t('hero.subtitle')}
+        </motion.p>
+
+        {/* Cinematic CTA Button */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
+          className="mt-14 pointer-events-auto"
+        >
+          <Magnetic>
+            <motion.a
+              href="#projects"
+              whileHover={{ scale: 1.05, boxShadow: "0 0 40px rgba(255, 255, 255, 0.15)" }}
+              whileTap={{ scale: 0.95 }}
+              className="liquid-glass rounded-full px-16 py-6 text-lg text-white font-black cursor-pointer transition-all duration-500 inline-block border border-white/10"
+            >
+              {t('hero.ctaWork')}
+            </motion.a>
+          </Magnetic>
         </motion.div>
-      </ParallaxContainer>
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.5, duration: 1 }} className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
-        <div className="w-[32px] h-[54px] rounded-full border-2 border-slate-300 dark:border-slate-700 p-1.5"><motion.div animate={{ y: [0, 22, 0], opacity: [1, 0.5, 1] }} transition={{ duration: 2.5, repeat: Infinity }} className="w-2.5 h-2.5 rounded-full bg-blue-600 mx-auto shadow-[0_0_12px_rgba(59,130,246,0.9)]" /></div>
+      </motion.div>
+
+      {/* 3D Motion Indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2.5, duration: 1.5 }}
+        className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 z-20 pointer-events-none"
+      >
+        <motion.div
+          animate={{ y: [0, 12, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          className="w-[1px] h-24 bg-gradient-to-b from-white/60 to-transparent"
+        />
       </motion.div>
     </section>
   );

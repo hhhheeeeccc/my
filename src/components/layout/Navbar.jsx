@@ -3,26 +3,15 @@ import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../context/ThemeContext';
 import { Sun, Moon, Languages } from 'lucide-react';
-import { motion, useScroll, useTransform, useMotionTemplate, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Magnetic from '../common/Magnetic';
 import { NAV_LINKS } from '../../utils/constants.jsx';
 
 const Navbar = ({ isAdminOpen }) => {
   const { t, i18n } = useTranslation();
   const { theme, toggleTheme } = useTheme();
-  const { scrollY } = useScroll();
 
   const isArabic = i18n.language?.startsWith('ar') || i18n.resolvedLanguage?.startsWith('ar');
-
-  const h = useTransform(scrollY, [0, 150], ["6.5rem", "5rem"]);
-  const bo = useTransform(scrollY, [0, 150], [0, 0.8]);
-  const bro = useTransform(scrollY, [0, 150], [0, 1]);
-  const bl = useTransform(scrollY, [0, 150], [0, 25]);
-  const s = useTransform(scrollY, [0, 150], [1, 0.98]);
-
-  const bc = useMotionTemplate`rgba(${theme === 'dark' ? '15, 23, 42' : '255, 255, 255'}, ${bo})`;
-  const brc = useMotionTemplate`rgba(${theme === 'dark' ? '30, 41, 59' : '226, 232, 240'}, ${bro})`;
-  const bbl = useMotionTemplate`blur(${bl}px)`;
 
   const links = useMemo(() => NAV_LINKS.map(link => ({ ...link, label: t(link.labelKey) })), [t]);
 
@@ -38,44 +27,88 @@ const Navbar = ({ isAdminOpen }) => {
   return (
     <AnimatePresence>
       {!isAdminOpen && (
-        <div className="fixed top-0 w-full z-[200] flex justify-center pointer-events-none px-4 pt-4">
-          <motion.nav
-            initial={{ y: -100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -100, opacity: 0 }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            style={{ height: h, backgroundColor: bc, borderColor: brc, backdropFilter: bbl, WebkitBackdropFilter: bbl, scale: s }}
-            className="w-full max-w-7xl border rounded-[2.5rem] shadow-2xl pointer-events-auto transition-[background-color] duration-300 px-8"
-          >
-            <div className="flex justify-between items-center h-full">
+        <header className="fixed top-0 left-0 right-0 z-[100] w-full pointer-events-none">
+          <nav className="flex flex-row justify-between items-center px-8 py-6 max-w-7xl mx-auto pointer-events-auto">
+            {/* Logo - Restored User Data */}
+            <Magnetic>
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex items-center cursor-pointer"
+              >
+                <span
+                  className="text-3xl font-black bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent tracking-tighter font-display"
+                >
+                  M.Y.H.G<sup className="text-[10px] text-white/50">®</sup>
+                </span>
+              </motion.div>
+            </Magnetic>
+
+            {/* Nav Links */}
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+              className="hidden md:flex gap-1 items-center bg-white/5 backdrop-blur-xl px-6 py-2 rounded-full border border-white/10 shadow-2xl"
+            >
+              {links.map((link, idx) => (
+                <Magnetic key={idx}>
+                  <motion.a
+                    href={link.href}
+                    className="text-sm text-muted-foreground hover:text-white transition-all duration-300 font-medium px-4 py-1 rounded-full hover:bg-white/10"
+                  >
+                    {link.label}
+                  </motion.a>
+                </Magnetic>
+              ))}
+            </motion.div>
+
+            {/* Actions */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+              className="flex items-center gap-4"
+            >
+              <div className="flex items-center gap-1">
+                <Magnetic>
+                  <motion.button
+                    whileHover={{ scale: 1.1, backgroundColor: 'rgba(255,255,255,0.1)' }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={onToggleLang}
+                    className="p-2.5 text-muted-foreground hover:text-white transition-colors rounded-full"
+                  >
+                    <Languages size={18} />
+                  </motion.button>
+                </Magnetic>
+                <Magnetic>
+                  <motion.button
+                    whileHover={{ scale: 1.1, backgroundColor: 'rgba(255,255,255,0.1)' }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={toggleTheme}
+                    className="p-2.5 text-muted-foreground hover:text-white transition-colors rounded-full"
+                  >
+                    {theme === 'dark' ? <Sun size={18} className="text-amber-400" /> : <Moon size={18} />}
+                  </motion.button>
+                </Magnetic>
+              </div>
+
               <Magnetic>
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="flex-shrink-0 flex items-center cursor-pointer">
-                  <span className="text-2xl font-black bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent tracking-tighter">M.Y.H.G</span>
-                </motion.div>
+                <motion.a
+                  href="#contact"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="liquid-glass rounded-full px-6 py-2.5 text-sm text-white font-bold transition-all duration-500 inline-block border border-white/20 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+                >
+                  {t('hero.ctaContact')}
+                </motion.a>
               </Magnetic>
-
-              <div className="hidden md:flex gap-10 items-center">
-                {links.map((link, idx) => (
-                  <Magnetic key={idx}>
-                    <motion.a href={link.href} className="relative text-sm font-bold text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 px-2 py-1 group">
-                      {link.label}
-                      <span className="absolute -bottom-1 left-2 right-2 h-0.5 bg-blue-600 scale-x-0 transition-transform group-hover:scale-x-100" />
-                    </motion.a>
-                  </Magnetic>
-                ))}
-              </div>
-
-              <div className="flex items-center gap-3">
-                <Magnetic><motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={onToggleLang} className="p-2.5 rounded-2xl hover:bg-slate-100/50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300">
-                  <div className="flex items-center gap-1.5"><Languages size={18} className="text-blue-600 dark:text-blue-400" /><span className="text-xs font-black uppercase tracking-wider">{isArabic ? 'EN' : 'AR'}</span></div>
-                </motion.button></Magnetic>
-                <Magnetic><motion.button whileHover={{ scale: 1.1, rotate: 15 }} whileTap={{ scale: 0.9 }} onClick={toggleTheme} className="p-2.5 rounded-2xl hover:bg-slate-100/50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300">
-                  {theme === 'dark' ? <Sun size={18} className="text-amber-400" /> : <Moon size={18} className="text-blue-600" />}
-                </motion.button></Magnetic>
-              </div>
-            </div>
-          </motion.nav>
-        </div>
+            </motion.div>
+          </nav>
+        </header>
       )}
     </AnimatePresence>
   );

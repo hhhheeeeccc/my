@@ -50,7 +50,7 @@ function App() {
       <div className="min-h-screen bg-slate-950 transition-colors duration-500 overflow-x-hidden relative">
         <div className="noise-overlay" aria-hidden="true" />
         <CustomCursor />
-        <StoryBlobs />
+        {/* <StoryBlobs /> */}
 
         <GlobalCanvas />
 
