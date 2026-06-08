@@ -6,11 +6,17 @@ const Portrait3D = () => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
-  const mouseXSpring = useSpring(x, { stiffness: 150, damping: 20 });
-  const mouseYSpring = useSpring(y, { stiffness: 150, damping: 20 });
+  // Smooth springs for high-end feel
+  const mouseXSpring = useSpring(x, { stiffness: 100, damping: 25 });
+  const mouseYSpring = useSpring(y, { stiffness: 100, damping: 25 });
 
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["15deg", "-15deg"]);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-15deg", "15deg"]);
+  // Rotate values to simulate head following mouse
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["20deg", "-20deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-20deg", "20deg"]);
+
+  // Parallax translation for the image inside the frame
+  const translateX = useTransform(mouseXSpring, [-0.5, 0.5], ["10px", "-10px"]);
+  const translateY = useTransform(mouseYSpring, [-0.5, 0.5], ["10px", "-10px"]);
 
   const handleMouseMove = (e) => {
     if (!containerRef.current) return;
@@ -33,7 +39,7 @@ const Portrait3D = () => {
   return (
     <div
       className="relative flex items-center justify-center py-10"
-      style={{ perspective: "1000px" }}
+      style={{ perspective: "1200px" }}
     >
       <motion.div
         ref={containerRef}
@@ -44,29 +50,42 @@ const Portrait3D = () => {
           rotateY,
           transformStyle: "preserve-3d",
         }}
-        className="relative w-64 h-80 md:w-72 md:h-96 rounded-[3rem] liquid-glass cursor-pointer group shadow-2xl"
+        className="relative w-72 h-96 md:w-80 md:h-[420px] rounded-[3.5rem] liquid-glass cursor-pointer group shadow-2xl"
       >
-        {/* Inner Content with parallax */}
+        {/* Inner Content with parallax depth */}
         <motion.div
           style={{
-            transform: "translateZ(50px)",
+            transform: "translateZ(60px)",
             transformStyle: "preserve-3d",
+            x: translateX,
+            y: translateY,
           }}
-          className="absolute inset-4 rounded-[2.5rem] overflow-hidden bg-slate-900 shadow-inner"
+          className="absolute inset-5 rounded-[3rem] overflow-hidden bg-slate-900 shadow-2xl"
         >
+          {/* Professional Man using Laptop image */}
           <img
-            src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop"
-            alt="Professional Portrait"
-            className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110"
+            src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=1000&auto=format&fit=crop"
+            alt="Professional man using laptop"
+            className="w-full h-full object-cover grayscale-[0.1] group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105"
           />
 
-          {/* Overlay glow */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          {/* Liquid overlay effect */}
+          <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/20 via-transparent to-cyan-500/10 opacity-30 group-hover:opacity-10 transition-opacity duration-700" />
+
+          {/* Reflection glow following mouse (CSS-based simple version) */}
+          <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+               style={{
+                 background: "radial-gradient(circle at center, rgba(255,255,255,0.15) 0%, transparent 70%)",
+                 transform: "translateZ(80px)"
+               }}
+          />
         </motion.div>
 
-        {/* Outer glass border decorations */}
-        <div className="absolute -inset-4 border border-white/5 rounded-[4rem] pointer-events-none opacity-50" />
-        <div className="absolute -inset-8 border border-white/5 rounded-[5rem] pointer-events-none opacity-20" />
+        {/* Decorative glass layers */}
+        <div className="absolute -inset-6 border border-white/10 rounded-[4.5rem] pointer-events-none opacity-40 blur-[1px]" />
+        <div className="absolute -inset-12 border border-white/5 rounded-[5.5rem] pointer-events-none opacity-20" />
+
+        {/* Magnetic floating particles or elements could go here */}
       </motion.div>
     </div>
   );
