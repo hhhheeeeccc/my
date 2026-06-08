@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import ParticleField from './three/ParticleField';
 import InteractiveBlob from './three/InteractiveBlob';
 import { BLOBS_CONFIG } from '../../utils/constants.jsx';
-import { createColor, createFog } from '../../utils/three-utils';
+import { createFog } from '../../utils/three-utils';
 
 const Experience3D = () => {
   const { camera } = useThree();
@@ -31,12 +31,12 @@ const Experience3D = () => {
     camera.updateProjectionMatrix();
   });
 
-  const bg = useMemo(() => createColor('#020617'), []);
+  // Make background transparent to show the video
   const fog = useMemo(() => createFog('#020617', 5, 15), []);
 
   return (
     <>
-      <primitive object={bg} attach="background" />
+      {/* Background is removed to allow the video to show through the canvas */}
       <primitive object={fog} attach="fog" />
       <ambientLight args={['#ffffff', focus.active ? 0.6 : 0.4]} />
       <pointLight args={['#3b82f6', focus.active ? 2 : 1]} position={[10, 10, 10]} />

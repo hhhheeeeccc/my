@@ -4,8 +4,6 @@
 @theme {
   --font-display: 'Instrument Serif', serif;
   --font-body: 'Inter', sans-serif;
-
-  --color-navy: hsl(201, 100%, 13%);
 }
 
 :root {
@@ -23,7 +21,7 @@
 
 /* Custom styles for smoother transitions */
 * {
-  @apply transition-colors duration-200;
+  @apply transition-colors duration-300;
 }
 
 html {
@@ -32,44 +30,19 @@ html {
 
 body {
   font-family: var(--font-body);
-  @apply bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100;
+  @apply bg-slate-950 text-white;
+  overflow-x: hidden;
 }
 
-.dark body {
-  background-color: hsl(var(--background));
-  color: hsl(var(--foreground));
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-::-webkit-scrollbar-track {
-  @apply bg-slate-50 dark:bg-slate-900;
-}
-
-::-webkit-scrollbar-thumb {
-  @apply bg-slate-300 dark:bg-slate-700 rounded-full border-4 border-solid border-slate-50 dark:border-slate-900;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-blue-500;
-}
-
-/* Text Selection */
-::selection {
-  @apply bg-blue-500/30 text-blue-900 dark:text-blue-100;
-}
-
-/* Liquid Glass Effect */
+/* Liquid Glass Effect - High End Cinematic Version */
 .liquid-glass {
-  background: rgba(255, 255, 255, 0.01);
-  background-blend-mode: luminosity;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  border: none;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 4px 30px rgba(0, 0, 0, 0.1),
+    inset 0 0 20px rgba(255, 255, 255, 0.05);
   position: relative;
   overflow: hidden;
 }
@@ -79,40 +52,48 @@ body {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: 1.4px;
-  background: linear-gradient(180deg,
-    rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.15) 20%,
-    rgba(255,255,255,0) 40%, rgba(255,255,255,0) 60%,
-    rgba(255,255,255,0.15) 80%, rgba(255,255,255,0.45) 100%);
+  padding: 1px;
+  background: linear-gradient(145deg,
+    rgba(255,255,255,0.4) 0%,
+    rgba(255,255,255,0) 50%,
+    rgba(255,255,255,0.2) 100%);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
 }
 
-/* Animations */
-@keyframes fade-rise {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
 }
 
-.animate-fade-rise {
-  animation: fade-rise 0.8s ease-out both;
+::-webkit-scrollbar-track {
+  @apply bg-slate-950;
 }
 
-.animate-fade-rise-delay {
-  animation: fade-rise 0.8s ease-out 0.2s both;
+::-webkit-scrollbar-thumb {
+  @apply bg-white/10 rounded-full hover:bg-white/20 transition-colors;
 }
 
-.animate-fade-rise-delay-2 {
-  animation: fade-rise 0.8s ease-out 0.4s both;
-}
-
-/* Cinematic Typography Fixes */
+/* Typography Classes */
 .font-display {
   font-family: var(--font-display);
 }
 
 .font-body {
   font-family: var(--font-body);
+}
+
+/* Cinematic Grain Overlay */
+.noise-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
