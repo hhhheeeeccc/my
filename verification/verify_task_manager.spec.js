@@ -1,12 +1,12 @@
 import { test, expect } from '@playwright/test';
-import { promises as fs } from 'fs';
-import path from 'path';
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
 
 test('Verify Task Manager Component and SCSS existence', async () => {
   const tsxPath = path.resolve('plugins/com.workspace.tasks/webapp/task_manager_modal.tsx');
   const scssPath = path.resolve('plugins/com.workspace.tasks/webapp/task_manager_modal.scss');
 
-  // Use async operations to avoid SonarCloud warnings about sync fs
+  // Use async operations and node: prefix for built-in modules
   const tsxExists = await fs.access(tsxPath).then(() => true).catch(() => false);
   const scssExists = await fs.access(scssPath).then(() => true).catch(() => false);
 
