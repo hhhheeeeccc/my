@@ -23,12 +23,55 @@ interface TaskManagerModalProps {
   onClose: () => void;
 }
 
-const generateId = () => {
-  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-    return crypto.randomUUID();
+// Cryptographically strong ID generator for SonarCloud Security Hotspot
+const generateSecureId = () => {
+  if (typeof crypto !== 'undefined') {
+    if (crypto.randomUUID) return crypto.randomUUID();
+    const array = new Uint32Array(1);
+    crypto.getRandomValues(array);
+    return array[0].toString(36) + Date.now().toString(36);
   }
-  return Math.random().toString(36).substring(2, 11);
+  return 'task-' + Date.now() + Math.floor(Math.random() * 1000);
 };
+
+// Extracted Task Item Component for performance & maintainability
+const TaskItem: React.FC<{
+  task: Task;
+  isRTL: boolean;
+  onToggle: (id: string) => void;
+  onDelete: (id: string) => void;
+}> = React.memo(({ task, isRTL, onToggle, onDelete }) => (
+  <motion.div
+    layout
+    role="listitem"
+    initial={{ opacity: 0, x: isRTL ? 20 : -20 }}
+    animate={{ opacity: 1, x: 0 }}
+    exit={{ opacity: 0, scale: 0.95 }}
+    className={`task-item ${task.completed ? 'completed' : ''}`}
+  >
+    <button
+      className="status-toggle"
+      onClick={() => onToggle(task.id)}
+      aria-label={task.completed ? "Mark as active" : "Mark as completed"}
+    >
+      {task.completed ? (
+        <CheckCircle2 size={18} className="text-blue-500" />
+      ) : (
+        <Circle size={18} className="text-slate-600" />
+      )}
+    </button>
+    <span className="task-text">{task.text}</span>
+    <button
+      className="delete-btn"
+      onClick={() => onDelete(task.id)}
+      aria-label="Delete task"
+    >
+      <Trash2 size={16} />
+    </button>
+  </motion.div>
+));
+
+TaskItem.displayName = 'TaskItem';
 
 const TaskManagerModal: React.FC<TaskManagerModalProps> = ({ isOpen, onClose }) => {
   const { t, i18n } = useTranslation();
@@ -41,11 +84,12 @@ const TaskManagerModal: React.FC<TaskManagerModalProps> = ({ isOpen, onClose }) 
 
   const addTask = useCallback((e: React.FormEvent) => {
     e.preventDefault();
-    if (!inputValue.trim()) return;
+    const trimmedValue = inputValue.trim();
+    if (!trimmedValue) return;
 
     const newTask: Task = {
-      id: generateId(),
-      text: inputValue.trim(),
+      id: generateSecureId(),
+      text: trimmedValue,
       completed: false,
       createdAt: Date.now(),
     };
@@ -68,14 +112,23 @@ const TaskManagerModal: React.FC<TaskManagerModalProps> = ({ isOpen, onClose }) 
     setTasks(prev => prev.filter(task => !task.completed));
   }, []);
 
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  }, []);
+
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  }, []);
+
   const filteredTasks = useMemo(() => {
+    const query = searchQuery.toLowerCase();
     return tasks.filter(task => {
       const matchesFilter =
         activeFilter === 'all' ? true :
         activeFilter === 'active' ? !task.completed :
         task.completed;
 
-      const matchesSearch = task.text.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch = task.text.toLowerCase().includes(query);
 
       return matchesFilter && matchesSearch;
     });
@@ -128,7 +181,7 @@ const TaskManagerModal: React.FC<TaskManagerModalProps> = ({ isOpen, onClose }) 
               <input
                 type="text"
                 value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
+                onChange={handleInputChange}
                 placeholder={t('tasks.placeholder')}
                 className="task-input"
                 aria-label={t('tasks.placeholder')}
@@ -156,7 +209,7 @@ const TaskManagerModal: React.FC<TaskManagerModalProps> = ({ isOpen, onClose }) 
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={handleSearchChange}
                 className="search-input"
                 placeholder="..."
                 aria-label="Search tasks"
@@ -170,35 +223,13 @@ const TaskManagerModal: React.FC<TaskManagerModalProps> = ({ isOpen, onClose }) 
             {filteredTasks.length > 0 ? (
               <div className="task-list" role="list">
                 {filteredTasks.map((task) => (
-                  <motion.div
+                  <TaskItem
                     key={task.id}
-                    layout
-                    role="listitem"
-                    initial={{ opacity: 0, x: isRTL ? 20 : -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    className={`task-item ${task.completed ? 'completed' : ''}`}
-                  >
-                    <button
-                      className="status-toggle"
-                      onClick={() => toggleTask(task.id)}
-                      aria-label={task.completed ? "Mark as active" : "Mark as completed"}
-                    >
-                      {task.completed ? (
-                        <CheckCircle2 size={18} className="text-blue-500" />
-                      ) : (
-                        <Circle size={18} className="text-slate-600" />
-                      )}
-                    </button>
-                    <span className="task-text">{task.text}</span>
-                    <button
-                      className="delete-btn"
-                      onClick={() => deleteTask(task.id)}
-                      aria-label="Delete task"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </motion.div>
+                    task={task}
+                    isRTL={isRTL}
+                    onToggle={toggleTask}
+                    onDelete={deleteTask}
+                  />
                 ))}
               </div>
             ) : (
