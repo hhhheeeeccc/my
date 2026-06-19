@@ -1,11 +1,14 @@
 import { test, expect } from '@playwright/test';
+import fs from 'fs';
+import path from 'path';
 
-// Since TaskManagerModal is not yet integrated into the App.jsx or main entry,
-// we will create a temporary test page to verify it in isolation.
-// For now, I'll check if the files exist and look correct as per the requirements.
+test('Verify Task Manager Component and SCSS existence', async () => {
+  const tsxPath = path.resolve('plugins/com.workspace.tasks/webapp/task_manager_modal.tsx');
+  const scssPath = path.resolve('plugins/com.workspace.tasks/webapp/task_manager_modal.scss');
 
-test('Verify Task Manager Component and SCSS existence', async ({ page }) => {
-  // This is a placeholder as the component isn't mounted in the app yet.
-  // We've already verified build success.
-  console.log('Verification successful: Files exist and build passed.');
+  expect(fs.existsSync(tsxPath)).toBe(true);
+  expect(fs.existsSync(scssPath)).toBe(true);
+
+  const tsxContent = fs.readFileSync(tsxPath, 'utf-8');
+  expect(tsxContent).toContain('TaskManagerModal');
 });
