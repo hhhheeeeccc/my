@@ -126,6 +126,18 @@
     "privacy": "الخصوصية",
     "terms": "الشروط"
   },
+  "tasks": {
+    "title": "إدارة المهام",
+    "subtitle": "مساحة عمل انسيابية",
+    "placeholder": "ما الذي يجب إنجازه؟",
+    "empty": "لا توجد مهام بعد. استمتع بيومك!",
+    "filterAll": "الكل",
+    "filterActive": "نشط",
+    "filterCompleted": "مكتمل",
+    "itemsRemaining": "تبقى {{count}} مهمة",
+    "itemsRemaining_plural": "تبقى {{count}} مهام",
+    "clearCompleted": "مسح المكتمل"
+  },
   "admin": {
     "title": "محرر الملف الشخصي",
     "subtitle": "قم بتخصيص محتوى ملفك الشخصي",

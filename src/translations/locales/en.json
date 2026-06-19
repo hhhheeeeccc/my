@@ -126,6 +126,18 @@
     "privacy": "Privacy",
     "terms": "Terms"
   },
+  "tasks": {
+    "title": "Task Management",
+    "subtitle": "Streamlined Workspace",
+    "placeholder": "What needs to be done?",
+    "empty": "No tasks yet. Enjoy your day!",
+    "filterAll": "All",
+    "filterActive": "Active",
+    "filterCompleted": "Completed",
+    "itemsRemaining": "{{count}} item remaining",
+    "itemsRemaining_plural": "{{count}} items remaining",
+    "clearCompleted": "Clear Completed"
+  },
   "admin": {
     "title": "Portfolio Editor",
     "subtitle": "Customize your portfolio content",
