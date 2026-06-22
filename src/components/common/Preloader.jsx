@@ -1,35 +1,59 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { gsap } from 'gsap';
 
 const Preloader = ({ onComplete }) => {
   const [count, setCount] = useState(0);
-  const [phase, setPhase] = useState('counting'); // counting → reveal → done
-  const canvasRef = useRef(null);
+  const [phase, setPhase] = useState('counting');
+  const containerRef = useRef(null);
+  const counterRef = useRef(null);
+  const progressBarRef = useRef(null);
+  const labelRef = useRef(null);
 
-  // Animated counter
+  // Animated counter using GSAP
   useEffect(() => {
     if (phase !== 'counting') return;
-    const duration = 2000;
-    const start = Date.now();
-    const tick = () => {
-      const elapsed = Date.now() - start;
-      const progress = Math.min(elapsed / duration, 1);
-      // Eased progress
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setCount(Math.floor(eased * 100));
-      if (progress < 1) requestAnimationFrame(tick);
-      else setTimeout(() => setPhase('reveal'), 300);
-    };
-    requestAnimationFrame(tick);
+
+    const obj = { val: 0 };
+    const tl = gsap.timeline({
+      onComplete: () => setTimeout(() => setPhase('reveal'), 400)
+    });
+
+    tl.to(obj, {
+      val: 100,
+      duration: 2.5,
+      ease: 'power2.inOut',
+      onUpdate: () => setCount(Math.floor(obj.val)),
+    });
+
+    // Progress bar animation
+    if (progressBarRef.current) {
+      tl.to(progressBarRef.current, {
+        scaleX: 1,
+        duration: 2.5,
+        ease: 'power2.inOut',
+      }, '<');
+    }
+
+    // Label fade in
+    if (labelRef.current) {
+      tl.fromTo(labelRef.current,
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' },
+        0.3
+      );
+    }
+
+    return () => tl.kill();
   }, [phase]);
 
-  // Reveal phase → done
+  // Reveal phase
   useEffect(() => {
     if (phase !== 'reveal') return;
     const timer = setTimeout(() => {
       setPhase('done');
       setTimeout(() => onComplete?.(), 100);
-    }, 800);
+    }, 1000);
     return () => clearTimeout(timer);
   }, [phase, onComplete]);
 
@@ -37,83 +61,89 @@ const Preloader = ({ onComplete }) => {
     <AnimatePresence>
       {phase !== 'done' && (
         <motion.div
-          className="fixed inset-0 z-[200] bg-slate-950 flex items-center justify-center"
+          ref={containerRef}
+          className="fixed inset-0 z-[200] bg-slate-950 flex items-center justify-center overflow-hidden"
           exit={{ y: '-100%' }}
-          transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
+          transition={{ duration: 1, ease: [0.76, 0, 0.24, 1] }}
         >
-          {/* Animated background grid lines */}
-          <div className="absolute inset-0 overflow-hidden opacity-20">
-            {Array.from({ length: 20 }).map((_, i) => (
+          {/* Animated horizontal lines */}
+          <div className="absolute inset-0 overflow-hidden opacity-15 pointer-events-none">
+            {Array.from({ length: 30 }).map((_, i) => (
               <motion.div
                 key={i}
-                className="absolute h-px bg-cyan-500/30"
-                style={{ left: 0, right: 0, top: `${i * 5}%` }}
+                className="absolute h-px bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent"
+                style={{ left: 0, right: 0, top: `${i * 3.33}%` }}
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
-                transition={{ duration: 1.5, delay: i * 0.05, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 2, delay: i * 0.04, ease: [0.16, 1, 0.3, 1] }}
               />
             ))}
           </div>
 
+          {/* Vertical scan line */}
+          <motion.div
+            className="absolute w-px h-full bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent pointer-events-none"
+            initial={{ x: '-100%' }}
+            animate={{ x: '200%' }}
+            transition={{ duration: 3, repeat: Infinity, ease: 'linear', delay: 0.5 }}
+          />
+
           <div className="relative flex flex-col items-center">
-            {/* Counter number */}
-            <motion.div
-              className="overflow-hidden"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-            >
+            {/* Counter */}
+            <div className="overflow-hidden">
               <motion.span
+                ref={counterRef}
                 key={count}
-                className="text-[12rem] font-black text-white/90 leading-none tabular-nums tracking-tighter"
-                initial={{ y: 40, opacity: 0, filter: 'blur(8px)' }}
+                className="text-[14rem] font-black text-white/90 leading-none tabular-nums tracking-tighter"
+                style={{ fontFamily: 'var(--font-display)' }}
+                initial={{ y: 50, opacity: 0, filter: 'blur(10px)' }}
                 animate={{ y: 0, opacity: 1, filter: 'blur(0px)' }}
-                transition={{ duration: 0.15, ease: 'easeOut' }}
+                transition={{ duration: 0.12, ease: 'easeOut' }}
               >
                 {String(count).padStart(3, '0')}
               </motion.span>
-            </motion.div>
+            </div>
 
             {/* Progress bar */}
-            <motion.div
-              className="mt-8 h-[2px] bg-cyan-500/80"
-              initial={{ width: 0 }}
-              animate={{ width: phase === 'reveal' ? '100%' : `${count}%` }}
-              transition={{ duration: phase === 'reveal' ? 0.6 : 0.1, ease: [0.16, 1, 0.3, 1] }}
-            />
+            <div className="mt-10 w-48 h-[1px] bg-white/[0.06] rounded-full overflow-hidden">
+              <div
+                ref={progressBarRef}
+                className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full"
+                style={{ transformOrigin: 'left', transform: 'scaleX(0)' }}
+              />
+            </div>
 
-            {/* Bottom text */}
-            <motion.p
-              className="mt-6 text-sm text-slate-500 font-medium tracking-[0.3em] uppercase"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: phase === 'reveal' ? 0 : 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
+            {/* Label */}
+            <p
+              ref={labelRef}
+              className="mt-6 text-[11px] text-slate-600 font-bold tracking-[0.4em] uppercase opacity-0"
             >
               Loading Experience
-            </motion.p>
+            </p>
 
             {/* Reveal flash */}
             {phase === 'reveal' && (
               <motion.div
                 className="absolute inset-0 bg-white"
                 initial={{ opacity: 0 }}
-                animate={{ opacity: [0, 0.15, 0] }}
-                transition={{ duration: 0.6 }}
+                animate={{ opacity: [0, 0.12, 0] }}
+                transition={{ duration: 0.8 }}
               />
             )}
           </div>
 
-          {/* Corner decorations */}
-          {['top-4 left-4', 'top-4 right-4', 'bottom-4 left-4', 'bottom-4 right-4'].map((pos, i) => (
+          {/* Corner brackets */}
+          {[
+            'top-6 left-6', 'top-6 right-6', 'bottom-6 left-6', 'bottom-6 right-6'
+          ].map((pos, i) => (
             <motion.div
               key={pos}
-              className={`absolute ${pos} w-3 h-3`}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.3 }}
-              transition={{ delay: 0.5 + i * 0.1 }}
+              className={`absolute ${pos} w-4 h-4 opacity-0`}
+              animate={{ opacity: 0.25 }}
+              transition={{ delay: 0.8 + i * 0.15, duration: 0.5 }}
             >
-              <div className="w-full h-px bg-cyan-500 absolute top-0 left-0" />
-              <div className="w-px h-full bg-cyan-500 absolute top-0 left-0" />
+              <div className="absolute top-0 left-0 w-full h-px bg-cyan-500/50" />
+              <div className="absolute top-0 left-0 w-px h-full bg-cyan-500/50" />
             </motion.div>
           ))}
         </motion.div>

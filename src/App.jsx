@@ -1,12 +1,15 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
-import { ReactLenis } from 'lenis/react';
+import { motion, useScroll, useSpring } from 'framer-motion';
+import { ReactLenis, useLenis } from 'lenis/react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 // Layout Components
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
-import SectionReveal from './components/layout/SectionReveal';
 
 // Section Components
 import Hero from './components/sections/Hero';
@@ -32,10 +35,13 @@ function App() {
 
   const { scrollYProgress } = useScroll();
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
+    stiffness: 80,
+    damping: 25,
     restDelta: 0.001
   });
+
+  // Sync Lenis with GSAP ScrollTrigger
+  useLenis(ScrollTrigger.update);
 
   useEffect(() => {
     const currentIsAr = i18n.language?.startsWith('ar');
@@ -43,13 +49,27 @@ function App() {
     document.documentElement.lang = currentIsAr ? 'ar' : 'en';
   }, [i18n.language]);
 
+  // Cleanup ScrollTriggers on unmount
+  useEffect(() => {
+    return () => {
+      ScrollTrigger.getAll().forEach(t => t.kill());
+    };
+  }, []);
+
+  // Refresh ScrollTriggers after load
+  useEffect(() => {
+    if (isLoaded) {
+      setTimeout(() => ScrollTrigger.refresh(), 200);
+    }
+  }, [isLoaded]);
+
   const handlePreloaderComplete = useCallback(() => {
     setIsLoaded(true);
   }, []);
 
   return (
-    <ReactLenis root>
-      <div className="min-h-screen bg-slate-950 transition-colors duration-500 overflow-x-hidden relative">
+    <ReactLenis root options={{ lerp: 0.08, smoothWheel: true }}>
+      <div className="min-h-screen bg-slate-950 overflow-x-hidden relative">
         <div className="noise-overlay" aria-hidden="true" />
 
         {/* Preloader */}
@@ -58,24 +78,24 @@ function App() {
         <CustomCursor />
         <GlobalCanvas />
 
-        {/* Scroll progress bar */}
+        {/* Scroll progress bar - minimal */}
         <motion.div
-          className="fixed top-0 left-0 right-0 h-[2px] z-[150]"
+          className="fixed top-0 left-0 right-0 h-[1px] z-[150]"
           style={{
             scaleX: smoothProgress,
             transformOrigin: isAr ? "right" : "left",
-            background: 'linear-gradient(90deg, #06b6d4, #8b5cf6, #06b6d4)',
+            background: 'linear-gradient(90deg, transparent, #06b6d4, #8b5cf6, transparent)',
           }}
         />
 
         <Navbar isAdminOpen={isAdminOpen} />
 
-        <main className={`relative z-10 transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+        <main className={`relative z-10 transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
           <Hero />
-          <SectionReveal variant="wipe"><About /></SectionReveal>
-          <SectionReveal variant="scaleReveal"><Skills /></SectionReveal>
-          <SectionReveal><Projects /></SectionReveal>
-          <SectionReveal variant="slideIn"><Contact /></SectionReveal>
+          <About />
+          <Skills />
+          <Projects />
+          <Contact />
         </main>
 
         <Footer />

@@ -23,11 +23,19 @@
     "features": {
       "code": {
         "title": "Clean Code",
-        "desc": "Writing modular, maintainable, and testable code following SOLID principles."
+        "desc": "Writing modular, maintainable, and testable code following SOLID principles and industry best practices."
       },
       "rocket": {
         "title": "High Performance",
-        "desc": "Optimizing every byte to ensure lightning-fast execution and smooth UX."
+        "desc": "Optimizing every byte to ensure lightning-fast execution and smooth UX across all platforms."
+      },
+      "sparkles": {
+        "title": "Creative Design",
+        "desc": "Crafting visually stunning interfaces that combine aesthetics with functional excellence."
+      },
+      "zap": {
+        "title": "Rapid Delivery",
+        "desc": "Shipping production-ready software with speed and precision through efficient workflows."
       }
     }
   },

@@ -1,29 +1,86 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { motion } from 'framer-motion';
-import TextReveal3D from './TextReveal3D';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-const SectionHeader = ({ subtitle, title, intro, center = true }) => (
-  <div className={`${center ? 'text-center items-center' : 'text-start items-start'} mb-32 flex flex-col`}>
-    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className={`flex items-center gap-3 mb-6 ${center ? 'justify-center' : ''}`}>
-      <div className="w-16 h-1.5 bg-blue-600 rounded-full" />
-      <span className="text-blue-600 font-black uppercase tracking-[0.3em] text-xs md:text-sm">{subtitle}</span>
-      {center && <div className="w-16 h-1.5 bg-blue-600 rounded-full" />}
-    </motion.div>
-    <div className="text-5xl md:text-8xl font-black text-slate-900 dark:text-white mb-10 tracking-tight leading-[0.9]">
-      <TextReveal3D text={title} />
+gsap.registerPlugin(ScrollTrigger);
+
+const SectionHeader = ({ subtitle, title, intro, center = true, accentColor = 'cyan' }) => {
+  const headerRef = useRef(null);
+
+  useEffect(() => {
+    if (!headerRef.current) return;
+    const items = headerRef.current.querySelectorAll('[data-header-item]');
+    if (!items.length) return;
+
+    gsap.set(items, { y: 50, opacity: 0 });
+    gsap.to(items, {
+      y: 0, opacity: 1,
+      duration: 0.9,
+      stagger: 0.12,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: headerRef.current,
+        start: 'top 82%',
+        end: 'top 45%',
+        scrub: 1,
+      }
+    });
+
+    return () => {
+      ScrollTrigger.getAll().forEach(tr => {
+        if (tr.trigger === headerRef.current) tr.kill();
+      });
+    };
+  }, []);
+
+  const colorMap = {
+    cyan: { line: 'from-transparent to-cyan-500/60', text: 'text-cyan-400/70' },
+    violet: { line: 'from-transparent to-violet-500/60', text: 'text-violet-400/70' },
+    blue: { line: 'from-transparent to-blue-500/60', text: 'text-blue-400/70' },
+    emerald: { line: 'from-transparent to-emerald-500/60', text: 'text-emerald-400/70' },
+  };
+
+  const colors = colorMap[accentColor] || colorMap.cyan;
+
+  return (
+    <div
+      ref={headerRef}
+      className={`${center ? 'text-center items-center' : 'text-start items-start'} mb-36 flex flex-col`}
+    >
+      <div
+        data-header-item
+        className={`flex items-center gap-4 mb-8 ${center ? 'justify-center' : ''}`}
+      >
+        <div className={`w-12 h-[2px] bg-gradient-to-r ${colors.line}`} />
+        <span className={`text-xs font-black uppercase tracking-[0.4em] ${colors.text}`}>
+          {subtitle}
+        </span>
+        {center && <div className={`w-12 h-[2px] bg-gradient-to-l ${colors.line}`} />}
+      </div>
+      <div data-header-item className="overflow-hidden">
+        <h2
+          className="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tight leading-[0.9]"
+          style={{ fontFamily: 'var(--font-display)' }}
+        >
+          {title}
+        </h2>
+      </div>
+      <div data-header-item className="mt-10 max-w-3xl">
+        <p className="text-lg md:text-xl text-slate-400 font-medium leading-relaxed">
+          {intro}
+        </p>
+      </div>
     </div>
-    <p className={`text-xl md:text-2xl text-slate-600 dark:text-slate-400 max-w-3xl font-semibold opacity-80 leading-relaxed ${center ? 'mx-auto' : ''}`}>
-      {intro}
-    </p>
-  </div>
-);
+  );
+};
 
 SectionHeader.propTypes = {
   subtitle: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   intro: PropTypes.string.isRequired,
-  center: PropTypes.bool
+  center: PropTypes.bool,
+  accentColor: PropTypes.string,
 };
 
 export default SectionHeader;
