@@ -6,6 +6,7 @@ import { EffectComposer, Bloom, ChromaticAberration, Vignette } from '@react-thr
 import { BlendFunction } from 'postprocessing';
 import * as THREE from 'three';
 import { createFog } from '../../utils/three-utils';
+import CyberCharacter from './three/CyberCharacter';
 
 // ===================== NEON DATA RAIN =====================
 function NeonDataRain({ count = 1500, focusMode, velocityFactor }) {
@@ -312,7 +313,8 @@ function LightBeams({ focusMode }) {
 const Experience3D = () => {
   const { camera } = useThree();
   const [focus, setFocus] = useState({ active: false, pulse: false });
-  const { scrollY } = useScroll();
+  const { scrollY, scrollYProgress } = useScroll();
+  const scrollProgress = useMemo(() => ({ get: () => scrollYProgress.get() }), [scrollYProgress]);
   const smoothVelocity = useSpring(useVelocity(scrollY), { stiffness: 50, damping: 20 });
   const velFactor = useMemo(() => ({ get: () => Math.min(Math.abs(smoothVelocity.get() / 1000), 1) }), [smoothVelocity]);
 
@@ -382,6 +384,9 @@ const Experience3D = () => {
 
       {/* Light Beams */}
       <LightBeams focusMode={focus.active} />
+
+      {/* 3D Cyberpunk Character - Scroll Animated */}
+      <CyberCharacter scrollProgress={scrollProgress} />
 
       {/* Post Processing */}
       <EffectComposer>

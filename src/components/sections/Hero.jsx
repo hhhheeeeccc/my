@@ -5,8 +5,6 @@ import Magnetic from '../common/Magnetic';
 
 const Hero = () => {
   const { t, i18n } = useTranslation();
-  const videoRef = useRef(null);
-  const isArabic = i18n.language?.startsWith('ar');
 
   // 3D Parallax Mouse Effect
   const mouseX = useMotionValue(0);
@@ -25,17 +23,8 @@ const Hero = () => {
   const springY = useSpring(mouseY, { stiffness: 120, damping: 25 });
 
   const { scrollY } = useScroll();
-  const videoScale = useTransform(scrollY, [0, 800], [1, 1.15]);
   const contentOpacity = useTransform(scrollY, [0, 400], [1, 0]);
   const contentY = useTransform(scrollY, [0, 400], [0, -50]);
-
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.play().catch(error => {
-        console.warn("Video playback restricted:", error);
-      });
-    }
-  }, []);
 
   return (
     <section
@@ -43,26 +32,7 @@ const Hero = () => {
       onMouseMove={handleMouseMove}
       className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-slate-950"
     >
-      {/* Background Video - Pure Depth */}
-      <motion.div
-        style={{ scale: videoScale }}
-        className="absolute inset-0 w-full h-full z-0"
-      >
-        <video
-          ref={videoRef}
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full h-full object-cover z-0"
-        >
-          <source
-            src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260314_131748_f2ca2a28-fed7-44c8-b9a9-bd9acdd5ec31.mp4"
-            type="video/mp4"
-          />
-        </video>
-        {/* No overlays here as per prompt instructions "The video provides all visual depth" */}
-      </motion.div>
+      {/* 3D Character Area - Background is handled by GlobalCanvas */}
 
       {/* Hero Content - Immersive 3D Motion */}
       <motion.div
@@ -104,9 +74,9 @@ const Hero = () => {
           <Magnetic>
             <motion.a
               href="#projects"
-              whileHover={{ scale: 1.05, boxShadow: "0 0 40px rgba(255, 255, 255, 0.15)" }}
+              whileHover={{ scale: 1.05, boxShadow: "0 0 40px rgba(0, 255, 255, 0.3)" }}
               whileTap={{ scale: 0.95 }}
-              className="liquid-glass rounded-full px-16 py-6 text-lg text-white font-black cursor-pointer transition-all duration-500 inline-block border border-white/10"
+              className="liquid-glass rounded-full px-16 py-6 text-lg text-white font-black cursor-pointer transition-all duration-500 inline-block border border-cyan-400/30"
             >
               {t('hero.ctaWork')}
             </motion.a>
@@ -124,7 +94,7 @@ const Hero = () => {
         <motion.div
           animate={{ y: [0, 12, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          className="w-[1px] h-24 bg-gradient-to-b from-white/60 to-transparent"
+          className="w-[1px] h-24 bg-gradient-to-b from-cyan-400/60 to-transparent"
         />
       </motion.div>
     </section>
