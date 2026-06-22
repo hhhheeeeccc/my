@@ -9,8 +9,10 @@ const GlobalCanvas = () => (
       camera={{ position: [0, 0, 5], fov: 75 }}
       gl={{
         antialias: true,
-        alpha: true, // Crucial for showing video behind 3D particles
-        powerPreference: "high-performance"
+        alpha: true,
+        powerPreference: "high-performance",
+        toneMapping: 6, // ACESFilmicToneMapping
+        toneMappingExposure: 1.2,
       }}
     >
       <Experience3D />
