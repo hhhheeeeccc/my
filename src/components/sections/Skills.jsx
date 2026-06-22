@@ -43,7 +43,7 @@ const Skills = () => {
   ].map(s => ({ ...s, name: t(`skills.items.${s.key}.name`), description: t(`skills.items.${s.key}.desc`) }));
 
   return (
-    <section id="skills" className="py-40 bg-white dark:bg-slate-950 transition-colors duration-500 relative">
+    <section id="skills" className="py-40 bg-white dark:bg-transparent transition-colors duration-500 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeader subtitle={t('skills.subtitle')} title={t('skills.title')} intro={t('skills.intro')} />
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">

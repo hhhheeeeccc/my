@@ -16,7 +16,7 @@ const Contact = () => {
   const { container, item: iv } = SECTION_ANIMATION_VARIANTS;
 
   return (
-    <section id="contact" className="py-40 bg-white dark:bg-slate-950 transition-colors duration-500 relative overflow-hidden">
+    <section id="contact" className="py-40 bg-white dark:bg-transparent transition-colors duration-500 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <SectionHeader subtitle={t('contact.subtitle')} title={t('contact.title')} intro={t('contact.intro', "I'm always open to discussing new projects, creative ideas, or opportunities to be part of your visions.")} />
         <div className="grid md:grid-cols-5 gap-20">

@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Float, MeshDistortMaterial, Text, Stars } from '@react-three/drei';
 import { useScroll, useVelocity, useSpring } from 'framer-motion';
-import { EffectComposer, Bloom, ChromaticAberration, Vignette } from '@react-three/postprocessing';
+import { EffectComposer, Bloom, ChromaticAberration } from '@react-three/postprocessing';
 import { BlendFunction } from 'postprocessing';
 import * as THREE from 'three';
 import { createFog } from '../../utils/three-utils';
@@ -432,24 +432,23 @@ const Experience3D = () => {
       {/* 3D Cyberpunk Character - Scroll Animated */}
       <CyberCharacter scrollProgress={scrollProgress} />
 
-      {/* Post Processing */}
+      {/* Post Processing - no Vignette to keep canvas transparent */}
       <EffectComposer>
         <Bloom
-          intensity={focus.active ? 2 : 1.2}
-          luminanceThreshold={0.15}
+          intensity={focus.active ? 1.8 : 1.0}
+          luminanceThreshold={0.3}
           luminanceSmoothing={0.9}
           mipmapBlur
         />
         <ChromaticAberration
           blendFunction={BlendFunction.NORMAL}
           offset={new THREE.Vector2(
-            focus.active ? 0.001 : 0.0003,
-            focus.active ? 0.001 : 0.0003
+            focus.active ? 0.0008 : 0.0002,
+            focus.active ? 0.0008 : 0.0002
           )}
           radialModulation={true}
           modulationOffset={0.5}
         />
-        <Vignette offset={0.3} darkness={focus.active ? 0.8 : 0.5} blendFunction={BlendFunction.NORMAL} />
       </EffectComposer>
     </>
   );

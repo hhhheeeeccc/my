@@ -10,7 +10,7 @@ const Footer = () => {
   const links = useMemo(() => NAV_LINKS.map(link => ({ ...link, label: t(link.labelKey) })), [t]);
 
   return (
-    <footer className="py-20 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-900 transition-colors duration-500 overflow-hidden relative">
+    <footer className="py-20 bg-white dark:bg-transparent border-t border-slate-100 dark:border-slate-900 transition-colors duration-500 overflow-hidden relative">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-px bg-gradient-to-r from-transparent via-blue-600/30 to-transparent" />
       <div className="max-w-7xl mx-auto px-4 text-center">
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}>

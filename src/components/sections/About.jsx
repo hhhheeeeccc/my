@@ -9,7 +9,7 @@ const About = () => {
   const { t } = useTranslation();
   const interaction = useSectionInteraction();
   return (
-    <section id="about" className="py-40 bg-slate-50 dark:bg-slate-900/20 transition-colors duration-500 relative overflow-hidden">
+    <section id="about" className="py-40 bg-slate-50 dark:bg-transparent transition-colors duration-500 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-20 items-center">
           <motion.div initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}>
