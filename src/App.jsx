@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion, useScroll, useSpring } from 'framer-motion';
+import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
 import { ReactLenis } from 'lenis/react';
 
 // Layout Components
@@ -21,23 +21,21 @@ import AdminToggle from './components/admin/AdminToggle';
 
 // Common Components
 import CustomCursor from './components/common/CustomCursor';
-import StoryBlobs from './components/common/StoryBlobs';
+import Preloader from './components/common/Preloader';
 import GlobalCanvas from './components/common/GlobalCanvas';
 
 function App() {
   const { i18n } = useTranslation();
   const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
   const isAr = i18n.language?.startsWith('ar');
 
   const { scrollYProgress } = useScroll();
-
   const smoothProgress = useSpring(scrollYProgress, {
     stiffness: 100,
     damping: 30,
     restDelta: 0.001
   });
-
-  const scaleX = smoothProgress;
 
   useEffect(() => {
     const currentIsAr = i18n.language?.startsWith('ar');
@@ -45,31 +43,39 @@ function App() {
     document.documentElement.lang = currentIsAr ? 'ar' : 'en';
   }, [i18n.language]);
 
+  const handlePreloaderComplete = useCallback(() => {
+    setIsLoaded(true);
+  }, []);
+
   return (
     <ReactLenis root>
       <div className="min-h-screen bg-slate-950 transition-colors duration-500 overflow-x-hidden relative">
         <div className="noise-overlay" aria-hidden="true" />
-        <CustomCursor />
-        {/* <StoryBlobs /> */}
 
+        {/* Preloader */}
+        {!isLoaded && <Preloader onComplete={handlePreloaderComplete} />}
+
+        <CustomCursor />
         <GlobalCanvas />
 
+        {/* Scroll progress bar */}
         <motion.div
-          className="fixed top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 z-[150] shadow-[0_0_15px_rgba(59,130,246,0.5)]"
+          className="fixed top-0 left-0 right-0 h-[2px] z-[150]"
           style={{
-            scaleX,
-            transformOrigin: isAr ? "right" : "left"
+            scaleX: smoothProgress,
+            transformOrigin: isAr ? "right" : "left",
+            background: 'linear-gradient(90deg, #06b6d4, #8b5cf6, #06b6d4)',
           }}
         />
 
         <Navbar isAdminOpen={isAdminOpen} />
 
-        <main className="relative z-10">
+        <main className={`relative z-10 transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
           <Hero />
-          <SectionReveal><About /></SectionReveal>
-          <SectionReveal><Skills /></SectionReveal>
+          <SectionReveal variant="wipe"><About /></SectionReveal>
+          <SectionReveal variant="scaleReveal"><Skills /></SectionReveal>
           <SectionReveal><Projects /></SectionReveal>
-          <SectionReveal><Contact /></SectionReveal>
+          <SectionReveal variant="slideIn"><Contact /></SectionReveal>
         </main>
 
         <Footer />

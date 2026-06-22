@@ -8,17 +8,37 @@ import SectionHeader from '../layout/SectionHeader';
 const SkillCard = ({ skill, idx }) => (
   <motion.div
     variants={{
-      hidden: { opacity: 0, y: 30 },
-      visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: idx * 0.05 } }
+      hidden: { opacity: 0, y: 60, scale: 0.95 },
+      visible: {
+        opacity: 1, y: 0, scale: 1,
+        transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: idx * 0.08 }
+      }
     }}
-    className="group relative p-10 rounded-[2.5rem] bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800 hover:border-blue-500/50 transition-all duration-500 hover:shadow-2xl hover:shadow-blue-500/10 overflow-hidden"
+    whileHover={{ y: -8, scale: 1.02 }}
+    className="group relative p-8 md:p-10 rounded-2xl bg-slate-900/40 border border-slate-800/40 backdrop-blur-sm hover:border-cyan-500/30 transition-all duration-500 overflow-hidden"
   >
+    {/* Hover gradient glow */}
+    <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 to-blue-500/0 group-hover:from-cyan-500/5 group-hover:to-blue-500/5 transition-all duration-700" />
+
     <div className="relative z-10">
-      <div className="mb-8 p-4 bg-white dark:bg-slate-950 rounded-2xl w-fit shadow-lg"><TechIcons name={skill.techIcon} className="w-10 h-10" /></div>
-      <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-4">{skill.name}</h3>
-      <p className="text-slate-600 dark:text-slate-400 font-medium leading-relaxed">{skill.description}</p>
+      {/* Icon */}
+      <div className="mb-8 p-4 bg-slate-800/80 rounded-2xl w-fit group-hover:bg-cyan-500/10 group-hover:scale-110 transition-all duration-500">
+        <TechIcons name={skill.techIcon} className="w-8 h-8 text-cyan-400" />
+      </div>
+
+      {/* Title */}
+      <h3 className="text-xl md:text-2xl font-black text-white mb-3 group-hover:text-cyan-400 transition-colors duration-500">
+        {skill.name}
+      </h3>
+
+      {/* Description */}
+      <p className="text-slate-500 font-medium leading-relaxed text-sm">
+        {skill.description}
+      </p>
     </div>
-    <div className="absolute bottom-0 left-0 w-full h-1.5 bg-blue-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
+
+    {/* Bottom accent line */}
+    <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-cyan-500 to-blue-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
   </motion.div>
 );
 
@@ -44,11 +64,21 @@ const Skills = () => {
 
   return (
     <section id="skills" className="py-40 bg-white dark:bg-transparent transition-colors duration-500 relative">
+      {/* Section number */}
+      <div className="absolute top-20 right-8 md:right-12 text-[8rem] font-black text-white/[0.02] leading-none select-none pointer-events-none">
+        02
+      </div>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SectionHeader subtitle={t('skills.subtitle')} title={t('skills.title')} intro={t('skills.intro')} />
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {skillList.map((s, i) => <SkillCard key={i} skill={s} idx={i} />)}
-          </motion.div>
+        <SectionHeader subtitle={t('skills.subtitle')} title={t('skills.title')} intro={t('skills.intro')} />
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          className="grid md:grid-cols-2 lg:grid-cols-3 gap-5"
+        >
+          {skillList.map((s, i) => <SkillCard key={i} skill={s} idx={i} />)}
+        </motion.div>
       </div>
     </section>
   );
