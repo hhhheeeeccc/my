@@ -329,9 +329,50 @@ const Experience3D = () => {
   }, []);
 
   useFrame(() => {
-    camera.position.z = THREE.MathUtils.lerp(camera.position.z, focus.pulse ? 3 : (focus.active ? 4 : 5), 0.05);
-    camera.rotation.x = THREE.MathUtils.lerp(camera.rotation.x, focus.active ? -0.1 : 0, 0.05);
-    camera.fov = THREE.MathUtils.lerp(camera.fov, 75 + velFactor.get() * 20 + (focus.pulse ? 25 : 0), 0.1);
+    const sp = scrollYProgress.get();
+
+    // === CINEMATIC CAMERA ===
+    let targetZ, targetY, targetRotX, targetFov;
+
+    if (sp < 0.2) {
+      // HERO: Wide cinematic shot
+      const t = sp / 0.2;
+      targetZ = 6 - t * 1;
+      targetY = 0.5 + t * 0.3;
+      targetRotX = -0.05 - t * 0.05;
+      targetFov = 72 + t * 3;
+    } else if (sp < 0.45) {
+      // ABOUT: Push in closer, slight pan left
+      const t = (sp - 0.2) / 0.25;
+      targetZ = 5 - t * 1;
+      targetY = 0.8 + Math.sin(t * Math.PI) * 0.5;
+      targetRotX = -0.1 + Math.sin(t * Math.PI) * 0.05;
+      targetFov = 75 + Math.sin(t * Math.PI) * 5;
+    } else if (sp < 0.7) {
+      // PROJECTS: Close-up, dramatic angle
+      const t = (sp - 0.45) / 0.25;
+      targetZ = 4 - t * 0.5 + Math.sin(t * Math.PI) * 0.3;
+      targetY = 1.0 - t * 0.3;
+      targetRotX = -0.05 - t * 0.1;
+      targetFov = 78 + Math.sin(t * Math.PI) * 8;
+    } else {
+      // CONTACT/FOOTER: Pull back wide
+      const t = (sp - 0.7) / 0.3;
+      targetZ = 4.5 + t * 1.5;
+      targetY = 0.5 - t * 0.5;
+      targetRotX = -0.15 + t * 0.15;
+      targetFov = 76 - t * 4;
+    }
+
+    // Velocity shake
+    const vel = velFactor.get();
+    const velShake = vel * 0.15;
+
+    camera.position.z = THREE.MathUtils.lerp(camera.position.z, (focus.pulse ? 3 : (focus.active ? targetZ - 0.5 : targetZ)) + velShake, 0.03);
+    camera.position.y = THREE.MathUtils.lerp(camera.position.y, targetY, 0.03);
+    camera.rotation.x = THREE.MathUtils.lerp(camera.rotation.x, targetRotX, 0.03);
+    camera.rotation.y = THREE.MathUtils.lerp(camera.rotation.y, sp < 0.5 ? -0.05 : 0.05, 0.02);
+    camera.fov = THREE.MathUtils.lerp(camera.fov, targetFov + vel * 15 + (focus.pulse ? 25 : 0), 0.08);
     camera.updateProjectionMatrix();
   });
 
@@ -384,6 +425,9 @@ const Experience3D = () => {
 
       {/* Light Beams */}
       <LightBeams focusMode={focus.active} />
+
+      {/* Character area light */}
+      <pointLight args={['#00ffff', 0.8, 8]} position={[1.5, 2, 1]} distance={10} />
 
       {/* 3D Cyberpunk Character - Scroll Animated */}
       <CyberCharacter scrollProgress={scrollProgress} />
