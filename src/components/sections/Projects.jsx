@@ -11,8 +11,7 @@ const Projects = () => {
   const { t } = useTranslation();
   const sectionRef = useRef(null);
   const headerRef = useRef(null);
-  const horizontalRef = useRef(null);
-  const trackRef = useRef(null);
+  const projectRefs = useRef([]);
 
   const projects = useMemo(() => [1, 2, 3].map((i) => ({
     title: t(`projects.project${i}.title`),
@@ -27,9 +26,11 @@ const Projects = () => {
       i === 1
         ? 'from-blue-600 via-indigo-600 to-violet-600'
         : i === 2
-          ? 'from-cyan-500 via-blue-500 to-indigo-500'
-          : 'from-violet-600 via-purple-600 to-blue-600',
-    accentHex: i === 1 ? '#818cf8' : i === 2 ? '#22d3ee' : '#a78bfa',
+          ? 'from-cyan-500 via-teal-500 to-emerald-500'
+          : 'from-violet-600 via-purple-600 to-fuchsia-500',
+    accentHex: i === 1 ? '#818cf8' : i === 2 ? '#2dd4bf' : '#c084fc',
+    year: '2024',
+    category: i === 1 ? 'WEB / ENTERPRISE' : i === 2 ? 'DESKTOP / NETWORKING' : 'DESKTOP / PERFORMANCE',
   })), [t]);
 
   useEffect(() => {
@@ -50,41 +51,89 @@ const Projects = () => {
         });
       }
 
-      // ── HORIZONTAL SCROLL (ActiveTheory style) ──
-      if (!horizontalRef.current || !trackRef.current) return;
+      // ── Per-project parallax scroll (ActiveTheory style) ──
+      projectRefs.current.forEach((panel, i) => {
+        if (!panel) return;
 
-      const track = trackRef.current;
-      const totalScroll = track.scrollWidth - window.innerWidth;
+        const visual = panel.querySelector('.at-visual');
+        const titleEl = panel.querySelector('.at-title');
+        const descEl = panel.querySelector('.at-desc');
+        const metaEl = panel.querySelector('.at-meta');
+        const tagsEl = panel.querySelector('.at-tags');
+        const linksEl = panel.querySelector('.at-links');
+        const indexEl = panel.querySelector('.at-index');
 
-      // Animate each project card individually for parallax
-      const cards = track.querySelectorAll('.h-project-card');
-
-      gsap.to(track, {
-        x: -totalScroll,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: horizontalRef.current,
-          start: 'top top',
-          end: () => `+=${totalScroll}`,
-          pin: true,
-          scrub: 0.5,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-          onUpdate: (self) => {
-            // Per-card parallax: inner elements move at different speeds
-            cards.forEach((card, i) => {
-              const visual = card.querySelector('.h-visual');
-              const textContent = card.querySelector('.h-text');
-              if (visual) {
-                const direction = i % 2 === 0 ? -1 : 1;
-                gsap.set(visual, { y: self.progress * 60 * direction });
-              }
-              if (textContent) {
-                gsap.set(textContent, { y: -self.progress * 30 });
-              }
-            });
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: panel,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 0.4,
           },
-        },
+        });
+
+        // Visual: parallax — moves slower (enters from below)
+        if (visual) {
+          tl.fromTo(visual,
+            { y: 120, scale: 1.08 },
+            { y: -80, scale: 1.0, ease: 'none' },
+            0
+          );
+        }
+
+        // Index number: slow parallax
+        if (indexEl) {
+          tl.fromTo(indexEl,
+            { y: 60, opacity: 0 },
+            { y: -40, opacity: 1, ease: 'none' },
+            0
+          );
+        }
+
+        // Title: slides up and fades in
+        if (titleEl) {
+          tl.fromTo(titleEl,
+            { y: 80, opacity: 0 },
+            { y: -30, opacity: 1, ease: 'none' },
+            0.1
+          );
+        }
+
+        // Meta (year/category): slides up
+        if (metaEl) {
+          tl.fromTo(metaEl,
+            { y: 50, opacity: 0 },
+            { y: -20, opacity: 1, ease: 'none' },
+            0.15
+          );
+        }
+
+        // Tags: fade in
+        if (tagsEl) {
+          tl.fromTo(tagsEl,
+            { y: 40, opacity: 0 },
+            { y: -15, opacity: 1, ease: 'none' },
+            0.2
+          );
+        }
+
+        // Description: slides up
+        if (descEl) {
+          tl.fromTo(descEl,
+            { y: 40, opacity: 0 },
+            { y: -15, opacity: 1, ease: 'none' },
+            0.25
+          );
+        }
+
+        // Links: fade in last
+        if (linksEl) {
+          tl.fromTo(linksEl,
+            { y: 30, opacity: 0 },
+            { y: -10, opacity: 1, ease: 'none' },
+            0.3
+          );
+        }
       });
 
     }, sectionRef);
@@ -95,17 +144,9 @@ const Projects = () => {
   const padIndex = (n) => String(n + 1).padStart(2, '0');
 
   return (
-    <section ref={sectionRef} id="projects" className="relative bg-transparent overflow-hidden">
-      {/* Background number */}
-      <div
-        className="absolute top-16 left-8 md:left-16 text-[10rem] md:text-[14rem] font-black text-white/[0.015] leading-none select-none pointer-events-none"
-        style={{ fontFamily: 'var(--font-display)' }}
-      >
-        03
-      </div>
-
+    <section ref={sectionRef} id="projects" className="relative bg-transparent">
       {/* ── HEADER ── */}
-      <div className="max-w-7xl mx-auto px-4 pt-48 pb-28 relative z-10">
+      <div className="max-w-7xl mx-auto px-6 pt-48 pb-32 relative z-10">
         <div ref={headerRef} className="flex flex-col items-center text-center">
           <div data-gsap-reveal className="flex items-center gap-4 mb-8">
             <div className="w-12 h-[2px] bg-gradient-to-r from-transparent to-blue-500/60" />
@@ -116,42 +157,57 @@ const Projects = () => {
           </div>
           <div data-gsap-reveal className="overflow-hidden">
             <h2
-              className="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tight leading-[0.9]"
+              className="text-5xl md:text-7xl lg:text-[8rem] font-black text-white tracking-tight leading-[0.85]"
               style={{ fontFamily: 'var(--font-display)' }}
             >
               {t('projects.title')}
             </h2>
           </div>
-          <div data-gsap-reveal className="mt-10 max-w-3xl">
-            <p className="text-lg md:text-xl text-slate-400 font-medium leading-relaxed">
+          <div data-gsap-reveal className="mt-10 max-w-2xl">
+            <p className="text-lg md:text-xl text-slate-500 font-medium leading-relaxed">
               {t('projects.intro')}
             </p>
           </div>
         </div>
       </div>
 
-      {/* ── HORIZONTAL SCROLL SECTION ── */}
-      <div ref={horizontalRef} className="relative z-10">
+      {/* ── FULL-SCREEN PROJECT SECTIONS (ActiveTheory style) ── */}
+      {projects.map((project, i) => (
         <div
-          ref={trackRef}
-          className="flex h-screen will-change-transform"
-          style={{ width: 'max-content' }}
+          key={i}
+          ref={(el) => (projectRefs.current[i] = el)}
+          className="at-project relative min-h-screen flex items-center justify-center overflow-hidden"
+          style={{ paddingTop: '80px', paddingBottom: '80px' }}
         >
-          {projects.map((project, i) => (
+          {/* Full-width visual background */}
+          <div
+            className="at-visual absolute inset-0 opacity-30 pointer-events-none"
+          >
+            <div className={`absolute inset-0 bg-gradient-to-br ${project.iconColor}`} />
             <div
-              key={i}
-              className="h-project-card relative w-screen h-screen flex-shrink-0 flex items-center justify-center px-8 md:px-16 lg:px-24"
-            >
-              <div className="w-full max-w-[1200px] flex flex-col lg:flex-row items-center gap-10 lg:gap-20">
-                {/* Visual block */}
+              className="absolute inset-0 opacity-[0.05]"
+              style={{
+                backgroundImage:
+                  'linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px)',
+                backgroundSize: '60px 60px',
+              }}
+            />
+          </div>
+
+          {/* Content */}
+          <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-16">
+            <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-24">
+              {/* Left: Visual card */}
+              <div className="w-full lg:w-[60%]">
                 <div
-                  className="h-visual w-full lg:w-[58%] aspect-[16/10] rounded-2xl overflow-hidden relative flex-shrink-0 border border-white/[0.06]"
+                  className="at-visual aspect-[16/10] rounded-2xl overflow-hidden relative border border-white/[0.06]"
+                  style={{ boxShadow: `0 40px 120px -30px ${project.accentHex}30` }}
                 >
-                  <div className={`absolute inset-0 bg-gradient-to-br ${project.iconColor} opacity-80`} />
+                  <div className={`absolute inset-0 bg-gradient-to-br ${project.iconColor}`} />
 
                   {/* Grid pattern */}
                   <div
-                    className="absolute inset-0 opacity-[0.06]"
+                    className="absolute inset-0 opacity-[0.08]"
                     style={{
                       backgroundImage:
                         'linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px)',
@@ -159,105 +215,135 @@ const Projects = () => {
                     }}
                   />
 
-                  {/* Large index */}
+                  {/* Giant index */}
                   <span
-                    className="absolute -bottom-4 -left-2 text-[10rem] md:text-[13rem] font-black text-white/[0.05] select-none leading-none pointer-events-none"
+                    className="at-index absolute -bottom-6 -left-4 text-[12rem] md:text-[16rem] font-black text-white/[0.05] select-none leading-none pointer-events-none"
                     style={{ fontFamily: 'var(--font-display)' }}
                   >
                     {padIndex(i)}
                   </span>
 
-                  {/* Decorative circles */}
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250px] h-[250px] md:w-[350px] md:h-[350px] rounded-full border border-white/[0.06]" />
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150px] h-[150px] md:w-[220px] md:h-[220px] rounded-full border border-white/[0.04]" />
+                  {/* Decorative rings */}
+                  <div
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] h-[280px] md:w-[380px] md:h-[380px] rounded-full border border-white/[0.08]"
+                  />
+                  <div
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[180px] h-[180px] md:w-[250px] md:h-[250px] rounded-full border border-white/[0.05]"
+                  />
+                  <div
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80px] h-[80px] md:w-[120px] md:h-[120px] rounded-full border border-white/[0.03]"
+                  />
 
-                  {/* Hover overlay */}
-                  <div className="absolute inset-0 bg-black/0 hover:bg-black/40 transition-all duration-700 flex items-end cursor-pointer">
-                    <div className="p-6 md:p-8 translate-y-6 opacity-0 hover:translate-y-0 hover:opacity-100 transition-all duration-500">
+                  {/* Hover overlay with icons */}
+                  <div className="absolute inset-0 bg-black/0 hover:bg-black/40 transition-all duration-700 flex items-end pointer-events-auto cursor-pointer">
+                    <div className="p-8 translate-y-8 opacity-0 hover:translate-y-0 hover:opacity-100 transition-all duration-500 ease-out">
                       <div className="flex gap-3">
-                        <span className="p-3 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-white">
+                        <span className="p-3.5 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-white">
                           <Github size={18} />
                         </span>
-                        <span className="p-3 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-white">
+                        <span className="p-3.5 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-white">
                           <ExternalLink size={18} />
                         </span>
                       </div>
                     </div>
                   </div>
                 </div>
+              </div>
 
-                {/* Text block */}
-                <div className="h-text w-full lg:w-[42%] flex flex-col">
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-2 mb-6">
-                    {project.tags.slice(0, 4).map((tag, ti) => (
-                      <span
-                        key={ti}
-                        className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] rounded-full bg-white/[0.04] text-slate-400 border border-white/[0.06]"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Index */}
-                  <span
-                    className="text-6xl md:text-7xl font-black mb-4 leading-none pointer-events-none select-none"
-                    style={{
-                      fontFamily: 'var(--font-display)',
-                      color: project.accentHex + '15',
-                    }}
-                  >
-                    {padIndex(i)}
+              {/* Right: Text content */}
+              <div className="w-full lg:w-[40%]">
+                {/* Meta line */}
+                <div className="at-meta flex items-center gap-4 mb-6">
+                  <span className="text-xs font-bold uppercase tracking-[0.25em] text-slate-500">
+                    {project.year}
                   </span>
+                  <span className="w-1 h-1 rounded-full bg-slate-600" />
+                  <span className="text-xs font-bold uppercase tracking-[0.25em]" style={{ color: project.accentHex + 'aa' }}>
+                    {project.category}
+                  </span>
+                </div>
 
-                  {/* Title */}
-                  <h3
-                    className="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-5 leading-[1.1]"
-                    style={{ fontFamily: 'var(--font-display)' }}
+                {/* Index */}
+                <div
+                  className="at-index text-7xl md:text-8xl lg:text-9xl font-black leading-none mb-2 select-none pointer-events-none"
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    color: project.accentHex + '12',
+                  }}
+                >
+                  {padIndex(i)}
+                </div>
+
+                {/* Title */}
+                <h3
+                  className="at-title text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-black text-white mb-6 leading-[1.05]"
+                  style={{ fontFamily: 'var(--font-display)' }}
+                >
+                  {project.title}
+                </h3>
+
+                {/* Tags */}
+                <div className="at-tags flex flex-wrap gap-2 mb-8">
+                  {project.tags.slice(0, 3).map((tag, ti) => (
+                    <span
+                      key={ti}
+                      className="px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] rounded-full border"
+                      style={{
+                        backgroundColor: project.accentHex + '08',
+                        color: project.accentHex + '99',
+                        borderColor: project.accentHex + '15',
+                      }}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Description */}
+                <p className="at-desc text-slate-400 leading-relaxed font-medium text-base md:text-lg mb-10 max-w-md">
+                  {project.description}
+                </p>
+
+                {/* Links */}
+                <div className="at-links flex items-center gap-8">
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    className="group flex items-center gap-3 text-sm text-slate-400 hover:text-white font-medium transition-colors duration-300 cursor-pointer"
                   >
-                    {project.title}
-                  </h3>
-
-                  {/* Description */}
-                  <p className="text-slate-400 leading-relaxed font-medium text-base md:text-lg mb-8 max-w-md">
-                    {project.description}
-                  </p>
-
-                  {/* Links — NO href="#" to prevent scroll break */}
-                  <div className="flex items-center gap-8">
-                    <span
-                      role="button"
-                      tabIndex={0}
-                      onClick={(e) => e.stopPropagation()}
-                      className="flex items-center gap-2.5 text-sm text-slate-400 hover:text-white font-medium transition-colors duration-300 cursor-pointer"
-                    >
-                      <Github size={16} />
-                      {t('projects.sourceCode')}
+                    <span className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:border-white/30 group-hover:bg-white/5 transition-all duration-300">
+                      <Github size={15} />
                     </span>
+                    {t('projects.sourceCode')}
+                  </span>
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    className="group flex items-center gap-3 text-sm font-medium transition-colors duration-300 cursor-pointer"
+                    style={{ color: project.accentHex + 'cc' }}
+                  >
                     <span
-                      role="button"
-                      tabIndex={0}
-                      onClick={(e) => e.stopPropagation()}
-                      className="flex items-center gap-2.5 text-sm font-medium transition-colors duration-300 cursor-pointer"
-                      style={{ color: project.accentHex }}
+                      className="w-10 h-10 rounded-full border flex items-center justify-center transition-all duration-300"
+                      style={{ borderColor: project.accentHex + '25' }}
                     >
-                      <ExternalLink size={16} />
-                      {t('projects.liveDemo')}
+                      <ExternalLink size={15} />
                     </span>
-                  </div>
+                    {t('projects.liveDemo')}
+                  </span>
                 </div>
               </div>
             </div>
-          ))}
+          </div>
 
-          {/* Spacer panel so last card can be centered */}
-          <div className="w-screen h-screen flex-shrink-0" />
+          {/* Separator line between projects */}
+          {i < projects.length - 1 && (
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1px] h-20 bg-gradient-to-b from-transparent via-white/10 to-transparent" />
+          )}
         </div>
-      </div>
+      ))}
 
-      {/* ── View More ── */}
-      <div className="max-w-7xl mx-auto px-4 py-32 flex justify-center relative z-10">
+      {/* ── View All ── */}
+      <div className="max-w-7xl mx-auto px-6 py-40 flex justify-center relative z-10">
         <motion.button
           type="button"
           initial={{ opacity: 0, y: 30 }}
@@ -266,7 +352,7 @@ const Projects = () => {
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           whileHover={{ scale: 1.04, y: -3 }}
           whileTap={{ scale: 0.96 }}
-          className="group inline-flex items-center gap-4 px-14 py-5 rounded-full bg-white/[0.04] text-white text-[13px] font-black tracking-[0.15em] uppercase border border-white/[0.08] hover:border-cyan-500/30 hover:bg-cyan-500/5 transition-all duration-700"
+          className="group inline-flex items-center gap-4 px-16 py-5 rounded-full bg-white/[0.03] text-white text-[13px] font-black tracking-[0.2em] uppercase border border-white/[0.06] hover:border-white/15 hover:bg-white/[0.06] transition-all duration-700"
         >
           <span>{t('projects.viewMore')}</span>
           <ArrowUpRight size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />

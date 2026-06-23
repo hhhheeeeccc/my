@@ -100,8 +100,13 @@ function App() {
 
         <Footer />
 
-        <AdminToggle onClick={() => setIsAdminOpen(true)} />
-        {isAdminOpen && <Dashboard onClose={() => setIsAdminOpen(false)} />}
+        {/* Admin: only via ?admin=1 */}
+        {typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('admin') === '1' && (
+          <>
+            <AdminToggle onClick={() => setIsAdminOpen(true)} />
+            {isAdminOpen && <Dashboard onClose={() => setIsAdminOpen(false)} />}
+          </>
+        )}
       </div>
     </ReactLenis>
   );
