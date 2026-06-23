@@ -10,6 +10,14 @@ const Preloader = ({ onComplete }) => {
   const progressBarRef = useRef(null);
   const labelRef = useRef(null);
 
+  // Safety: force complete after 4s even if GSAP fails
+  useEffect(() => {
+    const safety = setTimeout(() => {
+      if (phase !== 'done') { setPhase('done'); onComplete?.(); }
+    }, 4000);
+    return () => clearTimeout(safety);
+  }, [phase, onComplete]);
+
   // Animated counter using GSAP
   useEffect(() => {
     if (phase !== 'counting') return;

@@ -83,9 +83,9 @@ function App() {
           }}
         />
 
-        <Navbar />
+        <Navbar isAdminOpen={false} />
 
-        <main className={`relative z-10 transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+        <main className="relative z-10" style={{ opacity: isLoaded ? 1 : 0, transition: 'opacity 1s' }}>
           <Hero />
           <About />
           <Skills />
