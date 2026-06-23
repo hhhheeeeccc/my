@@ -1,3 +1,4 @@
+import { getSecureRandom } from '../../utils/three-utils';
 import { useRef, useMemo } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls, Stars, Float, Text, MeshDistortMaterial } from '@react-three/drei'
@@ -118,14 +119,14 @@ function CyberBuilding({ position, height, color }) {
           <meshStandardMaterial
             color={color}
             emissive={color}
-            emissiveIntensity={Math.random() > 0.3 ? 1.5 : 0.1}
+            emissiveIntensity={getSecureRandom() > 0.3 ? 1.5 : 0.1}
             transparent
-            opacity={Math.random() > 0.3 ? 0.9 : 0.2}
+            opacity={getSecureRandom() > 0.3 ? 0.9 : 0.2}
           />
         </mesh>
       ))}
 
-      {Math.random() > 0.5 && (
+      {getSecureRandom() > 0.5 && (
         <mesh position={[0, height / 2 + 0.5, 0]}>
           <cylinderGeometry args={[0.02, 0.02, 1, 4]} />
           <meshStandardMaterial color={color} emissive={color} emissiveIntensity={2} />
@@ -148,38 +149,38 @@ function CityCluster() {
 
     for (let i = -8; i <= 8; i += 2) {
       configs.push({
-        position: [i + (Math.random() - 0.5) * 0.5, 0, -8 + (Math.random() - 0.5) * 2],
-        height: 2 + Math.random() * 6,
-        color: colors[Math.floor(Math.random() * colors.length)],
+        position: [i + (getSecureRandom() - 0.5) * 0.5, 0, -8 + (getSecureRandom() - 0.5) * 2],
+        height: 2 + getSecureRandom() * 6,
+        color: colors[Math.floor(getSecureRandom() * colors.length)],
       })
     }
 
     for (let i = -10; i <= 10; i += 1.5) {
       configs.push({
-        position: [i + (Math.random() - 0.5) * 0.5, 0, -15 + (Math.random() - 0.5) * 3],
-        height: 3 + Math.random() * 10,
-        color: colors[Math.floor(Math.random() * colors.length)],
+        position: [i + (getSecureRandom() - 0.5) * 0.5, 0, -15 + (getSecureRandom() - 0.5) * 3],
+        height: 3 + getSecureRandom() * 10,
+        color: colors[Math.floor(getSecureRandom() * colors.length)],
       })
     }
 
     for (let i = -12; i <= 12; i += 2) {
       configs.push({
-        position: [i + (Math.random() - 0.5), 0, -22 + (Math.random() - 0.5) * 4],
-        height: 4 + Math.random() * 12,
-        color: colors[Math.floor(Math.random() * colors.length)],
+        position: [i + (getSecureRandom() - 0.5), 0, -22 + (getSecureRandom() - 0.5) * 4],
+        height: 4 + getSecureRandom() * 12,
+        color: colors[Math.floor(getSecureRandom() * colors.length)],
       })
     }
 
     for (let z = -8; z >= -20; z -= 3) {
       configs.push({
-        position: [-12 + (Math.random() - 0.5) * 2, 0, z],
-        height: 3 + Math.random() * 8,
-        color: colors[Math.floor(Math.random() * colors.length)],
+        position: [-12 + (getSecureRandom() - 0.5) * 2, 0, z],
+        height: 3 + getSecureRandom() * 8,
+        color: colors[Math.floor(getSecureRandom() * colors.length)],
       })
       configs.push({
-        position: [12 + (Math.random() - 0.5) * 2, 0, z],
-        height: 3 + Math.random() * 8,
-        color: colors[Math.floor(Math.random() * colors.length)],
+        position: [12 + (getSecureRandom() - 0.5) * 2, 0, z],
+        height: 3 + getSecureRandom() * 8,
+        color: colors[Math.floor(getSecureRandom() * colors.length)],
       })
     }
 
@@ -206,12 +207,12 @@ function DataRain() {
     for (let i = 0; i < count; i++) {
       temp.push({
         position: new THREE.Vector3(
-          (Math.random() - 0.5) * 50,
-          Math.random() * 30 - 5,
-          (Math.random() - 0.5) * 50
+          (getSecureRandom() - 0.5) * 50,
+          getSecureRandom() * 30 - 5,
+          (getSecureRandom() - 0.5) * 50
         ),
-        speed: 0.5 + Math.random() * 2,
-        color: new THREE.Color(colors[Math.floor(Math.random() * colors.length)]),
+        speed: 0.5 + getSecureRandom() * 2,
+        color: new THREE.Color(colors[Math.floor(getSecureRandom() * colors.length)]),
       })
     }
     return temp
@@ -225,7 +226,7 @@ function DataRain() {
       p.position.y -= p.speed * 0.05
       if (p.position.y < -5) {
         p.position.y = 25
-        p.position.x = (Math.random() - 0.5) * 50
+        p.position.x = (getSecureRandom() - 0.5) * 50
       }
       dummy.position.copy(p.position)
       dummy.scale.setScalar(0.02 + Math.sin(state.clock.elapsedTime * 2 + i) * 0.01)
@@ -342,9 +343,9 @@ function LightBeams() {
     const colors = ['#00ffff', '#ff00ff', '#00ff88', '#ff3366', '#6633ff']
     for (let i = 0; i < 15; i++) {
       configs.push({
-        position: [(Math.random() - 0.5) * 30, 5, -10 + (Math.random() - 0.5) * 20],
-        color: colors[Math.floor(Math.random() * colors.length)],
-        height: 10 + Math.random() * 15,
+        position: [(getSecureRandom() - 0.5) * 30, 5, -10 + (getSecureRandom() - 0.5) * 20],
+        color: colors[Math.floor(getSecureRandom() * colors.length)],
+        height: 10 + getSecureRandom() * 15,
       })
     }
     return configs
@@ -385,11 +386,11 @@ function FlyingLight({ startX, y, z, speed, color, index }) {
 function FlyingVehicles() {
   const paths = useMemo(() => {
     return Array.from({ length: 8 }, (_, i) => ({
-      startX: -20 + Math.random() * 40,
-      y: 5 + Math.random() * 10,
-      z: -5 - Math.random() * 15,
-      speed: 2 + Math.random() * 3,
-      color: ['#00ffff', '#ff00ff', '#ff3366', '#00ff88'][Math.floor(Math.random() * 4)],
+      startX: -20 + getSecureRandom() * 40,
+      y: 5 + getSecureRandom() * 10,
+      z: -5 - getSecureRandom() * 15,
+      speed: 2 + getSecureRandom() * 3,
+      color: ['#00ffff', '#ff00ff', '#ff3366', '#00ff88'][Math.floor(getSecureRandom() * 4)],
     }))
   }, [])
 

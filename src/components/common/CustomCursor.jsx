@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, useSpring, useMotionValue, useTransform, useVelocity, AnimatePresence } from 'framer-motion';
+import gsap from 'gsap';
 
 const CustomCursor = () => {
   const [isHovering, setIsHovering] = useState(false);
@@ -28,7 +29,7 @@ const CustomCursor = () => {
     };
     const onDown = (e) => {
       const id = Date.now(); setRipples(p => [...p, { x: e.clientX, y: e.clientY, id }]);
-      setTimeout(() => setRipples(p => p.filter(r => r.id !== id)), 800);
+      gsap.delayedCall(0.8, () => setRipples(p => p.filter(r => r.id !== id)));
     };
     t.addEventListener('mousemove', onMove);
     t.addEventListener('mouseleave', onLeave);
@@ -39,6 +40,7 @@ const CustomCursor = () => {
       t.removeEventListener('mouseleave', onLeave);
       t.removeEventListener('mouseover', onOver);
       t.removeEventListener('mousedown', onDown);
+      gsap.killDelayedCallsTo(setRipples);
     };
   }, [mx, my, visible]);
 
@@ -48,29 +50,14 @@ const CustomCursor = () => {
   return (
     <AnimatePresence>
       {visible && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="hidden md:block"
-        >
-          {/* Click ripples */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="hidden md:block">
           {ripples.map(r => (
-            <motion.div
-              key={r.id}
-              initial={{ scale: 0, opacity: 0.4 }}
-              animate={{ scale: 3, opacity: 0 }}
-              className="fixed w-6 h-6 rounded-full border pointer-events-none z-[9998]"
-              style={{ left: r.x - 12, top: r.y - 12, borderColor: cursorColor }}
-            />
+            <motion.div key={r.id} initial={{ scale: 0, opacity: 0.4 }} animate={{ scale: 3, opacity: 0 }} className="fixed w-6 h-6 rounded-full border pointer-events-none z-[9998]" style={{ left: r.x - 12, top: r.y - 12, borderColor: cursorColor }} />
           ))}
-
-          {/* Main cursor ring */}
           <motion.div
             className="fixed top-0 left-0 rounded-full pointer-events-none z-[9999] mix-blend-difference"
             style={{
-              width: cursorSize,
-              height: cursorSize,
+              width: cursorSize, height: cursorSize,
               x: useTransform(sx, v => v - cursorSize / 2),
               y: useTransform(sy, v => v - cursorSize / 2),
               scale: isHovering ? 1 : undefined,
@@ -82,8 +69,6 @@ const CustomCursor = () => {
               transition: 'width 0.3s ease, height 0.3s ease, border-color 0.2s',
             }}
           />
-
-          {/* Center dot */}
           <motion.div
             className="fixed top-0 left-0 w-1.5 h-1.5 rounded-full bg-cyan-400 pointer-events-none z-[9999] mix-blend-difference"
             style={{
