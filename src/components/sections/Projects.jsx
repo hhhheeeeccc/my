@@ -108,6 +108,7 @@ const Projects = () => {
   ], [t]);
 
   useEffect(() => {
+    if (!sectionRef.current) return;
     const ctx = gsap.context(() => {
       const headerLines = headerRef.current?.querySelectorAll('[data-gsap-reveal]');
       if (headerLines?.length) {
