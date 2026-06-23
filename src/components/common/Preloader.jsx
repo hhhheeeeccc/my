@@ -7,15 +7,15 @@ const Preloader = ({ onComplete }) => {
   const [show, setShow] = useState(true);
   const progressBarRef = useRef(null);
 
-  // Animated counter using GSAP
   useEffect(() => {
     const obj = { val: 0 };
     const tl = gsap.timeline({
       onComplete: () => {
-        setTimeout(() => {
+        // Use GSAP delayed call for cleaner timing and easier cleanup
+        gsap.delayedCall(0.3, () => {
           setShow(false);
-          setTimeout(() => onComplete?.(), 800);
-        }, 300);
+          gsap.delayedCall(0.8, () => onComplete?.());
+        });
       }
     });
 
@@ -34,16 +34,20 @@ const Preloader = ({ onComplete }) => {
       }, '<');
     }
 
-    return () => tl.kill();
-  }, [onComplete]);
+    // Safety fallback
+    const safetyTimer = setTimeout(() => {
+      if (show) {
+        setShow(false);
+        onComplete?.();
+      }
+    }, 5000);
 
-  // Safety: force complete after 4s
-  useEffect(() => {
-    const safety = setTimeout(() => {
-      if (show) { setShow(false); setTimeout(() => onComplete?.(), 800); }
-    }, 4000);
-    return () => clearTimeout(safety);
-  }, [show, onComplete]);
+    return () => {
+      tl.kill();
+      gsap.killDelayedCallsTo(setShow);
+      clearTimeout(safetyTimer);
+    };
+  }, [onComplete, show]);
 
   return (
     <AnimatePresence>

@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { Github, ExternalLink, ArrowUpRight, Code2, Globe, Monitor } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -12,7 +12,7 @@ const pad = (n) => (n + 1).toString().padStart(2, '0');
 /* ═══════════════════════════════════════════════════════
    PROJECT CARD COMPONENT
    ═══════════════════════════════════════════════════════ */
-const ProjectCard = ({ project, index, total }) => {
+const ProjectCard = ({ project, index }) => {
   const cardRef = useRef(null);
   const stickyRef = useRef(null);
   const titleRef = useRef(null);
@@ -25,10 +25,11 @@ const ProjectCard = ({ project, index, total }) => {
     offset: ['start end', 'end start'],
   });
 
-  // ActiveTheory-style parallax for title and elements
   const y = useTransform(scrollYProgress, [0, 1], [-100, 100]);
   const rotateX = useTransform(scrollYProgress, [0, 1], [5, -5]);
   const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.95, 1, 0.95]);
+  const scannerTop = useTransform(scrollYProgress, [0.3, 0.7], ['-10%', '110%']);
+  const scannerOpacity = useTransform(scrollYProgress, [0.3, 0.4, 0.6, 0.7], [0, 1, 1, 0]);
 
   return (
     <div ref={cardRef} className="project-card relative h-[150vh] w-full">
@@ -36,40 +37,35 @@ const ProjectCard = ({ project, index, total }) => {
 
         {/* Technical Scanner Line */}
         <motion.div
-          style={{
-            top: useTransform(scrollYProgress, [0.3, 0.7], ['-10%', '110%']),
-            opacity: useTransform(scrollYProgress, [0.3, 0.4, 0.6, 0.7], [0, 1, 1, 0])
-          }}
+          style={{ top: scannerTop, opacity: scannerOpacity }}
           className="absolute left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-400/30 to-transparent z-10 pointer-events-none"
         />
 
         {/* ── Visual Container ── */}
         <div className="relative w-full max-w-[1400px] aspect-[16/9] md:aspect-[21/9] group overflow-hidden rounded-[2rem] border border-white/[0.05] bg-slate-900/20 backdrop-blur-xl">
-          {/* Animated Background Mesh */}
           <div className="absolute inset-0 opacity-20 pointer-events-none overflow-hidden">
             <div className={`absolute inset-0 bg-gradient-to-br ${project.iconColor} mix-blend-overlay`} />
             <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20" />
           </div>
 
-          {/* Centered technical icon/symbol */}
           <div className="absolute inset-0 flex items-center justify-center">
             <motion.div
               style={{ rotateX, y, scale }}
               className="relative w-32 h-32 md:w-48 md:h-48 flex items-center justify-center"
             >
-              {/* Outer rotating ring */}
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
                 className="absolute inset-0 border border-dashed border-white/10 rounded-full"
               />
               <div className="relative z-10 p-10 bg-white/5 backdrop-blur-3xl rounded-3xl border border-white/10 shadow-2xl transition-transform duration-700 group-hover:scale-110">
-                {index === 0 ? <Globe size={48} className="text-blue-400" /> : index === 1 ? <Monitor size={48} className="text-cyan-400" /> : <Code2 size={48} className="text-violet-400" />}
+                {project.id === 'p1' && <Globe size={48} className="text-blue-400" />}
+                {project.id === 'p2' && <Monitor size={48} className="text-cyan-400" />}
+                {project.id === 'p3' && <Code2 size={48} className="text-violet-400" />}
               </div>
             </motion.div>
           </div>
 
-          {/* Floating technical ornaments */}
           <div className="absolute inset-0 pointer-events-none opacity-40">
             <div className="absolute top-10 left-10 text-[8px] font-bold text-white/20 tracking-widest uppercase">
               Project_Ref: {project.year} // 00{index + 1}
@@ -79,12 +75,10 @@ const ProjectCard = ({ project, index, total }) => {
             </div>
           </div>
 
-          {/* Project number watermark */}
           <span className="absolute -bottom-6 -right-2 text-[12rem] md:text-[18rem] font-black text-white/[0.025] select-none leading-none pointer-events-none" style={{ fontFamily: 'var(--font-display)' }}>
             {pad(index)}
           </span>
 
-          {/* Hover overlay */}
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-all duration-700 flex items-end cursor-pointer">
             <div className="p-8 md:p-12 translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-out w-full">
               <div className="flex items-center gap-4">
@@ -99,7 +93,6 @@ const ProjectCard = ({ project, index, total }) => {
           </div>
         </div>
 
-        {/* ── Accent line ── */}
         <div
           ref={lineRef}
           className="w-[85vw] max-w-[1400px] h-px my-6 md:my-8"
@@ -109,7 +102,6 @@ const ProjectCard = ({ project, index, total }) => {
           }}
         />
 
-        {/* ── Project Info ── */}
         <div ref={infoRef} className="w-[85vw] max-w-[1400px] flex flex-col md:flex-row items-start md:items-end justify-between gap-4 md:gap-8">
           <div>
             <div className="flex items-center gap-3 mb-3">
@@ -133,9 +125,9 @@ const ProjectCard = ({ project, index, total }) => {
 
           <div className="flex flex-col items-start md:items-end gap-4">
             <div className="flex flex-wrap gap-2">
-              {project.tags.slice(0, 4).map((tag, ti) => (
+              {project.tags.map((tag) => (
                 <span
-                  key={ti}
+                  key={`${project.id}-${tag}`}
                   className="px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.2em] rounded-full border border-white/5 bg-white/[0.03] text-white/40"
                 >
                   {tag}
@@ -155,10 +147,9 @@ const ProjectCard = ({ project, index, total }) => {
           </div>
         </div>
 
-        {/* ── Description ── */}
         <p
           ref={overlayTextRef}
-          className="w-[85vw] max-w-[1400px] mt-6 text-sm md:text-base text-white/25 font-medium leading-relaxed max-w-2xl"
+          className="w-[85vw] max-w-2xl mt-6 text-sm md:text-base text-white/25 font-medium leading-relaxed"
         >
           {project.description}
         </p>
@@ -174,29 +165,47 @@ const Projects = () => {
   const sectionRef = useRef(null);
   const headerRef = useRef(null);
 
-  const projects = useMemo(() => [1, 2, 3].map((i) => ({
-    title: t(`projects.project${i}.title`),
-    description: t(`projects.project${i}.description`),
-    tags:
-      i === 1
-        ? [t('projects.tags.react'), t('projects.tags.ts'), t('projects.tags.go'), t('projects.tags.tailwind'), t('projects.tags.arch')]
-        : i === 2
-          ? [t('projects.tags.electron'), t('projects.tags.js'), t('projects.tags.node'), t('projects.tags.networking'), t('projects.tags.proxy')]
-          : [t('projects.tags.react'), t('projects.tags.electron'), t('projects.tags.node'), t('projects.tags.uiohook'), t('projects.tags.perf')],
-    iconColor:
-      i === 1 ? 'from-blue-600 via-indigo-600 to-violet-600'
-      : i === 2 ? 'from-cyan-500 via-teal-500 to-emerald-500'
-      : 'from-violet-600 via-purple-600 to-fuchsia-500',
-    accentHex: i === 1 ? '#818cf8' : i === 2 ? '#2dd4bf' : '#c084fc',
-    year: '2024',
-    category: i === 1 ? 'WEB / ENTERPRISE' : i === 2 ? 'DESKTOP / NETWORKING' : 'DESKTOP / PERFORMANCE',
-    viewSourceLabel: t('projects.sourceCode'),
-    viewLiveLabel: t('projects.liveDemo'),
-  })), [t]);
+  const projects = useMemo(() => [
+    {
+      id: 'p1',
+      title: t('projects.project1.title'),
+      description: t('projects.project1.description'),
+      tags: [t('projects.tags.react'), t('projects.tags.ts'), t('projects.tags.go'), t('projects.tags.tailwind'), t('projects.tags.arch')],
+      iconColor: 'from-blue-600 via-indigo-600 to-violet-600',
+      accentHex: '#818cf8',
+      year: '2024',
+      category: 'WEB / ENTERPRISE',
+      viewSourceLabel: t('projects.sourceCode'),
+      viewLiveLabel: t('projects.liveDemo'),
+    },
+    {
+      id: 'p2',
+      title: t('projects.project2.title'),
+      description: t('projects.project2.description'),
+      tags: [t('projects.tags.electron'), t('projects.tags.js'), t('projects.tags.node'), t('projects.tags.networking'), t('projects.tags.proxy')],
+      iconColor: 'from-cyan-500 via-teal-500 to-emerald-500',
+      accentHex: '#2dd4bf',
+      year: '2024',
+      category: 'DESKTOP / NETWORKING',
+      viewSourceLabel: t('projects.sourceCode'),
+      viewLiveLabel: t('projects.liveDemo'),
+    },
+    {
+      id: 'p3',
+      title: t('projects.project3.title'),
+      description: t('projects.project3.description'),
+      tags: [t('projects.tags.react'), t('projects.tags.electron'), t('projects.tags.node'), t('projects.tags.uiohook'), t('projects.tags.perf')],
+      iconColor: 'from-violet-600 via-purple-600 to-fuchsia-500',
+      accentHex: '#c084fc',
+      year: '2024',
+      category: 'DESKTOP / PERFORMANCE',
+      viewSourceLabel: t('projects.sourceCode'),
+      viewLiveLabel: t('projects.liveDemo'),
+    }
+  ], [t]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Stagger header reveal
       const headerLines = headerRef.current?.querySelectorAll('[data-gsap-reveal]');
       if (headerLines?.length) {
         gsap.set(headerLines, { y: 100, opacity: 0 });
@@ -212,7 +221,6 @@ const Projects = () => {
         });
       }
 
-      // ── ActiveTheory-style: overlapping clip-path transitions ──
       const cards = sectionRef.current?.querySelectorAll('.project-card');
       if (!cards?.length) return;
 
@@ -270,7 +278,7 @@ const Projects = () => {
       </div>
 
       {projects.map((project, i) => (
-        <ProjectCard key={i} project={project} index={i} total={projects.length} />
+        <ProjectCard key={project.id} project={project} index={i} />
       ))}
 
       <div className="relative h-64">
