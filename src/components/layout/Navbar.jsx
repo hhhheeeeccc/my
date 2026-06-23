@@ -42,9 +42,9 @@ const Navbar = ({ isAdminOpen }) => {
         >
           {/* Background blur that appears on scroll */}
           <motion.div
-            className="absolute inset-0 bg-slate-950/0 backdrop-blur-none border-b border-transparent transition-all duration-700"
+            className="absolute inset-0 bg-black/0 backdrop-blur-none border-b border-transparent transition-all duration-700"
             animate={{
-              backgroundColor: scrolled ? 'rgba(2, 6, 23, 0.8)' : 'rgba(2, 6, 23, 0)',
+              backgroundColor: scrolled ? 'rgba(0, 0, 0, 0.85)' : 'rgba(0, 0, 0, 0)',
               backdropFilter: scrolled ? 'blur(20px)' : 'blur(0px)',
               borderBottomColor: scrolled ? 'rgba(255,255,255,0.04)' : 'transparent',
             }}
@@ -147,7 +147,7 @@ const Navbar = ({ isAdminOpen }) => {
                 animate={{ opacity: 1, y: 0, height: 'auto' }}
                 exit={{ opacity: 0, y: -20, height: 0 }}
                 transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                className="md:hidden relative overflow-hidden border-t border-white/[0.04] bg-slate-950/90 backdrop-blur-xl"
+                className="md:hidden relative overflow-hidden border-t border-white/[0.04] bg-black/90 backdrop-blur-xl"
               >
                 <div className="flex flex-col items-center gap-2 py-6 px-8">
                   {links.map((link, idx) => (
