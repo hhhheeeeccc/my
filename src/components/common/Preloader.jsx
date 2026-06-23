@@ -11,11 +11,7 @@ const Preloader = ({ onComplete }) => {
     const obj = { val: 0 };
     const tl = gsap.timeline({
       onComplete: () => {
-        // Use GSAP delayed call for cleaner timing and easier cleanup
-        gsap.delayedCall(0.3, () => {
-          setShow(false);
-          gsap.delayedCall(0.8, () => onComplete?.());
-        });
+        onComplete?.();
       }
     });
 
@@ -34,8 +30,13 @@ const Preloader = ({ onComplete }) => {
       }, '<');
     }
 
-    // Safety fallback
-    const safetyTimer = setTimeout(() => {
+    // Phase 2: Hide Preloader after completion
+    tl.to({}, { duration: 0.3 }); // Small gap
+    tl.call(() => setShow(false));
+    tl.to({}, { duration: 0.8 }); // Wait for exit animation
+
+    // Safety fallback logic
+    const safety = setTimeout(() => {
       if (show) {
         setShow(false);
         onComplete?.();
@@ -44,8 +45,7 @@ const Preloader = ({ onComplete }) => {
 
     return () => {
       tl.kill();
-      gsap.killDelayedCallsTo(setShow);
-      clearTimeout(safetyTimer);
+      clearTimeout(safety);
     };
   }, [onComplete, show]);
 
@@ -57,11 +57,10 @@ const Preloader = ({ onComplete }) => {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.6, ease: 'easeInOut' }}
         >
-          {/* Animated horizontal lines */}
           <div className="absolute inset-0 overflow-hidden opacity-15 pointer-events-none">
             {Array.from({ length: 30 }).map((_, i) => (
               <motion.div
-                key={i}
+                key={`line-${i}`}
                 className="absolute h-px bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent"
                 style={{ left: 0, right: 0, top: `${i * 3.33}%` }}
                 initial={{ scaleX: 0 }}
@@ -71,7 +70,6 @@ const Preloader = ({ onComplete }) => {
             ))}
           </div>
 
-          {/* Vertical scan line */}
           <motion.div
             className="absolute w-px h-full bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent pointer-events-none"
             initial={{ x: '-100%' }}
@@ -80,7 +78,6 @@ const Preloader = ({ onComplete }) => {
           />
 
           <div className="relative flex flex-col items-center">
-            {/* Counter */}
             <div className="overflow-hidden">
               <motion.span
                 key={count}
@@ -94,7 +91,6 @@ const Preloader = ({ onComplete }) => {
               </motion.span>
             </div>
 
-            {/* Progress bar */}
             <div className="mt-10 w-48 h-[1px] bg-white/[0.06] rounded-full overflow-hidden">
               <div
                 ref={progressBarRef}
@@ -103,7 +99,6 @@ const Preloader = ({ onComplete }) => {
               />
             </div>
 
-            {/* Label */}
             <motion.p
               className="mt-6 text-[11px] text-slate-600 font-bold tracking-[0.4em] uppercase"
               initial={{ opacity: 0, y: 10 }}
@@ -114,10 +109,7 @@ const Preloader = ({ onComplete }) => {
             </motion.p>
           </div>
 
-          {/* Corner brackets */}
-          {[
-            'top-6 left-6', 'top-6 right-6', 'bottom-6 left-6', 'bottom-6 right-6'
-          ].map((pos, i) => (
+          {['top-6 left-6', 'top-6 right-6', 'bottom-6 left-6', 'bottom-6 right-6'].map((pos, i) => (
             <motion.div
               key={pos}
               className={`absolute ${pos} w-4 h-4 opacity-0`}
