@@ -1,9 +1,9 @@
 import React, { useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
 import TechIcons from '../../icons/TechIcons';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import SplitText from '../common/SplitText';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -15,47 +15,26 @@ const Skills = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Header reveal
       const headerLines = headerRef.current?.querySelectorAll('[data-gsap-reveal]');
       if (headerLines?.length) {
         gsap.set(headerLines, { y: 60, opacity: 0 });
         gsap.to(headerLines, {
           y: 0, opacity: 1,
-          duration: 1,
-          stagger: 0.12,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: headerRef.current,
-            start: 'top 80%',
-            end: 'top 40%',
-            scrub: 1,
-          }
+          duration: 1, stagger: 0.12, ease: 'power3.out',
+          scrollTrigger: { trigger: headerRef.current, start: 'top 80%', end: 'top 40%', scrub: 1 }
         });
       }
 
-      // Skill cards - diagonal stagger
       const cards = gridRef.current?.querySelectorAll('[data-skill-card]');
       if (cards?.length) {
-        gsap.set(cards, { y: 100, opacity: 0, scale: 0.9 });
+        gsap.set(cards, { y: 120, opacity: 0, scale: 0.85 });
         gsap.to(cards, {
           y: 0, opacity: 1, scale: 1,
-          duration: 0.8,
-          stagger: {
-            each: 0.08,
-            from: 'start',
-            grid: [2, 3],
-          },
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: gridRef.current,
-            start: 'top 85%',
-            end: 'top 30%',
-            scrub: 1,
-          }
+          duration: 1, stagger: 0.1, ease: 'power4.out',
+          scrollTrigger: { trigger: gridRef.current, start: 'top 85%', end: 'top 30%', scrub: 1 }
         });
       }
     }, sectionRef);
-
     return () => ctx.revert();
   }, []);
 
@@ -69,71 +48,38 @@ const Skills = () => {
   ].map(s => ({ ...s, name: t(`skills.items.${s.key}.name`), description: t(`skills.items.${s.key}.desc`) }));
 
   return (
-    <section ref={sectionRef} id="skills" className="relative py-48 bg-transparent overflow-hidden">
-      {/* Background number */}
-      <div className="absolute top-16 right-8 md:right-16 text-[10rem] md:text-[14rem] font-black text-white/[0.015] leading-none select-none pointer-events-none" style={{ fontFamily: 'var(--font-display)' }}>
-        02
-      </div>
+    <section ref={sectionRef} id="skills" className="relative py-64 bg-transparent overflow-hidden">
+      <div className="absolute top-16 right-8 md:right-16 text-[10rem] md:text-[14rem] font-black text-white/[0.015] leading-none select-none pointer-events-none" style={{ fontFamily: 'var(--font-display)' }}>02</div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div ref={headerRef} className="mb-36 flex flex-col items-center text-center">
-          <div data-gsap-reveal className="flex items-center gap-4 mb-8">
-            <div className="w-12 h-[2px] bg-gradient-to-r from-transparent to-violet-500/60" />
-            <span className="text-xs font-black uppercase tracking-[0.4em] text-violet-400/70">{t('skills.subtitle')}</span>
-            <div className="w-12 h-[2px] bg-gradient-to-l from-transparent to-violet-500/60" />
+        <div ref={headerRef} className="mb-48 flex flex-col items-center text-center">
+          <div data-gsap-reveal className="flex items-center gap-6 mb-12">
+            <div className="w-16 h-[2px] bg-gradient-to-r from-transparent to-violet-500" />
+            <span className="text-xs font-black uppercase tracking-[0.5em] text-violet-400">{t('skills.subtitle')}</span>
+            <div className="w-16 h-[2px] bg-gradient-to-l from-transparent to-violet-500" />
           </div>
           <div data-gsap-reveal className="overflow-hidden">
-            <h2 className="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tight leading-[0.9]" style={{ fontFamily: 'var(--font-display)' }}>
-              {t('skills.title')}
+            <h2 className="text-6xl md:text-8xl lg:text-9xl font-black text-white tracking-tighter leading-[0.85]" style={{ fontFamily: 'var(--font-display)' }}>
+              <SplitText delay={0.1}>{t('skills.title')}</SplitText>
             </h2>
           </div>
-          <div data-gsap-reveal className="mt-10 max-w-3xl">
-            <p className="text-lg md:text-xl text-slate-400 font-medium leading-relaxed">
-              {t('skills.intro')}
-            </p>
+          <div data-gsap-reveal className="mt-12 max-w-3xl">
+            <p className="text-xl md:text-2xl text-slate-400 font-medium leading-relaxed italic">{t('skills.intro')}</p>
           </div>
         </div>
 
-        {/* Skills grid */}
-        <div ref={gridRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div ref={gridRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {skillList.map((skill, i) => (
-            <div
-              key={i}
-              data-skill-card
-              className={`group relative p-8 md:p-10 rounded-2xl bg-slate-900/30 border border-white/[0.06] backdrop-blur-sm ${skill.borderHover} transition-all duration-700 overflow-hidden cursor-default`}
-              style={{ perspective: '800px' }}
-            >
-              {/* Hover gradient */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${skill.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-2xl`} />
-
-              {/* Glow spot */}
-              <div className="absolute -top-20 -right-20 w-40 h-40 bg-cyan-500/0 group-hover:bg-cyan-500/5 rounded-full blur-3xl transition-all duration-700" />
-
+            <div key={i} data-skill-card className={`group relative p-12 rounded-[2.5rem] bg-slate-900/30 border border-white/[0.06] backdrop-blur-xl ${skill.borderHover} transition-all duration-700 overflow-hidden`}>
+              <div className={`absolute inset-0 bg-gradient-to-br ${skill.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-700`} />
               <div className="relative z-10">
-                {/* Icon */}
-                <div className="mb-8 p-4 bg-white/[0.04] rounded-xl w-fit group-hover:bg-white/[0.08] group-hover:scale-110 group-hover:-rotate-3 transition-all duration-500 border border-white/[0.04] group-hover:border-white/[0.08]">
-                  <TechIcons name={skill.techIcon} className="w-7 h-7 text-cyan-400" />
+                <div className="mb-10 p-5 bg-white/5 rounded-2xl w-fit group-hover:bg-white/10 group-hover:scale-110 group-hover:-rotate-6 transition-all duration-500 border border-white/5">
+                  <TechIcons name={skill.techIcon} className="w-10 h-10 text-cyan-400" />
                 </div>
-
-                {/* Title */}
-                <h3 className="text-xl md:text-2xl font-black text-white mb-3 group-hover:text-cyan-300 transition-colors duration-500">
-                  {skill.name}
-                </h3>
-
-                {/* Description */}
-                <p className="text-slate-500 font-medium leading-relaxed text-sm group-hover:text-slate-400 transition-colors duration-500">
-                  {skill.description}
-                </p>
+                <h3 className="text-3xl font-black text-white mb-5 group-hover:text-cyan-300 transition-colors duration-500">{skill.name}</h3>
+                <p className="text-slate-400 font-medium leading-relaxed text-base group-hover:text-slate-300 transition-colors duration-500">{skill.description}</p>
               </div>
-
-              {/* Bottom accent */}
-              <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-cyan-500/0 via-cyan-500/40 to-cyan-500/0 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left" />
-
-              {/* Corner number */}
-              <div className="absolute top-4 right-5 text-[3rem] font-black text-white/[0.02] leading-none select-none group-hover:text-white/[0.05] transition-colors duration-700" style={{ fontFamily: 'var(--font-display)' }}>
-                {String(i + 1).padStart(2, '0')}
-              </div>
+              <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-cyan-500/0 via-cyan-500 to-cyan-500/0 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-1000 origin-left" />
             </div>
           ))}
         </div>

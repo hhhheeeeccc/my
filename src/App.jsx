@@ -19,7 +19,7 @@ import Projects from './components/sections/Projects';
 import Contact from './components/sections/Contact';
 
 // Common Components
-// CustomCursor removed
+import CustomCursor from './components/common/CustomCursor';
 import Preloader from './components/common/Preloader';
 import GlobalCanvas from './components/common/GlobalCanvas';
 
@@ -65,12 +65,14 @@ function App() {
   return (
     <ReactLenis root options={{ lerp: 0.06, smoothWheel: true, duration: 1.2 }}>
       <div className="min-h-screen bg-black overflow-x-hidden relative">
-        {/* Noise overlay removed to fix mobile rendering crash */}
+        {/* Cinematic Noise & Vignette in Global Styles */}
 
         {/* Preloader */}
         {!isLoaded && <Preloader onComplete={handlePreloaderComplete} />}
 
-        {/* CustomCursor removed to fix mix-blend-difference rendering artifacts */}
+        {/* CustomCursor with optimized performance */}
+        <CustomCursor />
+
         <GlobalCanvas />
 
         {/* Cinematic scroll progress */}
@@ -79,7 +81,7 @@ function App() {
           style={{
             scaleX: smoothProgress,
             transformOrigin: isAr ? "right" : "left",
-            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)',
+            background: 'linear-gradient(90deg, transparent, rgba(34, 211, 238, 0.4), transparent)',
           }}
         />
 
@@ -94,7 +96,6 @@ function App() {
         </main>
 
         <Footer />
-
       </div>
     </ReactLenis>
   );
