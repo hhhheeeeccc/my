@@ -18,10 +18,6 @@ import Skills from './components/sections/Skills';
 import Projects from './components/sections/Projects';
 import Contact from './components/sections/Contact';
 
-// Admin Components
-import Dashboard from './components/admin/Dashboard';
-import AdminToggle from './components/admin/AdminToggle';
-
 // Common Components
 import CustomCursor from './components/common/CustomCursor';
 import Preloader from './components/common/Preloader';
@@ -29,7 +25,6 @@ import GlobalCanvas from './components/common/GlobalCanvas';
 
 function App() {
   const { i18n } = useTranslation();
-  const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const isAr = i18n.language?.startsWith('ar');
 
@@ -88,7 +83,7 @@ function App() {
           }}
         />
 
-        <Navbar isAdminOpen={isAdminOpen} />
+        <Navbar />
 
         <main className={`relative z-10 transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
           <Hero />
@@ -100,13 +95,6 @@ function App() {
 
         <Footer />
 
-        {/* Admin: only via ?admin=1 */}
-        {typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('admin') === '1' && (
-          <>
-            <AdminToggle onClick={() => setIsAdminOpen(true)} />
-            {isAdminOpen && <Dashboard onClose={() => setIsAdminOpen(false)} />}
-          </>
-        )}
       </div>
     </ReactLenis>
   );
