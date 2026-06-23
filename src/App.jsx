@@ -15,6 +15,7 @@ import Footer from './components/layout/Footer';
 import Hero from './components/sections/Hero';
 import About from './components/sections/About';
 import Skills from './components/sections/Skills';
+import CinematicWorkIndex from './components/sections/CinematicWorkIndex';
 import Projects from './components/sections/Projects';
 import Contact from './components/sections/Contact';
 
@@ -89,6 +90,7 @@ function App() {
           <Hero />
           <About />
           <Skills />
+          <CinematicWorkIndex />
           <Projects />
           <Contact />
         </main>

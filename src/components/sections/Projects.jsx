@@ -1,27 +1,16 @@
-import React, { useRef, useEffect, useMemo, useState, useCallback } from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ExternalLink, Github } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const PANEL_HEIGHT = '220vh';
-
 const Projects = () => {
-  const { t, i18n } = useTranslation();
-  const isAr = i18n.language?.startsWith('ar');
+  const { t } = useTranslation();
   const sectionRef = useRef(null);
   const headerRef = useRef(null);
-  const [activeProject, setActiveProject] = useState(0);
-
-  const pointerX = useMotionValue(0);
-  const pointerY = useMotionValue(0);
-  const smoothX = useSpring(pointerX, { stiffness: 90, damping: 24, mass: 0.4 });
-  const smoothY = useSpring(pointerY, { stiffness: 90, damping: 24, mass: 0.4 });
-  const previewRotateY = useTransform(smoothX, [-200, 200], [-12, 12]);
-  const previewRotateX = useTransform(smoothY, [-160, 160], [10, -10]);
 
   const projects = useMemo(() => [1, 2, 3].map((i) => ({
     title: t(`projects.project${i}.title`),
@@ -39,159 +28,188 @@ const Projects = () => {
     accentHex: i === 1 ? '#818cf8' : i === 2 ? '#2dd4bf' : '#c084fc',
     year: '2024',
     category: i === 1 ? 'WEB / ENTERPRISE' : i === 2 ? 'DESKTOP / NETWORKING' : 'DESKTOP / PERFORMANCE',
-    metric: i === 1 ? 'ARCHITECTED PRODUCT SYSTEMS' : i === 2 ? 'REAL-TIME NETWORK TOOLS' : 'LOW-LATENCY DESKTOP UX',
   })), [t]);
-
-  const handlePointerMove = useCallback((event) => {
-    const rect = sectionRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    pointerX.set(event.clientX - rect.left - rect.width / 2);
-    pointerY.set(event.clientY - rect.top - rect.height / 2);
-  }, [pointerX, pointerY]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      // ── Header reveal ──
       const headerLines = headerRef.current?.querySelectorAll('[data-gsap-reveal]');
       if (headerLines?.length) {
-        gsap.set(headerLines, { y: 90, opacity: 0, rotateX: 18, transformOrigin: '50% 100%' });
+        gsap.set(headerLines, { y: 60, opacity: 0 });
         gsap.to(headerLines, {
-          y: 0, opacity: 1, rotateX: 0,
-          duration: 1.2, stagger: 0.1, ease: 'power3.out',
-          scrollTrigger: { trigger: headerRef.current, start: 'top 82%', end: 'top 35%', scrub: 1 },
+          y: 0, opacity: 1,
+          duration: 1, stagger: 0.12, ease: 'power3.out',
+          scrollTrigger: { trigger: headerRef.current, start: 'top 80%', end: 'top 40%', scrub: 1 },
         });
       }
 
-      gsap.utils.toArray('.work-index-row').forEach((row, index) => {
-        gsap.fromTo(row,
-          { opacity: 0.22, xPercent: index % 2 ? 6 : -6 },
-          {
-            opacity: 1, xPercent: 0, ease: 'none',
-            scrollTrigger: { trigger: row, start: 'top 86%', end: 'bottom 45%', scrub: 0.8 },
-          }
-        );
-      });
-
+      // ── ActiveTheory-style: each project panel pinned with scroll-driven animation ──
       const panels = sectionRef.current?.querySelectorAll('.at-panel');
       if (!panels?.length) return;
 
-      panels.forEach((panel) => {
+      panels.forEach((panel, i) => {
+        const stickyWrap = panel.querySelector('.at-sticky');
         const visual = panel.querySelector('.at-visual-inner');
         const textGroup = panel.querySelector('.at-text-group');
-        const mediaLayers = panel.querySelectorAll('.at-media-layer');
+        const nextPanel = panels[i + 1];
 
+        if (!stickyWrap) return;
+
+        // The visual scales down and fades as you scroll through the panel
         if (visual) {
-          gsap.fromTo(visual,
-            { scale: 1.08, rotateY: -8, filter: 'blur(0px)' },
-            {
-              scale: 0.82, rotateY: 8, y: -80, opacity: 0.42, filter: 'blur(2px)', ease: 'none',
-              scrollTrigger: { trigger: panel, start: 'top top', end: 'bottom top', scrub: 0.35 },
-            }
-          );
-        }
-
-        if (mediaLayers.length) {
-          gsap.to(mediaLayers, {
-            yPercent: (i) => (i + 1) * -12,
+          gsap.to(visual, {
+            scale: 0.88,
+            y: -60,
+            opacity: 0.4,
             ease: 'none',
-            scrollTrigger: { trigger: panel, start: 'top bottom', end: 'bottom top', scrub: 0.6 },
+            scrollTrigger: {
+              trigger: panel,
+              start: 'top top',
+              end: 'bottom top',
+              scrub: 0.3,
+            },
           });
         }
 
+        // Text group slides up into view
         if (textGroup) {
           gsap.fromTo(textGroup,
-            { y: 160, opacity: 0 },
-            { y: -90, opacity: 1, ease: 'none', scrollTrigger: { trigger: panel, start: 'top top', end: 'bottom top', scrub: 0.35 } }
+            { y: 120, opacity: 0 },
+            {
+              y: -80,
+              opacity: 1,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: panel,
+                start: 'top top',
+                end: 'bottom top',
+                scrub: 0.3,
+              },
+            }
           );
         }
       });
+
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
   const pad = (n) => String(n + 1).padStart(2, '0');
-  const active = projects[activeProject] ?? projects[0];
 
   return (
-    <section ref={sectionRef} id="projects" className="relative bg-[#030409] overflow-hidden" onPointerMove={handlePointerMove}>
-      <div className="work-noise-field" aria-hidden="true" />
-      <motion.div
-        aria-hidden="true"
-        className="work-hover-preview hidden lg:block"
-        style={{ x: smoothX, y: smoothY, rotateX: previewRotateX, rotateY: previewRotateY }}
-      >
-        <div className={`work-hover-preview__media bg-gradient-to-br ${active?.iconColor || ''}`}>
-          <span>{pad(activeProject)}</span>
-        </div>
-      </motion.div>
+    <section ref={sectionRef} id="projects" className="relative bg-transparent">
+      {/* Background number */}
+      <div className="absolute top-16 left-8 md:left-16 text-[10rem] md:text-[14rem] font-black text-white/[0.015] leading-none select-none pointer-events-none" style={{ fontFamily: 'var(--font-display)' }}>03</div>
 
-      <div className="min-h-screen flex items-end px-6 md:px-14 pb-10 md:pb-16 relative z-10">
-        <div ref={headerRef} className="w-full">
-          <div data-gsap-reveal className="flex items-center justify-between gap-6 border-b border-white/10 pb-5 mb-8">
-            <span className="text-[11px] md:text-xs font-black uppercase tracking-[0.48em] text-white/45">{isAr ? 'أعمال مختارة' : 'Selected work'}</span>
-            <span className="text-[11px] md:text-xs font-black uppercase tracking-[0.48em] text-cyan-300/70">{projects.length.toString().padStart(2, '0')} CASES</span>
+      {/* ── HEADER ── */}
+      <div className="max-w-7xl mx-auto px-6 pt-48 pb-32 relative z-10">
+        <div ref={headerRef} className="flex flex-col items-center text-center">
+          <div data-gsap-reveal className="flex items-center gap-4 mb-8">
+            <div className="w-12 h-[2px] bg-gradient-to-r from-transparent to-blue-500/60" />
+            <span className="text-xs font-black uppercase tracking-[0.4em] text-blue-400/70">{t('projects.subtitle')}</span>
+            <div className="w-12 h-[2px] bg-gradient-to-l from-transparent to-blue-500/60" />
           </div>
           <div data-gsap-reveal className="overflow-hidden">
-            <h2 className="work-mega-title">{t('projects.title')}</h2>
+            <h2 className="text-5xl md:text-7xl lg:text-[8rem] font-black text-white tracking-tight leading-[0.85]" style={{ fontFamily: 'var(--font-display)' }}>
+              {t('projects.title')}
+            </h2>
           </div>
-          <p data-gsap-reveal className="max-w-3xl mt-8 text-white/50 text-lg md:text-2xl leading-relaxed">
-            {isAr ? 'قسم أعمال بتجربة قريبة من Active Theory: شاشة كاملة، حركة 3D، تغذية بصرية عند المرور، وانتقالات سينمائية أثناء التمرير.' : 'A full-screen work index with Active Theory-like rhythm: oversized typography, 3D hover feedback, cinematic scroll motion, and layered visual energy.'}
-          </p>
+          <div data-gsap-reveal className="mt-10 max-w-2xl">
+            <p className="text-lg md:text-xl text-slate-500 font-medium leading-relaxed">{t('projects.intro')}</p>
+          </div>
         </div>
       </div>
 
-      <div className="relative z-10 border-y border-white/10">
-        {projects.map((project, i) => (
-          <button
-            key={project.title}
-            type="button"
-            className="work-index-row group"
-            onMouseEnter={() => setActiveProject(i)}
-            onFocus={() => setActiveProject(i)}
-          >
-            <span className="work-index-row__number">{pad(i)}</span>
-            <span className="work-index-row__title">{project.title}</span>
-            <span className="work-index-row__meta">{project.category}</span>
-          </button>
-        ))}
-      </div>
-
+      {/* ── PROJECT PANELS (ActiveTheory sticky scroll) ── */}
       {projects.map((project, i) => (
-        <div key={`${project.title}-panel`} className="at-panel relative" style={{ height: PANEL_HEIGHT }}>
+        <div
+          key={i}
+          className="at-panel relative"
+          style={{ height: `${Math.max(window?.innerHeight || 800, 800) * 2.2}px` }}
+        >
+          {/* Sticky container — stays pinned while scrolling through panel */}
           <div className="at-sticky sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden" style={{ zIndex: 10 + i }}>
-            <div className="w-full max-w-[1500px] mx-auto px-6 md:px-14 grid lg:grid-cols-[1.25fr_0.75fr] items-center gap-10 lg:gap-20">
-              <div className="at-visual-inner work-card-3d">
-                <div className="work-cinematic-frame" style={{ boxShadow: `0 45px 140px -28px ${project.accentHex}66` }}>
-                  <div className={`at-media-layer absolute inset-0 bg-gradient-to-br ${project.iconColor}`} />
-                  <div className="at-media-layer work-cinematic-grid" />
-                  <div className="at-media-layer work-cinematic-orb work-cinematic-orb-a" />
-                  <div className="at-media-layer work-cinematic-orb work-cinematic-orb-b" />
-                  <div className="work-cinematic-scan" />
-                  <span className="work-cinematic-number">{pad(i)}</span>
-                  <span className="work-cinematic-label">{project.metric}</span>
+            <div className="w-full max-w-[1300px] mx-auto px-6 md:px-16 flex flex-col lg:flex-row items-center gap-10 lg:gap-20">
+
+              {/* ── Visual block (left) ── */}
+              <div className="at-visual-inner w-full lg:w-[58%] flex-shrink-0">
+                <div
+                  className="aspect-[16/10] rounded-2xl overflow-hidden relative border border-white/[0.06]"
+                  style={{ boxShadow: `0 40px 100px -20px ${project.accentHex}25` }}
+                >
+                  <div className={`absolute inset-0 bg-gradient-to-br ${project.iconColor}`} />
+                  <div className="absolute inset-0 opacity-[0.07]" style={{
+                    backgroundImage: 'linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px)',
+                    backgroundSize: '48px 48px',
+                  }} />
+                  <span className="absolute -bottom-5 -left-3 text-[11rem] md:text-[14rem] font-black text-white/[0.04] select-none leading-none pointer-events-none" style={{ fontFamily: 'var(--font-display)' }}>
+                    {pad(i)}
+                  </span>
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[260px] h-[260px] md:w-[360px] md:h-[360px] rounded-full border border-white/[0.07]" />
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[160px] h-[160px] md:w-[230px] md:h-[230px] rounded-full border border-white/[0.04]" />
+                  {/* Hover overlay */}
+                  <div className="absolute inset-0 bg-black/0 hover:bg-black/40 transition-all duration-700 flex items-end cursor-pointer">
+                    <div className="p-8 translate-y-6 opacity-0 hover:translate-y-0 hover:opacity-100 transition-all duration-500 ease-out">
+                      <div className="flex gap-3">
+                        <span className="p-3.5 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-white"><Github size={16} /></span>
+                        <span className="p-3.5 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-white"><ExternalLink size={16} /></span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="at-text-group">
+              {/* ── Text block (right) ── */}
+              <div className="at-text-group w-full lg:w-[42%]">
                 <div className="flex items-center gap-3 mb-5">
-                  <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-slate-500">{project.year}</span>
+                  <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-slate-600">{project.year}</span>
                   <span className="w-1 h-1 rounded-full bg-slate-700" />
-                  <span className="text-[11px] font-bold uppercase tracking-[0.25em]" style={{ color: project.accentHex }}>{project.category}</span>
+                  <span className="text-[11px] font-bold uppercase tracking-[0.25em]" style={{ color: project.accentHex + '88' }}>{project.category}</span>
                 </div>
-                <h3 className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-6 leading-[0.9]" style={{ fontFamily: 'var(--font-display)' }}>{project.title}</h3>
-                <p className="text-slate-400 leading-relaxed font-medium text-base md:text-lg mb-9 max-w-md">{project.description}</p>
-                <div className="flex flex-wrap gap-2 mb-9">
-                  {project.tags.map((tag) => <span key={tag} className="work-tag" style={{ color: project.accentHex, borderColor: `${project.accentHex}26` }}>{tag}</span>)}
+
+                <div className="text-6xl md:text-7xl lg:text-8xl font-black leading-none mb-3 select-none pointer-events-none" style={{ fontFamily: 'var(--font-display)', color: project.accentHex + '10' }}>
+                  {pad(i)}
                 </div>
+
+                <h3 className="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-5 leading-[1.05]" style={{ fontFamily: 'var(--font-display)' }}>
+                  {project.title}
+                </h3>
+
+                <div className="flex flex-wrap gap-2 mb-7">
+                  {project.tags.slice(0, 3).map((tag, ti) => (
+                    <span key={ti} className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] rounded-full border" style={{ backgroundColor: project.accentHex + '08', color: project.accentHex + '88', borderColor: project.accentHex + '15' }}>
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                <p className="text-slate-400 leading-relaxed font-medium text-base md:text-lg mb-9 max-w-md">
+                  {project.description}
+                </p>
+
                 <div className="flex items-center gap-8">
-                  <span role="button" tabIndex={0} className="work-link"><Github size={14} />{t('projects.sourceCode')}</span>
-                  <span role="button" tabIndex={0} className="work-link" style={{ color: project.accentHex }}><ExternalLink size={14} />{t('projects.liveDemo')}</span>
+                  <span role="button" tabIndex={0} className="group flex items-center gap-2.5 text-sm text-slate-500 hover:text-white font-medium transition-colors duration-300 cursor-pointer">
+                    <span className="w-9 h-9 rounded-full border border-white/10 flex items-center justify-center group-hover:border-white/25 group-hover:bg-white/5 transition-all duration-300">
+                      <Github size={14} />
+                    </span>
+                    {t('projects.sourceCode')}
+                  </span>
+                  <span role="button" tabIndex={0} className="group flex items-center gap-2.5 text-sm font-medium transition-colors duration-300 cursor-pointer" style={{ color: project.accentHex + 'aa' }}>
+                    <span className="w-9 h-9 rounded-full border flex items-center justify-center transition-all duration-300" style={{ borderColor: project.accentHex + '20' }}>
+                      <ExternalLink size={14} />
+                    </span>
+                    {t('projects.liveDemo')}
+                  </span>
                 </div>
               </div>
             </div>
           </div>
         </div>
       ))}
+
+      {/* Spacer */}
+      <div className="h-32" />
     </section>
   );
 };
