@@ -63,8 +63,8 @@ function App() {
   }, []);
 
   return (
-    <ReactLenis root options={{ lerp: 0.08, smoothWheel: true }}>
-      <div className="min-h-screen bg-slate-950 overflow-x-hidden relative">
+    <ReactLenis root options={{ lerp: 0.06, smoothWheel: true, duration: 1.2 }}>
+      <div className="min-h-screen bg-black overflow-x-hidden relative">
         {/* Noise overlay removed to fix mobile rendering crash */}
 
         {/* Preloader */}
@@ -73,13 +73,13 @@ function App() {
         {/* CustomCursor removed to fix mix-blend-difference rendering artifacts */}
         <GlobalCanvas />
 
-        {/* Scroll progress bar - minimal */}
+        {/* Cinematic scroll progress */}
         <motion.div
-          className="fixed top-0 left-0 right-0 h-[1px] z-[150]"
+          className="fixed top-0 left-0 right-0 h-[2px] z-[150]"
           style={{
             scaleX: smoothProgress,
             transformOrigin: isAr ? "right" : "left",
-            background: 'linear-gradient(90deg, transparent, #06b6d4, #8b5cf6, transparent)',
+            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)',
           }}
         />
 

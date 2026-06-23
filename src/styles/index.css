@@ -29,7 +29,7 @@ html {
 
 body {
   font-family: var(--font-body);
-  @apply bg-slate-950 text-white;
+  @apply bg-black text-white;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -136,4 +136,44 @@ html.lenis, html.lenis body {
 
 .lenis.lenis-stopped {
   overflow: hidden;
+}
+
+/* ═══ ActiveTheory-style animations ═══ */
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(3deg); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Project card stacking - later cards render on top */
+.project-card {
+ position: relative;
+}
+
+.project-card .sticky {
+ z-index: 1;
+}
+
+.project-card + .project-card .sticky {
+ z-index: 2;
+}
+
+.project-card + .project-card + .project-card .sticky {
+ z-index: 3;
+}
+
+/* Smooth image rendering during scale */
+.project-card img,
+.project-card video,
+.project-card [style*="transform"] {
+ backface-visibility: hidden;
+}
+
+/* Cinematic section transitions */
+section {
+ position: relative;
 }

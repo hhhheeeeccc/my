@@ -48,7 +48,7 @@ const Hero = () => {
       ref={sectionRef}
       id="hero"
       onMouseMove={handleMouseMove}
-      className="relative min-h-[300vh] w-full overflow-hidden bg-slate-950"
+      className="relative min-h-[300vh] w-full overflow-hidden bg-black"
     >
       {/* Sticky hero content that fades on scroll */}
       <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden">
