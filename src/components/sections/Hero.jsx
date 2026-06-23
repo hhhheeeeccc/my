@@ -11,7 +11,6 @@ const Hero = () => {
   const subtitleRef = useRef(null);
   const ctaRef = useRef(null);
   const marqueeRef = useRef(null);
-
   // Mouse parallax with multiple depth layers
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -19,6 +18,15 @@ const Hero = () => {
   const springY = useSpring(mouseY, { stiffness: 50, damping: 20, mass: 0.5 });
   const deepSpringX = useSpring(mouseX, { stiffness: 30, damping: 15, mass: 1 });
   const deepSpringY = useSpring(mouseY, { stiffness: 30, damping: 15, mass: 1 });
+
+  const cursorX = useTransform(springX, [-30, 30], ['42%', '58%']);
+  const cursorY = useTransform(springY, [-20, 20], ['44%', '56%']);
+
+  const sensoryFrames = useMemo(() => [
+    { id: '01', label: isAr ? 'عمق تفاعلي' : 'INTERACTIVE DEPTH', title: 'WEBGL', tone: 'from-cyan-400 via-blue-500 to-indigo-700' },
+    { id: '02', label: isAr ? 'حركة سينمائية' : 'CINEMATIC MOTION', title: 'MOTION', tone: 'from-fuchsia-500 via-violet-500 to-cyan-500' },
+    { id: '03', label: isAr ? 'تغذية بصرية' : 'VISUAL FEEDBACK', title: 'SIGNAL', tone: 'from-emerald-400 via-teal-500 to-slate-900' },
+  ], [isAr]);
 
   const handleMouseMove = useCallback((e) => {
     const { innerWidth, innerHeight } = window;
@@ -91,9 +99,56 @@ const Hero = () => {
         >
           <div className="w-8 h-px bg-cyan-500/40" />
           <span className="text-[11px] tracking-[0.4em] text-slate-500 font-medium uppercase whitespace-nowrap">
-            Portfolio — 2024
+            PORTFOLIO — CINEMATIC WEBGL
           </span>
           <div className="w-8 h-px bg-cyan-500/40" />
+        </motion.div>
+
+
+        {/* ActiveTheory-inspired sensory stage: original WebGL/cards treatment, not a copy */}
+        <motion.div
+          aria-hidden="true"
+          className="absolute inset-0 z-10 pointer-events-none overflow-hidden"
+          style={{ opacity: contentOpacity }}
+        >
+          <motion.div
+            className="hero-orbital-spotlight"
+            style={{ left: cursorX, top: cursorY }}
+          />
+
+          <div className="absolute inset-0 hero-perspective-stage">
+            {sensoryFrames.map((frame, i) => (
+              <motion.div
+                key={frame.id}
+                className={`hero-sensory-card hero-sensory-card-${i + 1}`}
+                initial={{ opacity: 0, y: 80, rotateX: 28, rotateY: isAr ? -22 : 22 }}
+                animate={{ opacity: 1, y: 0, rotateX: 0, rotateY: 0 }}
+                transition={{ duration: 1.5, delay: 3 + i * 0.16, ease: [0.16, 1, 0.3, 1] }}
+                style={{ x: i === 1 ? deepSpringX : springX, y: i === 1 ? deepSpringY : springY }}
+              >
+                <div className={`hero-sensory-card__media bg-gradient-to-br ${frame.tone}`}>
+                  <span className="hero-sensory-card__id">{frame.id}</span>
+                  <span className="hero-sensory-card__title">{frame.title}</span>
+                  <span className="hero-sensory-card__scan" />
+                </div>
+                <div className="hero-sensory-card__meta">
+                  <span>{frame.label}</span>
+                  <span>60 FPS</span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div
+            className="hero-kinetic-ring hero-kinetic-ring-a"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 28, repeat: Infinity, ease: 'linear' }}
+          />
+          <motion.div
+            className="hero-kinetic-ring hero-kinetic-ring-b"
+            animate={{ rotate: -360 }}
+            transition={{ duration: 36, repeat: Infinity, ease: 'linear' }}
+          />
         </motion.div>
 
         {/* Main hero content with parallax */}
@@ -110,7 +165,7 @@ const Hero = () => {
           >
             <div className="h-px w-12 bg-gradient-to-r from-transparent to-cyan-500/60" />
             <span className="text-xs sm:text-sm font-bold tracking-[0.3em] text-cyan-400/70 uppercase">
-              {isAr ? 'مطور واجهات أمامية' : 'Frontend Developer & Designer'}
+              {isAr ? 'مطور واجهات أمامية' : 'Frontend Developer / 3D Motion Designer'}
             </span>
             <div className="h-px w-12 bg-gradient-to-l from-transparent to-cyan-500/60" />
           </motion.div>
