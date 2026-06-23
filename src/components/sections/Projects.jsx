@@ -73,9 +73,11 @@ const Projects = () => {
           scrollTrigger: { trigger: panel, start: 'top 80%', end: 'top 35%', scrub: 0.6 },
         });
         gsap.to(title, {
-          opacity: 1, y: 0, duration: 0.8, ease: 'power2.out',
+          opacity: 1, y: 0, scale: 1.05, duration: 0.8, ease: 'power2.out',
           scrollTrigger: { trigger: panel, start: 'top 75%', end: 'top 25%', scrub: 0.6 },
         });
+        // Split title into words if possible for better stagger (manual implementation here via simple CSS)
+        title.style.perspective = '1000px';
         gsap.to(line, {
           scaleX: 1, duration: 0.6, ease: 'power2.out',
           scrollTrigger: { trigger: panel, start: 'top 80%', end: 'top 40%', scrub: 0.6 },
@@ -169,6 +171,8 @@ const Projects = () => {
             >
               {/* Main gradient - simulates fullscreen project image */}
               <div className={`absolute inset-0 bg-gradient-to-br ${project.iconColor}`} />
+              {/* Noise grain overlay for ActiveTheory feel */}
+              <div className="absolute inset-0 opacity-[0.15] mix-blend-overlay pointer-events-none" style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")', backgroundSize: '200px' }} />
 
               {/* Subtle texture */}
               <div className="absolute inset-0 opacity-[0.03]" style={{
@@ -200,12 +204,16 @@ const Projects = () => {
                 </span>
               </div>
 
-              {/* Project Title */}
+              {/* Project Title with staggered word effect */}
               <h3
                 className="at-title text-4xl sm:text-5xl md:text-7xl lg:text-[6rem] xl:text-[7rem] font-black text-white leading-[0.9] tracking-tight max-w-[90vw]"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
-                {project.title}
+                {project.title.split(' ').map((word, idx) => (
+                  <span key={idx} className="inline-block mr-[0.2em] last:mr-0 transition-transform duration-700 hover:scale-110">
+                    {word}
+                  </span>
+                ))}
               </h3>
             </div>
 

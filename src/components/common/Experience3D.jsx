@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect, useMemo } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Float, MeshDistortMaterial, Text, Stars } from '@react-three/drei';
 import { useScroll, useVelocity, useSpring } from 'framer-motion';
-import { EffectComposer, Bloom, ChromaticAberration } from '@react-three/postprocessing';
+import { EffectComposer, Bloom, ChromaticAberration, Noise } from '@react-three/postprocessing';
 import { BlendFunction } from 'postprocessing';
 import * as THREE from 'three';
 import { createFog } from '../../utils/three-utils';
@@ -311,6 +311,13 @@ function LightBeams({ focusMode }) {
 
 // ===================== MAIN EXPERIENCE =====================
 const Experience3D = () => {
+  const projectColors = useMemo(() => [
+    new THREE.Color('#818cf8'), // Project 1
+    new THREE.Color('#2dd4bf'), // Project 2
+    new THREE.Color('#c084fc')  // Project 3
+  ], []);
+  const baseFogColor = useMemo(() => new THREE.Color('#020617'), []);
+  const fogRef = useRef(null);
   const { camera } = useThree();
   const [focus, setFocus] = useState({ active: false, pulse: false });
   const { scrollY, scrollYProgress } = useScroll();
@@ -330,6 +337,15 @@ const Experience3D = () => {
 
   useFrame(() => {
     const sp = scrollYProgress.get();
+    // === DYNAMIC COLORS ===
+    let targetFogColor = baseFogColor.clone();
+    if (sp > 0.45 && sp < 0.75) {
+      const projectProgress = (sp - 0.45) / 0.3;
+      if (projectProgress < 0.33) { targetFogColor.lerp(projectColors[0], 0.4); }
+      else if (projectProgress < 0.66) { targetFogColor.lerp(projectColors[1], 0.4); }
+      else { targetFogColor.lerp(projectColors[2], 0.4); }
+    }
+    if (fogRef.current) { fogRef.current.color.lerp(targetFogColor, 0.05); }
 
     // === CINEMATIC CAMERA ===
     let targetZ, targetY, targetRotX, targetFov;
@@ -376,7 +392,11 @@ const Experience3D = () => {
     camera.updateProjectionMatrix();
   });
 
-  const fog = useMemo(() => createFog('#020617', 8, 25), []);
+  const fog = useMemo(() => {
+    const f = createFog('#020617', 8, 25);
+    fogRef.current = f;
+    return f;
+  }, [baseFogColor]);
 
   const cyberBlobs = [
     { pos: [-4, 2, -3], col: '#00ffff', s: 1.5, d: 0.4, r: 1.5 },
@@ -449,6 +469,7 @@ const Experience3D = () => {
           radialModulation={true}
           modulationOffset={0.5}
         />
+        <Noise opacity={0.06} blendFunction={BlendFunction.OVERLAY} />
       </EffectComposer>
     </>
   );
