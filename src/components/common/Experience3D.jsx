@@ -217,19 +217,7 @@ function CyberRing({ radius, color, speed, visible }) {
 function CyberBlob({ position, color, speed, distort, radius = 1, focusMode, velocityFactor, clickPulse }) {
   const mesh = useRef(null);
   const mouse = useThree((state) => state.mouse);
-  const [pulse, setPulse] = useState(1);
-
-  useEffect(() => {
-    const handleDown = () => setPulse(1.8);
-    const handleUp = () => setPulse(1);
-    const target = globalThis;
-    target.addEventListener('mousedown', handleDown);
-    target.addEventListener('mouseup', handleUp);
-    return () => {
-      target.removeEventListener('mousedown', handleDown);
-      target.removeEventListener('mouseup', handleUp);
-    };
-  }, []);
+  // Global click listeners removed to prevent re-render crashes
 
   useFrame((state) => {
     const time = state.clock.getElapsedTime();
@@ -239,14 +227,14 @@ function CyberBlob({ position, color, speed, distort, radius = 1, focusMode, vel
       const rotFactor = focusMode ? 0.8 : 0.2;
       mesh.current.rotation.x = THREE.MathUtils.lerp(mesh.current.rotation.x, mouse.y * rotFactor, 0.1);
       mesh.current.rotation.y = THREE.MathUtils.lerp(mesh.current.rotation.y, mouse.x * rotFactor, 0.1);
-      const scl = (1 + (focusMode ? 0.5 : 0)) * pulse * (focusMode ? 1.3 : 1) * (clickPulse ? 1.4 : 1);
+      const scl = (1 + (focusMode ? 0.5 : 0)) * (focusMode ? 1.3 : 1) * (clickPulse ? 1.4 : 1);
       const str = 1 + velocityFactor.get() * 0.3;
       mesh.current.scale.set(
         THREE.MathUtils.lerp(mesh.current.scale.x, scl, 0.1),
         THREE.MathUtils.lerp(mesh.current.scale.y, scl * str, 0.1),
         THREE.MathUtils.lerp(mesh.current.scale.z, scl, 0.1)
       );
-      const td = focusMode ? distort + 0.6 : distort + (pulse > 1 ? 0.6 : 0) + velocityFactor.get() * 0.8 + (clickPulse ? 1.2 : 0);
+      const td = focusMode ? distort + 0.6 : distort + velocityFactor.get() * 0.8 + (clickPulse ? 1.2 : 0);
       mesh.current.material.distort = THREE.MathUtils.lerp(mesh.current.material.distort, td, 0.1);
       mesh.current.material.opacity = THREE.MathUtils.lerp(
         mesh.current.material.opacity,

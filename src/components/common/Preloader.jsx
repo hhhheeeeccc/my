@@ -4,75 +4,54 @@ import { gsap } from 'gsap';
 
 const Preloader = ({ onComplete }) => {
   const [count, setCount] = useState(0);
-  const [phase, setPhase] = useState('counting');
-  const containerRef = useRef(null);
-  const counterRef = useRef(null);
+  const [show, setShow] = useState(true);
   const progressBarRef = useRef(null);
-  const labelRef = useRef(null);
-
-  // Safety: force complete after 4s even if GSAP fails
-  useEffect(() => {
-    const safety = setTimeout(() => {
-      if (phase !== 'done') { setPhase('done'); onComplete?.(); }
-    }, 4000);
-    return () => clearTimeout(safety);
-  }, [phase, onComplete]);
 
   // Animated counter using GSAP
   useEffect(() => {
-    if (phase !== 'counting') return;
-
     const obj = { val: 0 };
     const tl = gsap.timeline({
-      onComplete: () => setTimeout(() => setPhase('reveal'), 400)
+      onComplete: () => {
+        setTimeout(() => {
+          setShow(false);
+          setTimeout(() => onComplete?.(), 800);
+        }, 300);
+      }
     });
 
     tl.to(obj, {
       val: 100,
-      duration: 2.5,
+      duration: 2,
       ease: 'power2.inOut',
       onUpdate: () => setCount(Math.floor(obj.val)),
     });
 
-    // Progress bar animation
     if (progressBarRef.current) {
       tl.to(progressBarRef.current, {
         scaleX: 1,
-        duration: 2.5,
+        duration: 2,
         ease: 'power2.inOut',
       }, '<');
     }
 
-    // Label fade in
-    if (labelRef.current) {
-      tl.fromTo(labelRef.current,
-        { opacity: 0, y: 10 },
-        { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' },
-        0.3
-      );
-    }
-
     return () => tl.kill();
-  }, [phase]);
+  }, [onComplete]);
 
-  // Reveal phase
+  // Safety: force complete after 4s
   useEffect(() => {
-    if (phase !== 'reveal') return;
-    const timer = setTimeout(() => {
-      setPhase('done');
-      setTimeout(() => onComplete?.(), 100);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, [phase, onComplete]);
+    const safety = setTimeout(() => {
+      if (show) { setShow(false); setTimeout(() => onComplete?.(), 800); }
+    }, 4000);
+    return () => clearTimeout(safety);
+  }, [show, onComplete]);
 
   return (
     <AnimatePresence>
-      {phase !== 'done' && (
+      {show && (
         <motion.div
-          ref={containerRef}
           className="fixed inset-0 z-[200] bg-slate-950 flex items-center justify-center overflow-hidden"
-          exit={{ y: '-100%' }}
-          transition={{ duration: 1, ease: [0.76, 0, 0.24, 1] }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.6, ease: 'easeInOut' }}
         >
           {/* Animated horizontal lines */}
           <div className="absolute inset-0 overflow-hidden opacity-15 pointer-events-none">
@@ -100,7 +79,6 @@ const Preloader = ({ onComplete }) => {
             {/* Counter */}
             <div className="overflow-hidden">
               <motion.span
-                ref={counterRef}
                 key={count}
                 className="text-[14rem] font-black text-white/90 leading-none tabular-nums tracking-tighter"
                 style={{ fontFamily: 'var(--font-display)' }}
@@ -122,22 +100,14 @@ const Preloader = ({ onComplete }) => {
             </div>
 
             {/* Label */}
-            <p
-              ref={labelRef}
-              className="mt-6 text-[11px] text-slate-600 font-bold tracking-[0.4em] uppercase opacity-0"
+            <motion.p
+              className="mt-6 text-[11px] text-slate-600 font-bold tracking-[0.4em] uppercase"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3, ease: 'power3.out' }}
             >
               Loading Experience
-            </p>
-
-            {/* Reveal flash */}
-            {phase === 'reveal' && (
-              <motion.div
-                className="absolute inset-0 bg-white"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: [0, 0.12, 0] }}
-                transition={{ duration: 0.8 }}
-              />
-            )}
+            </motion.p>
           </div>
 
           {/* Corner brackets */}

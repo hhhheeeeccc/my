@@ -19,7 +19,7 @@ import Projects from './components/sections/Projects';
 import Contact from './components/sections/Contact';
 
 // Common Components
-import CustomCursor from './components/common/CustomCursor';
+// CustomCursor removed
 import Preloader from './components/common/Preloader';
 import GlobalCanvas from './components/common/GlobalCanvas';
 
@@ -65,12 +65,12 @@ function App() {
   return (
     <ReactLenis root options={{ lerp: 0.08, smoothWheel: true }}>
       <div className="min-h-screen bg-slate-950 overflow-x-hidden relative">
-        <div className="noise-overlay" aria-hidden="true" />
+        {/* Noise overlay removed to fix mobile rendering crash */}
 
         {/* Preloader */}
         {!isLoaded && <Preloader onComplete={handlePreloaderComplete} />}
 
-        <CustomCursor />
+        {/* CustomCursor removed to fix mix-blend-difference rendering artifacts */}
         <GlobalCanvas />
 
         {/* Scroll progress bar - minimal */}

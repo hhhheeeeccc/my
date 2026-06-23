@@ -7,11 +7,9 @@ import { PortfolioProvider } from './context/PortfolioContext';
 import './styles/index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <PortfolioProvider>
-      <ThemeProvider>
-        <App />
-      </ThemeProvider>
-    </PortfolioProvider>
-  </React.StrictMode>
+  <PortfolioProvider>
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>
+  </PortfolioProvider>
 );
