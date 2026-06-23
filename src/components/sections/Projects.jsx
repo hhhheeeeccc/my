@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useMemo } from 'react';
+import React, { useRef, useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { ExternalLink, Github, ArrowUpRight } from 'lucide-react';
@@ -7,29 +7,31 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Prevent '#' links from breaking scroll
+const preventDefault = (e) => e.preventDefault();
+
 const Projects = () => {
   const { t } = useTranslation();
   const sectionRef = useRef(null);
   const headerRef = useRef(null);
-  const trackRef = useRef(null);
-  const carouselRef = useRef(null);
-  const cardsRef = useRef([]);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const wrapperRef = useRef(null);
 
-  const numCards = 3;
-  const projects = useMemo(() => [1, 2, 3].map(i => ({
+  const projects = useMemo(() => [1, 2, 3].map((i) => ({
     title: t(`projects.project${i}.title`),
     description: t(`projects.project${i}.description`),
-    tags: i === 1
-      ? [t('projects.tags.react'), t('projects.tags.ts'), t('projects.tags.go'), t('projects.tags.tailwind'), t('projects.tags.arch')]
-      : i === 2
-        ? [t('projects.tags.electron'), t('projects.tags.js'), t('projects.tags.node'), t('projects.tags.networking'), t('projects.tags.proxy')]
-        : [t('projects.tags.react'), t('projects.tags.electron'), t('projects.tags.node'), t('projects.tags.uiohook'), t('projects.tags.perf')],
-    iconColor: i === 1
-      ? 'from-blue-600 via-indigo-600 to-violet-600'
-      : i === 2
-        ? 'from-cyan-500 via-blue-500 to-indigo-500'
-        : 'from-violet-600 via-purple-600 to-blue-600',
+    tags:
+      i === 1
+        ? [t('projects.tags.react'), t('projects.tags.ts'), t('projects.tags.go'), t('projects.tags.tailwind'), t('projects.tags.arch')]
+        : i === 2
+          ? [t('projects.tags.electron'), t('projects.tags.js'), t('projects.tags.node'), t('projects.tags.networking'), t('projects.tags.proxy')]
+          : [t('projects.tags.react'), t('projects.tags.electron'), t('projects.tags.node'), t('projects.tags.uiohook'), t('projects.tags.perf')],
+    iconColor:
+      i === 1
+        ? 'from-blue-600 via-indigo-600 to-violet-600'
+        : i === 2
+          ? 'from-cyan-500 via-blue-500 to-indigo-500'
+          : 'from-violet-600 via-purple-600 to-blue-600',
+    accentColor: i === 1 ? '#6366f1' : i === 2 ? '#06b6d4' : '#8b5cf6',
   })), [t]);
 
   useEffect(() => {
@@ -50,90 +52,66 @@ const Projects = () => {
         });
       }
 
-      // ── 3D CYLINDER CAROUSEL ──
-      if (!trackRef.current || !carouselRef.current) return;
+      // ── ActiveTheory-style stacking scroll ──
+      if (!wrapperRef.current) return;
 
-      const cards = trackRef.current.querySelectorAll('.carousel-card');
-      if (!cards.length) return;
+      const projectEls = wrapperRef.current.querySelectorAll('.project-panel');
+      if (!projectEls.length) return;
 
-      const angleStep = 360 / numCards;
-      // Radius: enough so adjacent cards are just peeking from behind
-      const radius = 900;
+      projectEls.forEach((panel, i) => {
+        const stickyCard = panel.querySelector('.project-sticky-card');
+        const colorBlock = panel.querySelector('.project-color-block');
+        const textBlock = panel.querySelector('.project-text-block');
+        if (!stickyCard) return;
 
-      // Set initial card positions on cylinder
-      cards.forEach((card, i) => {
-        const angle = i * angleStep;
-        gsap.set(card, {
-          rotateY: angle,
-          z: -radius,
-          transformOrigin: 'center center',
-        });
-      });
-
-      // Scroll-driven cylinder rotation
-      const totalRotation = -360;
-
-      gsap.to(trackRef.current, {
-        rotateY: totalRotation,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: carouselRef.current,
+        // Create a ScrollTrigger for each project panel
+        ScrollTrigger.create({
+          trigger: panel,
           start: 'top top',
-          end: `+=${numCards * 100}vh`,
-          pin: true,
-          scrub: 0.8,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
+          end: 'bottom top',
+          scrub: 0.6,
           onUpdate: (self) => {
-            const progress = self.progress;
-            const rotation = progress * totalRotation;
-            const normalizedAngle = (((-rotation) % 360) + 360) % 360;
-            const idx = Math.round(normalizedAngle / angleStep) % numCards;
-            setActiveIndex(idx);
+            const p = self.progress;
 
-            // Per-card depth & visual state
-            cards.forEach((card, i) => {
-              const cardAngle = i * angleStep;
-              const relativeAngle = ((cardAngle - normalizedAngle + 180 + 360) % 360) - 180;
-              const depthFactor = Math.cos((relativeAngle * Math.PI) / 180);
+            // Scale down as user scrolls past (1.0 → 0.82)
+            const scale = 1 - 0.18 * p;
+            // Fade out (1.0 → 0.15)
+            const opacity = 1 - 0.85 * p;
+            // Move up slightly as it shrinks
+            const y = -40 * p;
 
-              const isActive = Math.abs(relativeAngle) < angleStep * 0.45;
-
-              // Counter-rotate card content to always face camera
-              const cardInner = card.querySelector('.card-inner');
-              if (cardInner) {
-                gsap.set(cardInner, { rotateY: -rotation });
-              }
-
-              // Scale: 1.0 → 0.82
-              const s = 0.82 + 0.18 * Math.max(0, depthFactor);
-              // Opacity: 1.0 → 0.08
-              const o = 0.08 + 0.92 * Math.max(0, depthFactor);
-              // Z-push: bring front card closer for parallax depth
-              const zPush = -80 * (1 - Math.max(0, depthFactor));
-              // Blur: 0 → 6px for back cards
-              const blur = 6 * (1 - Math.max(0, depthFactor));
-
-              gsap.to(card, {
-                scale: s,
-                opacity: o,
-                z: -radius + zPush,
-                filter: `blur(${blur}px) brightness(${0.35 + 0.65 * Math.max(0, depthFactor)})`,
-                duration: 0.35,
-                ease: 'power2.out',
-                overwrite: 'auto',
-              });
+            gsap.set(stickyCard, {
+              scale,
+              opacity,
+              y,
             });
+
+            // Color block parallax — moves slower
+            if (colorBlock) {
+              gsap.set(colorBlock, {
+                y: -80 * p,
+              });
+            }
+
+            // Text block slides in from right
+            if (textBlock) {
+              const textProgress = Math.max(0, Math.min(1, (p - 0.15) / 0.35));
+              const textX = 60 * (1 - textProgress);
+              const textOpacity = textProgress;
+              gsap.set(textBlock, {
+                x: textX,
+                opacity: textOpacity,
+              });
+            }
           },
-        },
+        });
       });
 
     }, sectionRef);
 
     return () => ctx.revert();
-  }, [numCards]);
+  }, []);
 
-  // Index display helper
   const padIndex = (n) => String(n + 1).padStart(2, '0');
 
   return (
@@ -146,7 +124,7 @@ const Projects = () => {
         03
       </div>
 
-      {/* ── HEADER (above the pinned area) ── */}
+      {/* ── HEADER ── */}
       <div className="max-w-7xl mx-auto px-4 pt-48 pb-28 relative z-10">
         <div ref={headerRef} className="flex flex-col items-center text-center">
           <div data-gsap-reveal className="flex items-center gap-4 mb-8">
@@ -172,176 +150,112 @@ const Projects = () => {
         </div>
       </div>
 
-      {/* ── 3D CYLINDER CAROUSEL (pinned on scroll) ── */}
-      <div ref={carouselRef} className="relative w-full" style={{ minHeight: '100vh' }}>
-
-        {/* Counter indicator — bottom center */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-3 pointer-events-none">
-          <div className="flex items-center gap-4">
-            <span className="text-xs tracking-[0.25em] text-white/80 font-medium tabular-nums" style={{ fontFamily: 'var(--font-display)' }}>
-              {padIndex(activeIndex)}
-            </span>
-            <div className="w-8 h-[1px] bg-white/20" />
-            <span className="text-xs tracking-[0.25em] text-white/30 font-medium tabular-nums" style={{ fontFamily: 'var(--font-display)' }}>
-              {padIndex(numCards - 1)}
-            </span>
-          </div>
-          {/* Dot indicators */}
-          <div className="flex gap-2 mt-1">
-            {projects.map((_, i) => (
-              <div
-                key={i}
-                className="h-[2px] rounded-full transition-all duration-700 ease-out"
-                style={{
-                  backgroundColor: i === activeIndex ? 'rgba(6,182,212,0.9)' : 'rgba(255,255,255,0.08)',
-                  width: i === activeIndex ? '32px' : '12px',
-                }}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Scroll hint arrow — left side */}
-        <div className="absolute left-8 md:left-16 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-3 pointer-events-none">
-          <div className="w-[1px] h-16 bg-gradient-to-b from-transparent to-white/15" />
-          <span className="text-[10px] tracking-[0.3em] text-white/20 uppercase font-medium -rotate-90 origin-center whitespace-nowrap">
-            Scroll
-          </span>
-        </div>
-
-        {/* 3D perspective wrapper */}
-        <div
-          className="flex items-center justify-center w-full h-screen"
-          style={{
-            perspective: '1800px',
-            perspectiveOrigin: '50% 50%',
-          }}
-        >
-          {/* Rotating track — GSAP rotates this */}
+      {/* ── STACKING PROJECT PANELS ── */}
+      <div ref={wrapperRef} className="relative">
+        {projects.map((project, i) => (
           <div
-            ref={trackRef}
-            className="relative"
-            style={{
-              width: '100%',
-              height: '100%',
-              transformStyle: 'preserve-3d',
-            }}
+            key={i}
+            className="project-panel relative"
+            style={{ height: '200vh' }}
           >
-            {projects.map((project, i) => (
-              <div
-                key={i}
-                ref={(el) => (cardsRef.current[i] = el)}
-                className="carousel-card absolute left-0 right-0 flex items-center justify-center"
-                style={{
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  transformStyle: 'preserve-3d',
-                  backfaceVisibility: 'hidden',
-                }}
-              >
-                {/* Card content — counter-rotated to always face camera */}
-                <div className="card-inner" style={{ transformStyle: 'preserve-3d' }}>
+            {/* Sticky card — stays in viewport while scrolling through the panel */}
+            <div
+              className="project-sticky-card sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden"
+              style={{ zIndex: 10 + i }}
+            >
+              <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
+                {/* Color/visual block (left) */}
+                <div
+                  className="project-color-block w-full lg:w-[55%] aspect-[16/10] rounded-2xl overflow-hidden relative flex-shrink-0"
+                >
+                  <div className={`absolute inset-0 bg-gradient-to-br ${project.iconColor}`} />
+                  {/* Grid overlay */}
                   <div
-                    className="w-[360px] sm:w-[440px] md:w-[520px] lg:w-[580px] rounded-2xl bg-slate-900/70 border border-white/[0.06] backdrop-blur-sm overflow-hidden cursor-pointer group"
-                    style={{ transformStyle: 'preserve-3d' }}
+                    className="absolute inset-0 opacity-[0.07]"
+                    style={{
+                      backgroundImage:
+                        'linear-gradient(rgba(255,255,255,0.25) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.25) 1px, transparent 1px)',
+                      backgroundSize: '48px 48px',
+                    }}
+                  />
+                  {/* Giant index */}
+                  <span
+                    className="absolute -bottom-6 -left-2 text-[10rem] md:text-[14rem] font-black text-white/[0.06] select-none leading-none pointer-events-none"
+                    style={{ fontFamily: 'var(--font-display)' }}
                   >
-                    {/* ── Color header area ── */}
-                    <div className="relative h-[200px] md:h-[260px] overflow-hidden">
-                      <div className={`absolute inset-0 bg-gradient-to-br ${project.iconColor} opacity-70`} />
+                    {padIndex(i)}
+                  </span>
+                  {/* Decorative ring */}
+                  <div
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[400px] md:h-[400px] rounded-full border border-white/[0.06]"
+                  />
+                  <div
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] md:w-[280px] md:h-[280px] rounded-full border border-white/[0.04]"
+                  />
+                </div>
 
-                      {/* Grid overlay */}
-                      <div
-                        className="absolute inset-0 opacity-[0.06]"
-                        style={{
-                          backgroundImage:
-                            'linear-gradient(rgba(255,255,255,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.2) 1px, transparent 1px)',
-                          backgroundSize: '48px 48px',
-                        }}
-                      />
-
-                      {/* Giant index number */}
+                {/* Text block (right) */}
+                <div
+                  className="project-text-block w-full lg:w-[45%] flex flex-col justify-center"
+                >
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {project.tags.slice(0, 4).map((tag, ti) => (
                       <span
-                        className="absolute -bottom-4 left-6 text-[9rem] md:text-[11rem] font-black text-white/[0.04] select-none leading-none pointer-events-none"
-                        style={{ fontFamily: 'var(--font-display)' }}
+                        key={ti}
+                        className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] rounded-full bg-white/[0.04] text-slate-400 border border-white/[0.06]"
                       >
-                        {padIndex(i)}
+                        {tag}
                       </span>
+                    ))}
+                  </div>
 
-                      {/* Hover overlay with links */}
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-700 flex items-end">
-                        <div className="p-6 translate-y-6 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-out">
-                          <div className="flex gap-3">
-                            <span className="p-3 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-white cursor-pointer hover:bg-white/20 transition-colors">
-                              <Github size={18} />
-                            </span>
-                            <span className="p-3 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-white cursor-pointer hover:bg-white/20 transition-colors">
-                              <ExternalLink size={18} />
-                            </span>
-                          </div>
-                        </div>
-                      </div>
+                  {/* Title */}
+                  <h3
+                    className="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-5 leading-[1.1]"
+                    style={{ fontFamily: 'var(--font-display)' }}
+                  >
+                    {project.title}
+                  </h3>
 
-                      {/* Top-right arrow */}
-                      <div className="absolute top-5 right-5 p-3 bg-white/10 backdrop-blur-md rounded-full border border-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                        <ArrowUpRight size={16} className="text-white" />
-                      </div>
-                    </div>
+                  {/* Description */}
+                  <p className="text-slate-400 leading-relaxed font-medium text-base md:text-lg mb-8 max-w-xl">
+                    {project.description}
+                  </p>
 
-                    {/* ── Content area ── */}
-                    <div className="p-7 md:p-9">
-                      {/* Tags */}
-                      <div className="flex flex-wrap gap-2 mb-5">
-                        {project.tags.slice(0, 3).map((tag, ti) => (
-                          <span
-                            key={ti}
-                            className="px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] rounded-full bg-white/[0.04] text-slate-500 border border-white/[0.04]"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-
-                      {/* Title */}
-                      <h3 className="text-xl md:text-2xl font-black text-white mb-3 group-hover:text-cyan-300 transition-colors duration-500">
-                        {project.title}
-                      </h3>
-
-                      {/* Description */}
-                      <p className="text-slate-500 leading-relaxed font-medium text-sm line-clamp-2">
-                        {project.description}
-                      </p>
-
-                      {/* Bottom links */}
-                      <div className="mt-6 pt-5 border-t border-white/[0.06] flex items-center justify-between">
-                        <div className="flex gap-5">
-                          <a
-                            href="#"
-                            className="flex items-center gap-2 text-xs text-slate-500 hover:text-cyan-400 transition-colors font-medium"
-                          >
-                            <Github size={14} /> {t('projects.sourceCode')}
-                          </a>
-                          <a
-                            href="#"
-                            className="flex items-center gap-2 text-xs text-cyan-400/70 hover:text-cyan-300 transition-colors font-bold"
-                          >
-                            <ExternalLink size={14} /> {t('projects.liveDemo')}
-                          </a>
-                        </div>
-                        <ArrowUpRight size={18} className="text-slate-600" />
-                      </div>
-                    </div>
+                  {/* Links */}
+                  <div className="flex items-center gap-6">
+                    <button
+                      onClick={preventDefault}
+                      className="group/btn flex items-center gap-2.5 text-sm text-white font-medium hover:gap-4 transition-all duration-500"
+                    >
+                      <span className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center group-hover/btn:bg-white/10 transition-colors duration-300">
+                        <Github size={16} />
+                      </span>
+                      <span>{t('projects.sourceCode')}</span>
+                    </button>
+                    <button
+                      onClick={preventDefault}
+                      className="group/btn flex items-center gap-2.5 text-sm font-medium transition-all duration-500"
+                      style={{ color: project.accentColor }}
+                    >
+                      <span className="w-10 h-10 rounded-full border flex items-center justify-center transition-colors duration-300" style={{ borderColor: project.accentColor + '40' }}>
+                        <ExternalLink size={16} />
+                      </span>
+                      <span>{t('projects.liveDemo')}</span>
+                    </button>
                   </div>
                 </div>
               </div>
-            ))}
+            </div>
           </div>
-        </div>
+        ))}
       </div>
 
-      {/* ── View More (after unpinned) ── */}
+      {/* ── View More ── */}
       <div className="max-w-7xl mx-auto px-4 py-32 flex justify-center relative z-10">
-        <motion.a
-          href="#"
+        <motion.button
+          onClick={preventDefault}
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -352,7 +266,7 @@ const Projects = () => {
         >
           <span>{t('projects.viewMore')}</span>
           <ArrowUpRight size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-        </motion.a>
+        </motion.button>
       </div>
     </section>
   );
