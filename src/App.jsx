@@ -21,6 +21,7 @@ import Contact from './components/sections/Contact';
 // Common Components
 // CustomCursor removed
 import Preloader from './components/common/Preloader';
+import TechnicalUI from './components/common/TechnicalUI';
 import GlobalCanvas from './components/common/GlobalCanvas';
 
 function App() {
@@ -71,6 +72,7 @@ function App() {
         {!isLoaded && <Preloader onComplete={handlePreloaderComplete} />}
 
         {/* CustomCursor removed to fix mix-blend-difference rendering artifacts */}
+        <TechnicalUI />
         <GlobalCanvas />
 
         {/* Cinematic scroll progress */}

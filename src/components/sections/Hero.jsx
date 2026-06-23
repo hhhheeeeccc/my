@@ -1,35 +1,39 @@
-import React, { useRef, useEffect, useMemo, useCallback } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion, useScroll, useTransform, useSpring, useMotionValue, useInView } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import Magnetic from '../common/Magnetic';
 
 const Hero = () => {
   const { t, i18n } = useTranslation();
-  const isAr = i18n.language?.startsWith('ar');
+  const isAr = i18n.language === 'ar';
   const sectionRef = useRef(null);
   const titleRef = useRef(null);
   const subtitleRef = useRef(null);
   const ctaRef = useRef(null);
   const marqueeRef = useRef(null);
 
-  // Mouse parallax with multiple depth layers
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const springX = useSpring(mouseX, { stiffness: 50, damping: 20, mass: 0.5 });
-  const springY = useSpring(mouseY, { stiffness: 50, damping: 20, mass: 0.5 });
-  const deepSpringX = useSpring(mouseX, { stiffness: 30, damping: 15, mass: 1 });
-  const deepSpringY = useSpring(mouseY, { stiffness: 30, damping: 15, mass: 1 });
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"]
+  });
 
-  const handleMouseMove = useCallback((e) => {
+  // Parallax / Spring movement for mouse interaction
+  const mouseX = useSpring(0, { stiffness: 50, damping: 20 });
+  const mouseY = useSpring(0, { stiffness: 50, damping: 20 });
+
+  const springX = useTransform(mouseX, [-0.5, 0.5], [-30, 30]);
+  const springY = useTransform(mouseY, [-0.5, 0.5], [-30, 30]);
+  const deepSpringX = useTransform(mouseX, [-0.5, 0.5], [-60, 60]);
+  const deepSpringY = useTransform(mouseY, [-0.5, 0.5], [-60, 60]);
+
+  const handleMouseMove = (e) => {
+    const { clientX, clientY } = e;
     const { innerWidth, innerHeight } = window;
-    const nx = (e.clientX - innerWidth / 2) / innerWidth;
-    const ny = (e.clientY - innerHeight / 2) / innerHeight;
-    mouseX.set(nx * 30);
-    mouseY.set(ny * 20);
-  }, [mouseX, mouseY]);
+    mouseX.set((clientX / innerWidth) - 0.5);
+    mouseY.set((clientY / innerHeight) - 0.5);
+  };
 
-  // Scroll progress
-  const { scrollYProgress } = useScroll();
+  // Scroll animations
   const contentOpacity = useTransform(scrollYProgress, [0, 0.08], [1, 0]);
   const contentScale = useTransform(scrollYProgress, [0, 0.08], [1, 0.92]);
   const contentY = useTransform(scrollYProgress, [0, 0.08], [0, -80]);
@@ -52,7 +56,61 @@ const Hero = () => {
     >
       {/* Sticky hero content that fades on scroll */}
       <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden">
-        {/* Decorative corner accents */}
+
+        {/* Technical FUI Brackets around the viewport center */}
+        <motion.div
+          style={{ x: deepSpringX, y: deepSpringY, opacity: contentOpacity }}
+          className="absolute inset-0 pointer-events-none z-10"
+        >
+          {/* Top Left Bracket */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.5, delay: 2.2 }}
+            className="absolute top-1/4 left-1/4 w-12 h-12 border-t border-l border-cyan-500/20"
+          />
+          {/* Top Right Bracket */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.5, delay: 2.3 }}
+            className="absolute top-1/4 right-1/4 w-12 h-12 border-t border-r border-cyan-500/20"
+          />
+          {/* Bottom Left Bracket */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.5, delay: 2.4 }}
+            className="absolute bottom-1/4 left-1/4 w-12 h-12 border-b border-l border-cyan-500/20"
+          />
+          {/* Bottom Right Bracket */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.5, delay: 2.5 }}
+            className="absolute bottom-1/4 right-1/4 w-12 h-12 border-b border-r border-cyan-500/20"
+          />
+
+          {/* Floating Data Nodes */}
+          <motion.div
+            animate={{ y: [0, -15, 0], opacity: [0.2, 0.5, 0.2] }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+            className="absolute top-[30%] left-[20%] flex flex-col gap-1"
+          >
+            <div className="w-1 h-1 bg-cyan-400" />
+            <span className="text-[7px] text-cyan-400 font-bold tracking-tighter">TRK_ID: 0842</span>
+          </motion.div>
+          <motion.div
+            animate={{ y: [0, 15, 0], opacity: [0.2, 0.5, 0.2] }}
+            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+            className="absolute bottom-[30%] right-[20%] flex flex-col items-end gap-1"
+          >
+            <div className="w-1 h-1 bg-violet-400" />
+            <span className="text-[7px] text-violet-400 font-bold tracking-tighter">SIG_STR: HIGH</span>
+          </motion.div>
+        </motion.div>
+
+        {/* Decorative corner accents (original) */}
         <div className="absolute top-10 left-10 md:top-16 md:left-16" style={{ x: deepSpringX, y: deepSpringY }}>
           <motion.div
             className="w-20 h-px bg-gradient-to-r from-cyan-500/60 to-transparent"
@@ -117,16 +175,16 @@ const Hero = () => {
 
           {/* Title - word by word reveal with 3D perspective */}
           <div className="perspective-[1200px] w-full" ref={titleRef}>
-            <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[9rem] font-normal text-white font-display leading-[0.92] tracking-[-0.04em] pointer-events-auto flex flex-wrap justify-center">
+            <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[9.5rem] font-normal text-white font-display leading-[0.85] tracking-[-0.04em] pointer-events-auto flex flex-wrap justify-center">
               {titleWords.map((word, i) => (
                 <span key={i} className="inline-block overflow-hidden mr-[0.2em] last:mr-0">
                   <motion.span
                     className="inline-block origin-bottom"
-                    initial={{ y: '120%', rotateX: 40, opacity: 0 }}
-                    animate={{ y: '0%', rotateX: 0, opacity: 1 }}
+                    initial={{ y: '120%', rotateX: 60, opacity: 0, filter: 'blur(10px)' }}
+                    animate={{ y: '0%', rotateX: 0, opacity: 1, filter: 'blur(0px)' }}
                     transition={{
-                      duration: 1,
-                      delay: 2.6 + i * 0.08,
+                      duration: 1.2,
+                      delay: 2.6 + i * 0.1,
                       ease: [0.16, 1, 0.3, 1]
                     }}
                     style={{ lineHeight: titleLineHeight }}

@@ -1,8 +1,8 @@
-import React, { useRef, useState, useEffect, useMemo } from 'react';
+import React, { useRef, useState, useEffect, useMemo, useCallback } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { Float, MeshDistortMaterial, Text, Stars } from '@react-three/drei';
 import { useScroll, useVelocity, useSpring } from 'framer-motion';
-import { EffectComposer, Bloom, ChromaticAberration } from '@react-three/postprocessing';
+import { EffectComposer, Bloom, ChromaticAberration, Glitch, Scanline, Noise } from '@react-three/postprocessing';
 import { BlendFunction } from 'postprocessing';
 import * as THREE from 'three';
 import { createFog } from '../../utils/three-utils';
@@ -38,127 +38,46 @@ function NeonDataRain({ count = 1500, focusMode, velocityFactor }) {
       p.position.y -= p.speed * 0.04 * speedMult;
       if (p.position.y < -10) {
         p.position.y = 15;
-        p.position.x = (Math.random() - 0.5) * 30;
       }
       dummy.position.copy(p.position);
-      const s = 0.015 + Math.sin(state.clock.elapsedTime * 2 + i) * 0.008 + velocityFactor.get() * 0.01;
-      dummy.scale.setScalar(s);
       dummy.updateMatrix();
       meshRef.current.setMatrixAt(i, dummy.matrix);
+      meshRef.current.setColorAt(i, p.color);
     });
     meshRef.current.instanceMatrix.needsUpdate = true;
+    if (meshRef.current.instanceColor) meshRef.current.instanceColor.needsUpdate = true;
   });
 
   return (
-    <instancedMesh ref={meshRef} args={[undefined, undefined, count]}>
-      <sphereGeometry args={[1, 4, 4]} />
-      <meshBasicMaterial color="#00ffff" toneMapped={false} transparent opacity={0.7} />
+    <instancedMesh ref={meshRef} args={[null, null, count]}>
+      <boxGeometry args={[0.015, 0.25, 0.015]} />
+      <meshBasicMaterial transparent opacity={0.4} />
     </instancedMesh>
   );
 }
 
-// ===================== NEON GRID FLOOR =====================
+// ===================== NEON GRID =====================
 function NeonGrid() {
-  const gridUniforms = useMemo(() => ({
-    uTime: { value: 0 },
-    uColor1: { value: new THREE.Color('#00ffff') },
-    uColor2: { value: new THREE.Color('#ff00ff') },
-  }), []);
-
-  const gridMaterial = useMemo(() => {
-    return new THREE.ShaderMaterial({
-      transparent: true,
-      uniforms: gridUniforms,
-      vertexShader: `
-        varying vec2 vUv;
-        void main() {
-          vUv = uv;
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-      `,
-      fragmentShader: `
-        uniform float uTime;
-        uniform vec3 uColor1;
-        uniform vec3 uColor2;
-        varying vec2 vUv;
-
-        void main() {
-          vec2 grid = abs(fract(vUv * 30.0 - 0.5) - 0.5) / fwidth(vUv * 30.0);
-          float line = min(grid.x, grid.y);
-          float gridAlpha = 1.0 - min(line, 1.0);
-          float dist = length(vUv - 0.5);
-          float pulse = sin(dist * 20.0 - uTime * 1.5) * 0.5 + 0.5;
-          vec3 color = mix(uColor1, uColor2, sin(vUv.x * 6.28 + uTime * 0.5) * 0.5 + 0.5);
-          float edgeFade = 1.0 - smoothstep(0.2, 0.5, dist);
-          float alpha = gridAlpha * (0.15 + pulse * 0.1) * edgeFade;
-          gl_FragColor = vec4(color, alpha);
-        }
-      `,
-    });
-  }, [gridUniforms]);
-
-  const matRef = useRef(gridMaterial);
-
-  useFrame((state) => {
-    if (matRef.current) {
-      matRef.current.uniforms.uTime.value = state.clock.elapsedTime;
-    }
-  });
-
   return (
-    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -4, -2]} material={gridMaterial}>
-      <planeGeometry args={[50, 50, 1, 1]} />
-    </mesh>
+    <gridHelper
+      args={[100, 50, '#06b6d4', '#1e293b']}
+      position={[0, -1, 0]}
+      rotation={[0, 0, 0]}
+    >
+      <meshBasicMaterial transparent opacity={0.05} wireframe />
+    </gridHelper>
   );
 }
 
-// ===================== CYBER HOLOGRAM RINGS =====================
+// ===================== CYBER RINGS =====================
 function CyberRings({ focusMode, clickPulse }) {
-  const groupRef = useRef(null);
-  const coreRef = useRef(null);
-
-  useFrame((state) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y = state.clock.elapsedTime * (focusMode ? 0.4 : 0.15);
-    }
-    if (coreRef.current) {
-      const scale = (1 + Math.sin(state.clock.elapsedTime * 2) * 0.08) * (focusMode ? 1.3 : 1) * (clickPulse ? 1.5 : 1);
-      coreRef.current.scale.setScalar(scale);
-    }
-  });
-
-  const ringColor = focusMode ? '#00ffff' : '#3b82f6';
-
   return (
-    <group ref={groupRef} position={[0, 0, -3]}>
-      <mesh ref={coreRef}>
-        <icosahedronGeometry args={[0.8, 1]} />
-        <MeshDistortMaterial
-          color={ringColor}
-          emissive={ringColor}
-          emissiveIntensity={focusMode ? 3 : 1.5}
-          speed={2 + (focusMode ? 2 : 0)}
-          distort={focusMode ? 0.5 : 0.25}
-          roughness={0}
-          metalness={1}
-          transparent
-          opacity={focusMode ? 0.7 : 0.4}
-        />
-      </mesh>
+    <group position={[0, 0, -5]}>
+      <CyberRing radius={2} color="#00ffff" speed={0.5} visible={focusMode} />
+      <CyberRing radius={2.2} color="#ff00ff" speed={-0.3} visible={focusMode} />
+      <CyberRing radius={2.5} color="#00ff88" speed={0.4} visible={focusMode} />
 
-      <mesh scale={[1.3, 1.3, 1.3]}>
-        <icosahedronGeometry args={[0.8, 1]} />
-        <meshBasicMaterial color="#ff00ff" wireframe transparent opacity={focusMode ? 0.3 : 0.1} />
-      </mesh>
-
-      {[
-        { radius: 1.8, color: '#00ffff', speed: 0.8 },
-        { radius: 2.3, color: '#ff00ff', speed: -0.6 },
-        { radius: 2.8, color: '#00ff88', speed: 0.4 },
-      ].map((ring, i) => (
-        <CyberRing key={i} {...ring} visible={focusMode} />
-      ))}
-
+      {/* Floating data fragments */}
       {[...Array(6)].map((_, i) => {
         const angle = (i / 6) * Math.PI * 2;
         const r = 3;
@@ -217,7 +136,6 @@ function CyberRing({ radius, color, speed, visible }) {
 function CyberBlob({ position, color, speed, distort, radius = 1, focusMode, velocityFactor, clickPulse }) {
   const mesh = useRef(null);
   const mouse = useThree((state) => state.mouse);
-  // Global click listeners removed to prevent re-render crashes
 
   useFrame((state) => {
     const time = state.clock.getElapsedTime();
@@ -316,35 +234,31 @@ const Experience3D = () => {
     return () => target.removeEventListener('ui-focus', h);
   }, []);
 
-  useFrame(() => {
+  useFrame((state) => {
     const sp = scrollYProgress.get();
 
     // === CINEMATIC CAMERA ===
     let targetZ, targetY, targetRotX, targetFov;
 
     if (sp < 0.2) {
-      // HERO: Wide cinematic shot
       const t = sp / 0.2;
       targetZ = 6 - t * 1;
       targetY = 0.5 + t * 0.3;
       targetRotX = -0.05 - t * 0.05;
       targetFov = 72 + t * 3;
     } else if (sp < 0.45) {
-      // ABOUT: Push in closer, slight pan left
       const t = (sp - 0.2) / 0.25;
       targetZ = 5 - t * 1;
       targetY = 0.8 + Math.sin(t * Math.PI) * 0.5;
       targetRotX = -0.1 + Math.sin(t * Math.PI) * 0.05;
       targetFov = 75 + Math.sin(t * Math.PI) * 5;
     } else if (sp < 0.7) {
-      // PROJECTS: Close-up, dramatic angle
       const t = (sp - 0.45) / 0.25;
       targetZ = 4 - t * 0.5 + Math.sin(t * Math.PI) * 0.3;
       targetY = 1.0 - t * 0.3;
       targetRotX = -0.05 - t * 0.1;
       targetFov = 78 + Math.sin(t * Math.PI) * 8;
     } else {
-      // CONTACT/FOOTER: Pull back wide
       const t = (sp - 0.7) / 0.3;
       targetZ = 4.5 + t * 1.5;
       targetY = 0.5 - t * 0.5;
@@ -356,11 +270,16 @@ const Experience3D = () => {
     const vel = velFactor.get();
     const velShake = vel * 0.15;
 
-    camera.position.z = THREE.MathUtils.lerp(camera.position.z, (focus.pulse ? 3 : (focus.active ? targetZ - 0.5 : targetZ)) + velShake, 0.03);
-    camera.position.y = THREE.MathUtils.lerp(camera.position.y, targetY, 0.03);
-    camera.rotation.x = THREE.MathUtils.lerp(camera.rotation.x, targetRotX, 0.03);
-    camera.rotation.y = THREE.MathUtils.lerp(camera.rotation.y, sp < 0.5 ? -0.05 : 0.05, 0.02);
-    camera.fov = THREE.MathUtils.lerp(camera.fov, targetFov + vel * 15 + (focus.pulse ? 25 : 0), 0.08);
+    const mouseShiftX = (state.viewport?.width || 1) * 0.05 * (state.mouse.x);
+    const mouseShiftY = (state.viewport?.height || 1) * 0.05 * (state.mouse.y);
+
+    camera.position.z = THREE.MathUtils.lerp(camera.position.z, (focus.pulse ? 3 : (focus.active ? targetZ - 0.5 : targetZ)) + velShake, 0.05);
+    camera.position.y = THREE.MathUtils.lerp(camera.position.y, targetY + mouseShiftY, 0.05);
+    camera.position.x = THREE.MathUtils.lerp(camera.position.x, mouseShiftX, 0.05);
+
+    camera.rotation.x = THREE.MathUtils.lerp(camera.rotation.x, targetRotX - mouseShiftY * 0.05, 0.05);
+    camera.rotation.y = THREE.MathUtils.lerp(camera.rotation.y, (sp < 0.5 ? -0.05 : 0.05) + mouseShiftX * 0.05, 0.04);
+    camera.fov = THREE.MathUtils.lerp(camera.fov, targetFov + vel * 25 + (focus.pulse ? 30 : 0), 0.1);
     camera.updateProjectionMatrix();
   });
 
@@ -376,24 +295,13 @@ const Experience3D = () => {
   return (
     <>
       <primitive object={fog} attach="fog" />
-
-      {/* Cyberpunk Lighting */}
       <ambientLight args={['#ffffff', focus.active ? 0.15 : 0.08]} />
       <pointLight args={['#00ffff', focus.active ? 2.5 : 1]} position={[8, 8, 5]} distance={25} />
       <pointLight args={['#ff00ff', focus.active ? 2 : 0.8]} position={[-8, 5, 3]} distance={25} />
       <pointLight args={['#ff3366', focus.active ? 1.5 : 0.5]} position={[0, -3, 8]} distance={20} />
-      <spotLight args={['#6633ff', focus.active ? 2 : 0.8]} position={[0, 15, -5]} angle={0.4} penumbra={1} distance={40} />
-
-      {/* Background Stars */}
       <Stars radius={60} depth={40} count={1500} factor={3} saturation={0.5} fade speed={0.5} />
-
-      {/* Neon Grid */}
       <NeonGrid />
-
-      {/* Data Rain Particles */}
       <NeonDataRain count={1200} focusMode={focus.active} velocityFactor={velFactor} />
-
-      {/* Cyberpunk Blobs (replacing original blobs) */}
       {cyberBlobs.map((b, i) => (
         <CyberBlob
           key={i}
@@ -407,20 +315,11 @@ const Experience3D = () => {
           clickPulse={focus.pulse}
         />
       ))}
-
-      {/* Hologram Center */}
       <CyberRings focusMode={focus.active} clickPulse={focus.pulse} />
-
-      {/* Light Beams */}
       <LightBeams focusMode={focus.active} />
-
-      {/* Character area light */}
       <pointLight args={['#00ffff', 0.8, 8]} position={[1.5, 2, 1]} distance={10} />
-
-      {/* 3D Cyberpunk Character - Scroll Animated */}
       <CyberCharacter scrollProgress={scrollProgress} />
 
-      {/* Post Processing - no Vignette to keep canvas transparent */}
       <EffectComposer>
         <Bloom
           intensity={focus.active ? 1.8 : 1.0}
@@ -436,6 +335,23 @@ const Experience3D = () => {
           )}
           radialModulation={true}
           modulationOffset={0.5}
+        />
+        <Glitch
+          delay={new THREE.Vector2(1.5, 3.5)}
+          duration={new THREE.Vector2(0.6, 1.0)}
+          strength={new THREE.Vector2(0.1, 0.3)}
+          mode={1}
+          active={focus.active || velFactor.get() > 0.5}
+          ratio={0.85}
+        />
+        <Scanline
+          blendFunction={BlendFunction.OVERLAY}
+          density={1.2}
+          opacity={0.05}
+        />
+        <Noise
+          blendFunction={BlendFunction.SOFT_LIGHT}
+          opacity={0.08}
         />
       </EffectComposer>
     </>
