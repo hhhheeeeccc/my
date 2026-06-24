@@ -102,15 +102,26 @@ const ProjectCard = ({ project, index, total }) => {
 
             <div className="flex items-center gap-12">
               <Magnetic>
-                <span className="group flex items-center gap-3 text-sm text-white/40 hover:text-white transition-colors cursor-pointer font-bold tracking-[0.2em] uppercase">
+                <a
+                  href={project.sourceUrl || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center gap-3 text-sm text-white/40 hover:text-white transition-colors cursor-pointer font-bold tracking-[0.2em] uppercase"
+                >
                   <Github size={18} /> {project.viewSourceLabel}
-                </span>
+                </a>
               </Magnetic>
               <Magnetic>
-                <span className="group flex items-center gap-4 text-sm font-black tracking-[0.2em] transition-colors cursor-pointer uppercase" style={{ color: project.accentHex }}>
+                <a
+                  href={project.liveUrl || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center gap-4 text-sm font-black tracking-[0.2em] transition-colors cursor-pointer uppercase"
+                  style={{ color: project.accentHex }}
+                >
                   {project.viewLiveLabel}
                   <ArrowUpRight size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                </span>
+                </a>
               </Magnetic>
             </div>
           </div>
@@ -143,6 +154,8 @@ const Projects = () => {
     category: i === 1 ? 'WEB ARCHITECTURE' : i === 2 ? 'SYSTEM INTERFACE' : 'CORE ENGINE',
     viewSourceLabel: t('projects.sourceCode'),
     viewLiveLabel: t('projects.liveDemo'),
+    sourceUrl: "#",
+    liveUrl: "#",
   })), [t]);
 
   useEffect(() => {

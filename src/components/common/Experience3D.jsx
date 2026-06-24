@@ -1,3 +1,4 @@
+import { getSafeRandom } from '../../utils/math';
 import React, { useRef, useMemo, useEffect, useState } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import {
@@ -41,9 +42,9 @@ function NeonDataRain({ count = 500, focusMode, velocityFactor }) {
   const points = useMemo(() => {
     const p = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
-      p[i * 3] = (Math.random() - 0.5) * 25;
-      p[i * 3 + 1] = Math.random() * 20;
-      p[i * 3 + 2] = (Math.random() - 0.5) * 20;
+      p[i * 3] = (getSafeRandom() - 0.5) * 25;
+      p[i * 3 + 1] = getSafeRandom() * 20;
+      p[i * 3 + 2] = (getSafeRandom() - 0.5) * 20;
     }
     return p;
   }, [count]);
@@ -202,9 +203,9 @@ function LightBeams({ focusMode }) {
     const colors = ['#00ffff', '#ff00ff', '#00ff88', '#ff3366', '#6633ff'];
     for (let i = 0; i < 8; i++) {
       configs.push({
-        position: [(Math.random() - 0.5) * 20, 3, -8 + (Math.random() - 0.5) * 15],
-        color: colors[Math.floor(Math.random() * colors.length)],
-        height: 8 + Math.random() * 10,
+        position: [(getSafeRandom() - 0.5) * 20, 3, -8 + (getSafeRandom() - 0.5) * 15],
+        color: colors[Math.floor(getSafeRandom() * colors.length)],
+        height: 8 + getSafeRandom() * 10,
       });
     }
     return configs;

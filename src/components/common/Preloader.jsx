@@ -1,3 +1,4 @@
+import { getSafeRandom } from '../../utils/math';
 import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { gsap } from 'gsap';

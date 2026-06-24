@@ -137,7 +137,7 @@ const Contact = () => {
                   <motion.a
                     href={soc.link}
                     whileHover={{ scale: 1.15, y: -5 }}
-                    whileTap={{ scale: 0.9 }}
+                    whileTap={{ scale: 0.9 }} rel="noopener noreferrer" target="_blank"
                     className={`p-4 rounded-xl bg-slate-900/30 text-slate-500 border border-white/[0.06] backdrop-blur-sm transition-all duration-500 hover:border-white/[0.12] hover:text-white ${soc.color}`}
                   >
                     {soc.icon}

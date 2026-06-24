@@ -1,3 +1,4 @@
+import { getSafeRandom } from '../../../utils/math';
 import React, { useRef, useMemo, useCallback } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
@@ -229,19 +230,19 @@ function BodyParticleCloud({ scrollT, getJointPos }) {
     const jointNames = Object.keys(SKELETON);
     for (let i = 0; i < count; i++) {
       // Attach particle to a random joint with some spread
-      const jointName = jointNames[Math.floor(Math.random() * jointNames.length)];
-      const spread = 0.08 + Math.random() * 0.12;
+      const jointName = jointNames[Math.floor(getSafeRandom() * jointNames.length)];
+      const spread = 0.08 + getSafeRandom() * 0.12;
       temp.push({
         joint: jointName,
         offset: new THREE.Vector3(
-          (Math.random() - 0.5) * spread,
-          (Math.random() - 0.5) * spread,
-          (Math.random() - 0.5) * spread
+          (getSafeRandom() - 0.5) * spread,
+          (getSafeRandom() - 0.5) * spread,
+          (getSafeRandom() - 0.5) * spread
         ),
-        speed: 0.5 + Math.random() * 2,
-        phase: Math.random() * Math.PI * 2,
-        orbitRadius: 0.01 + Math.random() * 0.06,
-        size: 0.003 + Math.random() * 0.008,
+        speed: 0.5 + getSafeRandom() * 2,
+        phase: getSafeRandom() * Math.PI * 2,
+        orbitRadius: 0.01 + getSafeRandom() * 0.06,
+        size: 0.003 + getSafeRandom() * 0.008,
       });
     }
     return temp;
@@ -252,7 +253,7 @@ function BodyParticleCloud({ scrollT, getJointPos }) {
     const colors = new Float32Array(count * 3);
     const palette = [new THREE.Color('#00ffff'), new THREE.Color('#ff00ff'), new THREE.Color('#00ff88'), new THREE.Color('#ffffff')];
     for (let i = 0; i < count; i++) {
-      const c = palette[Math.floor(Math.random() * palette.length)];
+      const c = palette[Math.floor(getSafeRandom() * palette.length)];
       colors[i * 3] = c.r;
       colors[i * 3 + 1] = c.g;
       colors[i * 3 + 2] = c.b;
@@ -381,8 +382,8 @@ function HoloText3D({ text, yOffset, color, scrollT, visibleRange }) {
     groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, targetY, 0.05);
     groupRef.current.scale.setScalar(THREE.MathUtils.lerp(groupRef.current.scale.x, inRange ? 1 : 0, 0.05));
     // Holographic flicker
-    if (inRange && Math.random() < 0.015) {
-      groupRef.current.position.x += (Math.random() - 0.5) * 0.008;
+    if (inRange && getSafeRandom() < 0.015) {
+      groupRef.current.position.x += (getSafeRandom() - 0.5) * 0.008;
     } else {
       groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, 0, 0.05);
     }
@@ -411,11 +412,11 @@ function CharacterDataRain({ scrollT }) {
     const temp = [];
     for (let i = 0; i < count; i++) {
       temp.push({
-        x: (Math.random() - 0.5) * 2,
-        z: (Math.random() - 0.5) * 1,
-        y: Math.random() * 3 - 1,
-        speed: 1 + Math.random() * 3,
-        char: String.fromCharCode(0x30A0 + Math.floor(Math.random() * 96)),
+        x: (getSafeRandom() - 0.5) * 2,
+        z: (getSafeRandom() - 0.5) * 1,
+        y: getSafeRandom() * 3 - 1,
+        speed: 1 + getSafeRandom() * 3,
+        char: String.fromCharCode(0x30A0 + Math.floor(getSafeRandom() * 96)),
       });
     }
     return temp;
@@ -431,7 +432,7 @@ function CharacterDataRain({ scrollT }) {
     for (let i = 0; i < count; i++) {
       const d = drops[i];
       d.y -= d.speed * 0.02;
-      if (d.y < -1.5) { d.y = 2; d.x = (Math.random() - 0.5) * 2; }
+      if (d.y < -1.5) { d.y = 2; d.x = (getSafeRandom() - 0.5) * 2; }
 
       dummy.position.set(d.x, d.y, d.z);
       const s = 0.012 * (visible ? 1 : 0.1);
@@ -476,10 +477,10 @@ function HoloDesk({ scrollT }) {
     const lines = [];
     for (let i = 0; i < 12; i++) {
       lines.push({
-        width: 0.1 + Math.random() * 0.55,
-        x: -0.35 + Math.random() * 0.1,
+        width: 0.1 + getSafeRandom() * 0.55,
+        x: -0.35 + getSafeRandom() * 0.1,
         y: 0.2 - i * 0.032,
-        color: ['#00ffff', '#ff00ff', '#00ff88', '#ffaa00', '#6633ff'][Math.floor(Math.random() * 5)],
+        color: ['#00ffff', '#ff00ff', '#00ff88', '#ffaa00', '#6633ff'][Math.floor(getSafeRandom() * 5)],
       });
     }
     return lines;
@@ -579,13 +580,13 @@ function OrbitalFragments({ scrollT }) {
     const temp = [];
     for (let i = 0; i < count; i++) {
       temp.push({
-        orbitRadius: 0.5 + Math.random() * 0.8,
-        orbitSpeed: 0.3 + Math.random() * 0.8,
-        yOffset: (Math.random() - 0.5) * 2,
-        ySpeed: 0.5 + Math.random(),
-        phase: Math.random() * Math.PI * 2,
-        size: [0.02, 0.04, 0.015, 0.03][Math.floor(Math.random() * 4)],
-        rotationSpeed: Math.random() * 2 - 1,
+        orbitRadius: 0.5 + getSafeRandom() * 0.8,
+        orbitSpeed: 0.3 + getSafeRandom() * 0.8,
+        yOffset: (getSafeRandom() - 0.5) * 2,
+        ySpeed: 0.5 + getSafeRandom(),
+        phase: getSafeRandom() * Math.PI * 2,
+        size: [0.02, 0.04, 0.015, 0.03][Math.floor(getSafeRandom() * 4)],
+        rotationSpeed: getSafeRandom() * 2 - 1,
       });
     }
     return temp;
