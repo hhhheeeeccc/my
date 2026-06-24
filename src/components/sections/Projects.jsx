@@ -22,11 +22,10 @@ const PIcon = ({ id }) => {
   return <Code2 size={s} className="text-violet-400" />;
 };
 
-const PLinks = ({ hex, sL, lL }) => (
-  <div className="flex items-center gap-6">
-    <span className="group flex items-center gap-2 text-xs text-white/30 hover:text-white/70 font-medium transition-colors cursor-pointer"><Github size={14} />{sL}</span>
-    <span className="group flex items-center gap-2 text-xs font-medium transition-colors cursor-pointer" style={{ color: hex }}><ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />{lL}</span>
-  </div>
+const Btn = ({ icon: Icon }) => (
+  <span className="p-4 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-white hover:bg-white/20 transition-colors">
+    <Icon size={18} />
+  </span>
 );
 
 const PCard = ({ p, i }) => {
@@ -56,10 +55,7 @@ const PCard = ({ p, i }) => {
           </div>
           <span className={`absolute -bottom-6 -right-2 text-[12rem] md:text-[18rem] font-black text-white/[0.025] select-none leading-none pointer-events-none ${UI.F}`}>{pad(i)}</span>
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-all duration-700 flex items-end cursor-pointer">
-            <div className="p-8 md:p-12 translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-out flex gap-4">
-              <span className="p-4 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-white hover:bg-white/20 transition-colors"><Github size={18} /></span>
-              <span className="p-4 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-white hover:bg-white/20 transition-colors"><ExternalLink size={18} /></span>
-            </div>
+            <div className="p-8 md:p-12 translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 ease-out flex gap-4"><Btn icon={Github} /><Btn icon={ExternalLink} /></div>
           </div>
         </div>
         <div className={`${UI.C} h-px my-6 md:my-8`} style={{ background: `linear-gradient(90deg, transparent, ${p.accentHex}40, transparent)`, transformOrigin: 'center' }} />
@@ -70,7 +66,10 @@ const PCard = ({ p, i }) => {
           </div>
           <div className="flex flex-col items-start md:items-end gap-4">
             <div className="flex flex-wrap gap-2">{p.tags.map((t) => <span key={`${p.id}-${t}`} className="px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.2em] rounded-full border border-white/5 bg-white/[0.03] text-white/40">{t}</span>)}</div>
-            <PLinks hex={p.accentHex} sL={p.sourceLabel} lL={p.liveLabel} />
+            <div className="flex items-center gap-6">
+              <span className="group flex items-center gap-2 text-xs text-white/30 hover:text-white/70 font-medium transition-colors cursor-pointer"><Github size={14} />{p.sL}</span>
+              <span className="group flex items-center gap-2 text-xs font-medium transition-colors cursor-pointer" style={{ color: p.accentHex }}><ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />{p.lL}</span>
+            </div>
           </div>
         </div>
         <p className={`${UI.C} max-w-2xl mt-6 text-sm md:text-base ${UI.T}`}>{p.description}</p>
@@ -84,9 +83,9 @@ const Projects = () => {
   const sRef = useRef(null);
   const hRef = useRef(null);
   const pList = useMemo(() => [
-    { id: 'p1', title: t('projects.project1.title'), description: t('projects.project1.description'), tags: [t('projects.tags.react'), t('projects.tags.ts')], iconColor: 'from-blue-600 to-violet-600', accentHex: '#818cf8', year: '2024', category: 'WEB', sourceLabel: t('projects.sourceCode'), liveLabel: t('projects.liveDemo') },
-    { id: 'p2', title: t('projects.project2.title'), description: t('projects.project2.description'), tags: [t('projects.tags.electron'), t('projects.tags.js')], iconColor: 'from-cyan-500 to-emerald-500', accentHex: '#2dd4bf', year: '2024', category: 'DESKTOP', sourceLabel: t('projects.sourceCode'), liveLabel: t('projects.liveDemo') },
-    { id: 'p3', title: t('projects.project3.title'), description: t('projects.project3.description'), tags: [t('projects.tags.react'), t('projects.tags.electron')], iconColor: 'from-violet-600 to-fuchsia-500', accentHex: '#c084fc', year: '2024', category: 'PERF', sourceLabel: t('projects.sourceCode'), liveLabel: t('projects.liveDemo') }
+    { id: 'p1', title: t('projects.project1.title'), description: t('projects.project1.description'), tags: [t('projects.tags.react'), t('projects.tags.ts')], iconColor: 'from-blue-600 to-violet-600', accentHex: '#818cf8', year: '2024', category: 'WEB', sL: t('projects.sourceCode'), lL: t('projects.liveDemo') },
+    { id: 'p2', title: t('projects.project2.title'), description: t('projects.project2.description'), tags: [t('projects.tags.electron'), t('projects.tags.js')], iconColor: 'from-cyan-500 to-emerald-500', accentHex: '#2dd4bf', year: '2024', category: 'DESKTOP', sL: t('projects.sourceCode'), lL: t('projects.liveDemo') },
+    { id: 'p3', title: t('projects.project3.title'), description: t('projects.project3.description'), tags: [t('projects.tags.react'), t('projects.tags.electron')], iconColor: 'from-violet-600 to-fuchsia-500', accentHex: '#c084fc', year: '2024', category: 'PERF', sL: t('projects.sourceCode'), lL: t('projects.liveDemo') }
   ], [t]);
 
   useEffect(() => {
