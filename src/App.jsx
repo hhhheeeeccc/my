@@ -1,6 +1,5 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion, useScroll, useSpring } from 'framer-motion';
 import { ReactLenis, useLenis } from 'lenis/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -23,22 +22,12 @@ import Dashboard from './components/admin/Dashboard';
 import AdminToggle from './components/admin/AdminToggle';
 
 // Common Components
-import CustomCursor from './components/common/CustomCursor';
 import Preloader from './components/common/Preloader';
-import GlobalCanvas from './components/common/GlobalCanvas';
 
 function App() {
   const { i18n } = useTranslation();
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
-  const isAr = i18n.language?.startsWith('ar');
-
-  const { scrollYProgress } = useScroll();
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 80,
-    damping: 25,
-    restDelta: 0.001
-  });
 
   // Sync Lenis with GSAP ScrollTrigger
   useLenis(ScrollTrigger.update);
@@ -68,25 +57,11 @@ function App() {
   }, []);
 
   return (
-    <ReactLenis root options={{ lerp: 0.08, smoothWheel: true }}>
-      <div className="min-h-screen bg-slate-950 overflow-x-hidden relative">
-        <div className="noise-overlay" aria-hidden="true" />
+    <ReactLenis root options={{ lerp: 0.06, smoothWheel: true }}>
+      <div className="min-h-screen bg-black overflow-x-hidden relative">
 
         {/* Preloader */}
         {!isLoaded && <Preloader onComplete={handlePreloaderComplete} />}
-
-        <CustomCursor />
-        <GlobalCanvas />
-
-        {/* Scroll progress bar - minimal */}
-        <motion.div
-          className="fixed top-0 left-0 right-0 h-[1px] z-[150]"
-          style={{
-            scaleX: smoothProgress,
-            transformOrigin: isAr ? "right" : "left",
-            background: 'linear-gradient(90deg, transparent, #06b6d4, #8b5cf6, transparent)',
-          }}
-        />
 
         <Navbar isAdminOpen={isAdminOpen} />
 

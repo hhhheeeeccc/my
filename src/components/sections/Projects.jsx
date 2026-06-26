@@ -5,229 +5,264 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-/* ═══════════════════════════════════════════════════════════════
-   ActiveTheory /work clone
-   ─ Full-bleed fullscreen projects (no cards, no borders)
-   ─ Minimal text: number + category + title only
-   ─ Crossfade + zoom transitions driven by scroll
-   ─ 3D perspective shift on visuals
-   ═══════════════════════════════════════════════════════════════ */
+/*
+  ═══════════════════════════════════════════════════════════════
+  ActiveTheory /work — Cinematic scroll-through clone
+  ═══════════════════════════════════════════════════════════════
+  How AT work section actually works:
+  - Each project is a FULLSCREEN image/video
+  - As you scroll, the current project zooms out slightly & fades
+  - The next project zooms in from slightly zoomed state & fades in
+  - Text (category + title) appears at bottom-left during "hold" phase
+  - Project counter visible (01, 02, 03...)
+  - Pure black #000 background
+  - No section headers, no cards, no grids
+  - Smooth, cinematic, camera-like movement
+  ═══════════════════════════════════════════════════════════════
+*/
+
+const PROJECT_IMAGES = [
+  'https://sfile.chatglm.cn/images-ppt/368fa9fefa27.png',
+  'https://sfile.chatglm.cn/images-ppt/ffc85a6f9d93.png',
+  'https://sfile.chatglm.cn/images-ppt/8f0d57436abd.png',
+];
 
 const Projects = () => {
   const { t } = useTranslation();
   const sectionRef = useRef(null);
-  const headerRef = useRef(null);
+  const counterRef = useRef(null);
 
-  const projects = useMemo(() => [1, 2, 3].map((i) => ({
-    title: t(`projects.project${i}.title`),
-    category: i === 1 ? 'WEB / ENTERPRISE' : i === 2 ? 'DESKTOP / NETWORKING' : 'DESKTOP / PERFORMANCE',
-    accentHex: i === 1 ? '#818cf8' : i === 2 ? '#2dd4bf' : '#c084fc',
-    iconColor:
-      i === 1 ? 'from-blue-600 via-indigo-600 to-violet-600'
-      : i === 2 ? 'from-cyan-500 via-teal-500 to-emerald-500'
-      : 'from-violet-600 via-purple-600 to-fuchsia-500',
-  })), [t]);
+  const projects = useMemo(() =>
+    [
+      {
+        title: t('projects.project1.title'),
+        category: 'WEB / ENTERPRISE',
+        image: PROJECT_IMAGES[0],
+        year: '2024',
+      },
+      {
+        title: t('projects.project2.title'),
+        category: 'DESKTOP / NETWORKING',
+        image: PROJECT_IMAGES[1],
+        year: '2024',
+      },
+      {
+        title: t('projects.project3.title'),
+        category: 'DESKTOP / PERFORMANCE',
+        image: PROJECT_IMAGES[2],
+        year: '2024',
+      },
+    ],
+    [t]
+  );
 
   useEffect(() => {
     if (!sectionRef.current) return;
+
     const ctx = gsap.context(() => {
+      const items = sectionRef.current.querySelectorAll('.project-panel');
 
-      // ── Header reveal ──
-      const hl = headerRef.current?.querySelectorAll('[data-r]');
-      if (hl?.length) {
-        gsap.set(hl, { y: 80, opacity: 0 });
-        gsap.to(hl, {
-          y: 0, opacity: 1,
-          duration: 1, stagger: 0.15, ease: 'power3.out',
-          scrollTrigger: { trigger: headerRef.current, start: 'top 85%', end: 'top 30%', scrub: 1 },
-        });
-      }
+      items.forEach((panel, index) => {
+        const image = panel.querySelector('.project-image');
+        const overlay = panel.querySelector('.project-overlay');
+        const catEl = panel.querySelector('.project-cat');
+        const titleEl = panel.querySelector('.project-title');
+        const yearEl = panel.querySelector('.project-year');
+        const numEl = panel.querySelector('.project-num');
+        const lineEl = panel.querySelector('.project-line');
 
-      // ── Each fullscreen project ──
-      const panels = sectionRef.current.querySelectorAll('.at-project');
-      panels.forEach((panel, i) => {
-        const bg = panel.querySelector('.at-bg');
-        const num = panel.querySelector('.at-num');
-        const cat = panel.querySelector('.at-cat');
-        const title = panel.querySelector('.at-title');
-        const line = panel.querySelector('.at-line');
-
-        // ENTER: project fades in from below
-        gsap.set([bg, num, cat, title, line], { opacity: 0 });
-        gsap.set(bg, { scale: 1.08, y: 40 });
-        gsap.set(title, { y: 50 });
-        gsap.set(cat, { y: 30 });
-        gsap.set(line, { scaleX: 0 });
-
-        gsap.to(bg, {
-          opacity: 1, scale: 1, y: 0,
-          duration: 1, ease: 'power2.out',
-          scrollTrigger: { trigger: panel, start: 'top 95%', end: 'top 30%', scrub: 0.6 },
-        });
-        gsap.to(num, {
-          opacity: 0.15, duration: 0.6, ease: 'power2.out',
-          scrollTrigger: { trigger: panel, start: 'top 90%', end: 'top 40%', scrub: 0.6 },
-        });
-        gsap.to(cat, {
-          opacity: 1, y: 0, duration: 0.6, ease: 'power2.out',
-          scrollTrigger: { trigger: panel, start: 'top 80%', end: 'top 35%', scrub: 0.6 },
-        });
-        gsap.to(title, {
-          opacity: 1, y: 0, duration: 0.8, ease: 'power2.out',
-          scrollTrigger: { trigger: panel, start: 'top 75%', end: 'top 25%', scrub: 0.6 },
-        });
-        gsap.to(line, {
-          scaleX: 1, duration: 0.6, ease: 'power2.out',
-          scrollTrigger: { trigger: panel, start: 'top 80%', end: 'top 40%', scrub: 0.6 },
+        // ─── Pin each panel for the duration of its scroll animation ───
+        ScrollTrigger.create({
+          trigger: panel,
+          start: 'top top',
+          end: '+=200%',
+          pin: true,
+          pinSpacing: true,
         });
 
-        // 3D PERSPECTIVE: subtle tilt on the background
-        gsap.to(bg, {
-          rotateX: -1.5,
-          rotateY: i % 2 === 0 ? 1.5 : -1.5,
-          ease: 'none',
-          scrollTrigger: { trigger: panel, start: 'top 80%', end: 'bottom 20%', scrub: 1 },
+        // ─── Master Timeline ───
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: panel,
+            start: 'top top',
+            end: '+=200%',
+            scrub: 0.6,
+          },
         });
 
-        // DURING VIEW: slow zoom in as user reads
-        gsap.to(bg, {
-          scale: 1.04,
-          ease: 'none',
-          scrollTrigger: { trigger: panel, start: 'top top', end: 'bottom top', scrub: 0.3 },
-        });
+        // ── ENTER PHASE (0% → 25%): Image zooms in from 1.15, fades in ──
+        tl.fromTo(image,
+          { scale: 1.2, opacity: 0, filter: 'brightness(1.3)' },
+          { scale: 1.0, opacity: 1, filter: 'brightness(1)', duration: 0.25, ease: 'power2.out' },
+          0
+        );
 
-        // EXIT: fade out
-        gsap.to(bg, {
-          scale: 0.96, opacity: 0, y: -30,
-          ease: 'none',
-          scrollTrigger: { trigger: panel, start: 'bottom 80%', end: 'bottom 20%', scrub: 0.6 },
-        });
-        gsap.to(title, {
-          opacity: 0, y: -40,
-          ease: 'none',
-          scrollTrigger: { trigger: panel, start: 'bottom 75%', end: 'bottom 25%', scrub: 0.6 },
-        });
-        gsap.to(cat, {
-          opacity: 0, y: -20,
-          ease: 'none',
-          scrollTrigger: { trigger: panel, start: 'bottom 70%', end: 'bottom 30%', scrub: 0.6 },
-        });
+        // ── HOLD PHASE (20% → 65%): Text reveals ──
+        tl.fromTo(overlay,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.08, ease: 'power1.out' },
+          0.20
+        );
+
+        tl.fromTo(numEl,
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 0.15, duration: 0.05, ease: 'power2.out' },
+          0.22
+        );
+
+        tl.fromTo(catEl,
+          { y: 25, opacity: 0 },
+          { y: 0, opacity: 0.5, duration: 0.06, ease: 'power2.out' },
+          0.24
+        );
+
+        tl.fromTo(lineEl,
+          { scaleX: 0, opacity: 0 },
+          { scaleX: 1, opacity: 0.3, duration: 0.06, ease: 'power2.out' },
+          0.27
+        );
+
+        tl.fromTo(titleEl,
+          { y: 50, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.10, ease: 'power2.out' },
+          0.28
+        );
+
+        tl.fromTo(yearEl,
+          { y: 20, opacity: 0 },
+          { y: 0, opacity: 0.4, duration: 0.05, ease: 'power2.out' },
+          0.33
+        );
+
+        // ── EXIT PHASE (65% → 100%): Everything fades out, image zooms ──
+        tl.to(overlay, { opacity: 0, duration: 0.15, ease: 'power2.in' }, 0.65);
+        tl.to(numEl, { opacity: 0, y: -15, duration: 0.10, ease: 'power2.in' }, 0.65);
+        tl.to(catEl, { opacity: 0, y: -15, duration: 0.08, ease: 'power2.in' }, 0.68);
+        tl.to(lineEl, { scaleX: 0, opacity: 0, duration: 0.08, ease: 'power2.in' }, 0.70);
+        tl.to(titleEl, { opacity: 0, y: -30, duration: 0.12, ease: 'power2.in' }, 0.68);
+        tl.to(yearEl, { opacity: 0, y: -15, duration: 0.08, ease: 'power2.in' }, 0.72);
+
+        tl.to(image,
+          { scale: 1.15, opacity: 0, filter: 'brightness(1.5)', duration: 0.35, ease: 'power3.in' },
+          0.65
+        );
+
       });
 
+      // ─── Project counter (fixed position) ───
+      if (counterRef.current) {
+        const numEls = counterRef.current.querySelectorAll('.counter-num');
+        numEls.forEach((num, i) => {
+          gsap.fromTo(num,
+            { opacity: 0 },
+            {
+              opacity: 1,
+              scrollTrigger: {
+                trigger: items[i],
+                start: 'top 60%',
+                end: 'top 20%',
+                scrub: 0.3,
+              },
+            }
+          );
+          if (i < numEls.length - 1) {
+            gsap.to(num, {
+              opacity: 0,
+              scrollTrigger: {
+                trigger: items[i + 1],
+                start: 'top bottom',
+                end: 'top 60%',
+                scrub: 0.3,
+              },
+            });
+          }
+        });
+      }
     }, sectionRef);
+
     return () => ctx.revert();
   }, []);
-
-  const pad = (n) => String(n + 1).padStart(2, '0');
 
   return (
     <section ref={sectionRef} id="projects" className="relative bg-black">
 
-      {/* ── Minimal Header ── */}
-      <div className="relative z-10 pt-40 pb-20 md:pt-52 md:pb-28 px-6 md:px-12 lg:px-20">
-        <div ref={headerRef}>
-          <div data-r className="mb-6">
-            <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-white/20">
-              {t('projects.subtitle')}
-            </span>
-          </div>
-          <div data-r className="overflow-hidden">
-            <h2
-              className="text-5xl md:text-7xl lg:text-[8rem] font-black text-white tracking-tight leading-[0.85]"
-              style={{ fontFamily: 'var(--font-display)' }}
+      {/* Fixed project counter — top right */}
+      <div ref={counterRef} className="fixed top-8 right-8 z-50 pointer-events-none" style={{ mixBlendMode: 'difference' }}>
+        <div className="relative h-8 overflow-hidden">
+          {projects.map((p, i) => (
+            <span
+              key={i}
+              className="counter-num absolute top-0 left-0 text-[11px] font-normal tracking-[0.3em] text-white/80 font-body opacity-0"
             >
-              {t('projects.title')}
-            </h2>
-          </div>
-          <div data-r className="mt-6 max-w-lg">
-            <p className="text-sm md:text-base text-white/20 font-medium leading-relaxed">
-              {t('projects.intro')}
-            </p>
-          </div>
+              {String(i + 1).padStart(2, '0')} / {String(projects.length).padStart(2, '0')}
+            </span>
+          ))}
         </div>
       </div>
 
-      {/* ── Fullscreen Projects (ActiveTheory pattern) ── */}
       {projects.map((project, i) => (
         <div
           key={i}
-          className="at-project relative"
-          style={{ height: '120vh' }}
+          className="project-panel relative w-full h-screen overflow-hidden bg-black"
         >
-          {/* Sticky fullscreen viewport */}
-          <div
-            className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-between"
-            style={{ perspective: '1400px' }}
-          >
-            {/* ── Full-bleed Background Visual ── */}
-            <div
-              className="at-bg absolute inset-0"
+          {/* Fullscreen project image */}
+          <div className="absolute inset-0 overflow-hidden">
+            <img
+              className="project-image absolute inset-0 w-full h-full object-cover will-change-transform opacity-0"
+              src={project.image}
+              alt=""
+              loading={i === 0 ? 'eager' : 'lazy'}
+              draggable={false}
               style={{
-                transformStyle: 'preserve-3d',
-                willChange: 'transform, opacity',
+                transformOrigin: 'center center',
               }}
-            >
-              {/* Main gradient - simulates fullscreen project image */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${project.iconColor}`} />
+            />
+          </div>
 
-              {/* Subtle texture */}
-              <div className="absolute inset-0 opacity-[0.03]" style={{
-                backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.3) 1px, transparent 0)',
-                backgroundSize: '32px 32px',
-              }} />
+          {/* Text overlay — bottom left, AT terminal style */}
+          <div
+            className="project-overlay absolute inset-0 z-[3] pointer-events-none opacity-0"
+          >
+            <div className="absolute bottom-0 left-0 right-0 px-6 sm:px-10 md:px-16 lg:px-24 pb-10 sm:pb-14 md:pb-20">
 
-              {/* Radial vignette */}
-              <div className="absolute inset-0" style={{
-                background: 'radial-gradient(ellipse 70% 60% at 50% 50%, transparent 30%, rgba(0,0,0,0.4) 100%)',
-              }} />
+              {/* Project number — large faded */}
+              <span
+                className="project-num block text-[10rem] sm:text-[14rem] md:text-[18rem] font-black text-white/[0.03] leading-none tracking-tighter font-body absolute -top-20 sm:-top-28 md:-top-36 left-0 opacity-0 will-change-transform"
+              >
+                {String(i + 1).padStart(2, '0')}
+              </span>
 
-              {/* Very subtle center glow */}
-              <div className="absolute inset-0" style={{
-                background: `radial-gradient(ellipse 40% 35% at 50% 45%, ${project.accentHex}12, transparent)`,
-              }} />
-            </div>
+              {/* Category label */}
+              <p
+                className="project-cat text-[10px] sm:text-[11px] font-normal uppercase tracking-[0.35em] text-white/50 mb-3 sm:mb-4 font-body opacity-0 will-change-transform"
+              >
+                {project.category}
+              </p>
 
-            {/* ── Text Overlay (bottom-left, ActiveTheory style) ── */}
-            <div className="relative z-10 flex flex-col justify-end h-full px-6 md:px-12 lg:px-20 pb-16 md:pb-24">
-              {/* Category line */}
-              <div className="flex items-center gap-4 mb-5">
-                <div className="at-line h-px w-10 bg-white/20" style={{ transformOrigin: 'left' }} />
-                <span
-                  className="at-cat text-[10px] md:text-[11px] font-bold uppercase tracking-[0.4em]"
-                  style={{ color: `${project.accentHex}88` }}
-                >
-                  {pad(i)} — {project.category}
-                </span>
-              </div>
+              {/* Decorative line */}
+              <div
+                className="project-line h-px w-10 sm:w-12 bg-white/30 mb-4 sm:mb-5 origin-left opacity-0 will-change-transform"
+              />
 
-              {/* Project Title */}
+              {/* Title */}
               <h3
-                className="at-title text-4xl sm:text-5xl md:text-7xl lg:text-[6rem] xl:text-[7rem] font-black text-white leading-[0.9] tracking-tight max-w-[90vw]"
-                style={{ fontFamily: 'var(--font-display)' }}
+                className="project-title text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-white leading-[0.92] tracking-tight font-body opacity-0 will-change-transform max-w-[80vw] md:max-w-[60vw]"
               >
                 {project.title}
               </h3>
-            </div>
 
-            {/* ── Large background number ── */}
-            <div
-              className="at-num absolute top-8 right-8 md:top-16 md:right-16 text-[8rem] md:text-[14rem] font-black leading-none select-none pointer-events-none"
-              style={{
-                fontFamily: 'var(--font-display)',
-                color: 'rgba(255,255,255,0.03)',
-              }}
-            >
-              {pad(i)}
-            </div>
+              {/* Year */}
+              <span
+                className="project-year inline-block mt-3 sm:mt-4 text-[10px] sm:text-[11px] font-normal tracking-[0.3em] text-white/40 font-body opacity-0 will-change-transform"
+              >
+                {project.year}
+              </span>
 
-            {/* Bottom fade to black for smooth transition */}
-            <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black to-transparent pointer-events-none z-[5]" />
+            </div>
           </div>
+
         </div>
       ))}
-
-      {/* Bottom spacer */}
-      <div className="h-20" />
     </section>
   );
 };

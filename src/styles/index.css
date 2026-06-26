@@ -89,7 +89,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   outline-offset: 2px;
 }
 
-/* Lenis */
+/* Lenis smooth scroll */
 html.lenis, html.lenis body {
   height: auto;
 }
@@ -103,13 +103,14 @@ html.lenis, html.lenis body {
   overflow: hidden;
 }
 
-/* Project sections */
+/* Section base */
 section {
   position: relative;
 }
 
-/* Backface visibility for smooth 3D */
-.at-bg {
+/* ── ActiveTheory project image rendering ── */
+.at-img {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  -webkit-font-smoothing: subpixel-antialiased;
 }
