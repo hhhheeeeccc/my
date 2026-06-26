@@ -17,6 +17,9 @@ import Skills from './components/sections/Skills';
 import Projects from './components/sections/Projects';
 import Contact from './components/sections/Contact';
 
+// 3D Background
+import GlobalCanvas from './components/common/GlobalCanvas';
+
 // Admin Components
 import Dashboard from './components/admin/Dashboard';
 import AdminToggle from './components/admin/AdminToggle';
@@ -57,15 +60,18 @@ function App() {
   }, []);
 
   return (
-    <ReactLenis root options={{ lerp: 0.06, smoothWheel: true }}>
+    <ReactLenis root options={{ lerp: 0.07, smoothWheel: true }}>
       <div className="min-h-screen bg-black overflow-x-hidden relative">
+
+        {/* 3D WebGL Background — AT style */}
+        <GlobalCanvas />
 
         {/* Preloader */}
         {!isLoaded && <Preloader onComplete={handlePreloaderComplete} />}
 
         <Navbar isAdminOpen={isAdminOpen} />
 
-        <main className={`relative z-10 transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+        <main className={`relative z-[5] transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
           <Hero />
           <About />
           <Skills />
@@ -73,7 +79,9 @@ function App() {
           <Contact />
         </main>
 
-        <Footer />
+        <div className="relative z-[5]">
+          <Footer />
+        </div>
 
         <AdminToggle onClick={() => setIsAdminOpen(true)} />
         {isAdminOpen && <Dashboard onClose={() => setIsAdminOpen(false)} />}

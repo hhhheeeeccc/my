@@ -41,12 +41,11 @@ body {
   color: white;
 }
 
-/* Scrollbar hidden for cinematic feel */
+/* Hidden scrollbar — AT style */
 ::-webkit-scrollbar {
   width: 0px;
   display: none;
 }
-
 html {
   scrollbar-width: none;
 }
@@ -54,39 +53,8 @@ html {
 .font-display {
   font-family: var(--font-display);
 }
-
 .font-body {
   font-family: var(--font-body);
-}
-
-/* Liquid Glass Effect */
-.liquid-glass {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1), inset 0 0 20px rgba(255, 255, 255, 0.03);
-  position: relative;
-  overflow: hidden;
-}
-
-.liquid-glass::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(145deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 50%, rgba(255,255,255,0.15) 100%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-}
-
-/* Focus styles */
-a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
-  outline: 1px solid rgba(255, 255, 255, 0.2);
-  outline-offset: 2px;
 }
 
 /* Lenis smooth scroll */
@@ -108,9 +76,31 @@ section {
   position: relative;
 }
 
-/* ── ActiveTheory project image rendering ── */
-.at-img {
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  -webkit-font-smoothing: subpixel-antialiased;
+/* Liquid Glass Effect */
+.liquid-glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1), inset 0 0 20px rgba(255, 255, 255, 0.03);
+  position: relative;
+  overflow: hidden;
+}
+.liquid-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(145deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 50%, rgba(255,255,255,0.15) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Focus styles */
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
+  outline: 1px solid rgba(255, 255, 255, 0.2);
+  outline-offset: 2px;
 }

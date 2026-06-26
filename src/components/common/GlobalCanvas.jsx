@@ -1,22 +1,22 @@
 import React from 'react';
 import { Canvas } from '@react-three/fiber';
-import Experience3D from './Experience3D';
+import ATScene from './ATScene';
 
 const GlobalCanvas = () => (
-  <div className="fixed inset-0 z-[5] pointer-events-none">
+  <div className="fixed inset-0 z-[1] pointer-events-none">
     <Canvas
-      dpr={[1, 2]}
-      camera={{ position: [0, 0, 5], fov: 75 }}
+      dpr={[1, 1.5]}
+      camera={{ position: [0, 0, 8], fov: 45 }}
       gl={{
         antialias: true,
         alpha: true,
         powerPreference: "high-performance",
-        toneMapping: 6, // ACESFilmicToneMapping
-        toneMappingExposure: 1.2,
+        toneMapping: 6,
+        toneMappingExposure: 1.0,
         premultipliedAlpha: false,
       }}
     >
-      <Experience3D />
+      <ATScene />
     </Canvas>
   </div>
 );
