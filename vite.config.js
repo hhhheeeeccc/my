@@ -7,7 +7,7 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
-  base: '/my/',
+  base: '/',
   build: {
     outDir: 'dist',
     chunkSizeWarningLimit: 1000,
