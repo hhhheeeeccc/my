@@ -11,16 +11,28 @@ import * as THREE from 'three';
   - Elegant, minimal, sophisticated
 */
 
+// Simple seeded PRNG for deterministic visual positions (not security-sensitive)
+function mulberry32(seed) {
+  let a = seed | 0;
+  return function () {
+    a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
 // ─── Subtle floating dust particles ───
 function DustParticles({ count = 800 }) {
   const ref = useRef();
 
   const { positions } = useMemo(() => {
     const pos = new Float32Array(count * 3);
+    const rng = mulberry32(42); // Fixed seed for consistent layout
     for (let i = 0; i < count; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 40;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 25;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 30 - 5;
+      pos[i * 3] = (rng() - 0.5) * 40;
+      pos[i * 3 + 1] = (rng() - 0.5) * 25;
+      pos[i * 3 + 2] = (rng() - 0.5) * 30 - 5;
     }
     return { positions: pos };
   }, [count]);
@@ -58,7 +70,6 @@ function DustParticles({ count = 800 }) {
 // ─── Subtle geometric wireframe shapes ───
 function FloatingGeometry() {
   const group = useRef();
-  const meshes = useRef([]);
 
   const shapes = useMemo(() => [
     { pos: [-6, 3, -12], rot: [0.3, 0.5, 0], scale: 1.2, speed: 0.15 },
@@ -186,7 +197,6 @@ const ATScene = () => {
   const { camera } = useThree();
 
   useFrame(() => {
-    // Gentle camera sway
     const t = performance.now() * 0.0001;
     camera.position.x = THREE.MathUtils.lerp(camera.position.x, Math.sin(t * 3) * 0.3, 0.02);
     camera.position.y = THREE.MathUtils.lerp(camera.position.y, Math.cos(t * 2) * 0.2, 0.02);
@@ -194,22 +204,11 @@ const ATScene = () => {
 
   return (
     <>
-      {/* Fog for depth */}
       <fog attach="fog" args={['#000000', 8, 30]} />
-
-      {/* Lighting */}
       <ambientLight intensity={0.05} />
-
-      {/* Ambient orbs */}
       <AmbientOrbs />
-
-      {/* Particles */}
       <DustParticles count={600} />
-
-      {/* Geometry */}
       <FloatingGeometry />
-
-      {/* Grid */}
       <SubtleGrid />
     </>
   );

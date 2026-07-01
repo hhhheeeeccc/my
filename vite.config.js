@@ -15,7 +15,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           'vendor-react': ['react', 'react-dom'],
-          'vendor-three': ['three', '@react-three/fiber', '@react-three/drei', '@react-three/postprocessing', 'postprocessing'],
+          'vendor-three': ['three', '@react-three/fiber'],
           'vendor-motion': ['framer-motion', 'gsap'],
           'vendor-i18n': ['i18next', 'react-i18next', 'i18next-browser-languagedetector'],
         },
