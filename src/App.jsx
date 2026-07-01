@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, Component } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ReactLenis, useLenis } from 'lenis/react';
 import gsap from 'gsap';
@@ -27,12 +27,29 @@ import AdminToggle from './components/admin/AdminToggle';
 // Common Components
 import Preloader from './components/common/Preloader';
 
+class ErrorBoundary extends Component {
+  state = { hasError: false };
+  static getDerivedStateFromError() { return { hasError: true }; }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: '4rem', textAlign: 'center', color: '#fff', background: '#000', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+          <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Something went wrong</h2>
+          <button onClick={() => window.location.reload()} style={{ padding: '0.75rem 2rem', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '0.5rem', color: '#fff', background: 'transparent', cursor: 'pointer', fontSize: '0.875rem' }}>
+            Reload Page
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 function App() {
   const { i18n } = useTranslation();
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Sync Lenis with GSAP ScrollTrigger
   useLenis(ScrollTrigger.update);
 
   useEffect(() => {
@@ -41,14 +58,12 @@ function App() {
     document.documentElement.lang = currentIsAr ? 'ar' : 'en';
   }, [i18n.language]);
 
-  // Cleanup ScrollTriggers on unmount
   useEffect(() => {
     return () => {
       ScrollTrigger.getAll().forEach(t => t.kill());
     };
   }, []);
 
-  // Refresh ScrollTriggers after load
   useEffect(() => {
     if (isLoaded) {
       setTimeout(() => ScrollTrigger.refresh(), 200);
@@ -60,33 +75,33 @@ function App() {
   }, []);
 
   return (
-    <ReactLenis root options={{ lerp: 0.07, smoothWheel: true }}>
-      <div className="min-h-screen bg-black overflow-x-hidden relative">
+    <ErrorBoundary>
+      <ReactLenis root options={{ lerp: 0.07, smoothWheel: true }}>
+        <div className="min-h-screen bg-black overflow-x-hidden relative">
 
-        {/* 3D WebGL Background — AT style */}
-        <GlobalCanvas />
+          <GlobalCanvas />
 
-        {/* Preloader */}
-        {!isLoaded && <Preloader onComplete={handlePreloaderComplete} />}
+          {!isLoaded && <Preloader onComplete={handlePreloaderComplete} />}
 
-        <Navbar isAdminOpen={isAdminOpen} />
+          <Navbar isAdminOpen={isAdminOpen} />
 
-        <main className={`relative z-[5] transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
-          <Hero />
-          <About />
-          <Skills />
-          <Projects />
-          <Contact />
-        </main>
+          <main className={`relative z-[5] transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+            <Hero />
+            <About />
+            <Skills />
+            <Projects />
+            <Contact />
+          </main>
 
-        <div className="relative z-[5]">
-          <Footer />
+          <div className="relative z-[5]">
+            <Footer />
+          </div>
+
+          <AdminToggle onClick={() => setIsAdminOpen(true)} />
+          {isAdminOpen && <Dashboard onClose={() => setIsAdminOpen(false)} />}
         </div>
-
-        <AdminToggle onClick={() => setIsAdminOpen(true)} />
-        {isAdminOpen && <Dashboard onClose={() => setIsAdminOpen(false)} />}
-      </div>
-    </ReactLenis>
+      </ReactLenis>
+    </ErrorBoundary>
   );
 }
 

@@ -1,34 +1,35 @@
-import React, { useRef, useState } from 'react'
-import PropTypes from 'prop-types';
-import { motion } from 'framer-motion';
+import { useRef, useCallback } from 'react'
+import { motion, useMotionValue } from 'framer-motion'
 
 const Magnetic = ({ children }) => {
     const ref = useRef(null);
-    const [pos, setPos] = useState({ x: 0, y: 0 });
+    const x = useMotionValue(0);
+    const y = useMotionValue(0);
 
-    const handleMouse = (e) => {
-        const { clientX, clientY } = e;
+    const handleMouse = useCallback((e) => {
         if (!ref.current) return;
         const { height, width, left, top } = ref.current.getBoundingClientRect();
-        setPos({ x: (clientX - (left + width / 2)) * 0.35, y: (clientY - (top + height / 2)) * 0.35 });
-    };
+        x.set((e.clientX - (left + width / 2)) * 0.35);
+        y.set((e.clientY - (top + height / 2)) * 0.35);
+    }, [x, y]);
+
+    const handleMouseLeave = useCallback(() => {
+        x.set(0);
+        y.set(0);
+    }, [x, y]);
 
     return (
         <motion.div
-            style={{ position: "relative" }}
+            style={{ position: "relative", x, y }}
             ref={ref}
             onMouseMove={handleMouse}
-            onMouseLeave={() => setPos({ x: 0, y: 0 })}
-            animate={{ x: pos.x, y: pos.y }}
+            onMouseLeave={handleMouseLeave}
+            animate={{ x: x.get(), y: y.get() }}
             transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
         >
             {children}
         </motion.div>
     );
-};
-
-Magnetic.propTypes = {
-    children: PropTypes.node.isRequired
 };
 
 export default Magnetic;

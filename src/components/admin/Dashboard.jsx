@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useTranslation } from 'react-i18next';
 import { usePortfolio } from '../../context/PortfolioContext';
@@ -25,10 +25,12 @@ const Dashboard = ({ onClose }) => {
 
   const onExport = () => {
     const data = JSON.stringify(content, null, 2);
+    const url = URL.createObjectURL(new Blob([data], {type: 'application/json'}));
     const a = globalThis.document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([data], {type: 'application/json'}));
+    a.href = url;
     a.download = 'portfolio-config.json';
     a.click();
+    URL.revokeObjectURL(url);
   };
 
   if (!isAuthenticated) return <AdminLogin loginData={loginData} setLoginData={setLoginData} handleLogin={handleLogin} loginError={loginError} t={t} onClose={onClose} />;

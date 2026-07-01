@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { User, Code2, Rocket, Heart, Sparkles, Zap } from 'lucide-react';
@@ -11,8 +11,6 @@ const About = () => {
   const { t } = useTranslation();
   const sectionRef = useRef(null);
   const headerRef = useRef(null);
-  const leftColRef = useRef(null);
-  const rightColRef = useRef(null);
   const featuresRef = useRef(null);
   const personalRef = useRef(null);
 

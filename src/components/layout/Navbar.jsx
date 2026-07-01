@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
@@ -15,8 +15,6 @@ const Navbar = ({ isAdminOpen }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [visible, setVisible] = useState(true);
   const lastY = useRef(0);
-
-  const isAr = i18n.language?.startsWith('ar');
 
   // Hide on scroll down, show on scroll up (AT style)
   useEffect(() => {

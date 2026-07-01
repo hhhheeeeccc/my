@@ -125,7 +125,7 @@ export const useStaggerReveal = (ref, options = {}) => {
     return () => {
       tl.kill();
     };
-  }, [ref, options]);
+  }, [ref, JSON.stringify(options)]);
 };
 
 // Hook for parallax effect on scroll

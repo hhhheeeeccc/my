@@ -113,7 +113,9 @@
   },
   "contact": {
     "title": "Get In Touch",
+    "label": "Contact",
     "subtitle": "I'm always open to discussing new projects, creative ideas, or opportunities to be part of your visions.",
+    "intro": "I'm always open to discussing new projects, creative ideas, or opportunities to be part of your visions.",
     "emailMe": "Email Me",
     "emailAddress": "marwan.yahya@example.com",
     "nameLabel": "Name",
@@ -142,6 +144,7 @@
     "password": "Password",
     "loginBtn": "Login",
     "error": "Invalid credentials",
+    "tooManyAttempts": "Too many attempts. Please try again later.",
     "exportJson": "Export JSON",
     "resetConfirm": "Are you sure you want to reset all data to defaults?",
     "resetTitle": "Reset to defaults",

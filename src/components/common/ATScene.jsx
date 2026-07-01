@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from 'react';
+import { useRef, useMemo } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -15,16 +15,14 @@ import * as THREE from 'three';
 function DustParticles({ count = 800 }) {
   const ref = useRef();
 
-  const { positions, sizes } = useMemo(() => {
+  const { positions } = useMemo(() => {
     const pos = new Float32Array(count * 3);
-    const sz = new Float32Array(count);
     for (let i = 0; i < count; i++) {
       pos[i * 3] = (Math.random() - 0.5) * 40;
       pos[i * 3 + 1] = (Math.random() - 0.5) * 25;
       pos[i * 3 + 2] = (Math.random() - 0.5) * 30 - 5;
-      sz[i] = Math.random() * 0.02 + 0.005;
     }
-    return { positions: pos, sizes: sz };
+    return { positions: pos };
   }, [count]);
 
   useFrame((state) => {

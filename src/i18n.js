@@ -11,11 +11,8 @@ i18n
       en,
       ar
     },
-    lng: 'en', // Force initial language for predictable testing/loading
+    lng: 'en',
     fallbackLng: 'en',
-    interpolation: {
-      escapeValue: false
-    }
   });
 
 export default i18n;

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useMemo } from 'react';
+import { useRef, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -24,7 +24,7 @@ const PROJECT_IMAGES = [
 ];
 
 const Projects = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const sectionRef = useRef(null);
 
   const projects = useMemo(() =>
@@ -114,7 +114,7 @@ const Projects = () => {
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [i18n.language]);
 
   return (
     <section ref={sectionRef} id="projects" className="relative bg-black">

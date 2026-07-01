@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { gsap } from 'gsap';
 
@@ -9,14 +9,14 @@ const Preloader = ({ onComplete }) => {
   const counterRef = useRef(null);
   const progressBarRef = useRef(null);
   const labelRef = useRef(null);
+  const timerRef = useRef(null);
 
-  // Animated counter using GSAP
   useEffect(() => {
     if (phase !== 'counting') return;
 
     const obj = { val: 0 };
     const tl = gsap.timeline({
-      onComplete: () => setTimeout(() => setPhase('reveal'), 400)
+      onComplete: () => { timerRef.current = setTimeout(() => setPhase('reveal'), 400); }
     });
 
     tl.to(obj, {
@@ -26,7 +26,6 @@ const Preloader = ({ onComplete }) => {
       onUpdate: () => setCount(Math.floor(obj.val)),
     });
 
-    // Progress bar animation
     if (progressBarRef.current) {
       tl.to(progressBarRef.current, {
         scaleX: 1,
@@ -35,7 +34,6 @@ const Preloader = ({ onComplete }) => {
       }, '<');
     }
 
-    // Label fade in
     if (labelRef.current) {
       tl.fromTo(labelRef.current,
         { opacity: 0, y: 10 },
@@ -44,10 +42,9 @@ const Preloader = ({ onComplete }) => {
       );
     }
 
-    return () => tl.kill();
+    return () => { tl.kill(); clearTimeout(timerRef.current); };
   }, [phase]);
 
-  // Reveal phase
   useEffect(() => {
     if (phase !== 'reveal') return;
     const timer = setTimeout(() => {
@@ -66,7 +63,6 @@ const Preloader = ({ onComplete }) => {
           exit={{ y: '-100%' }}
           transition={{ duration: 1, ease: [0.76, 0, 0.24, 1] }}
         >
-          {/* Animated horizontal lines */}
           <div className="absolute inset-0 overflow-hidden opacity-15 pointer-events-none">
             {Array.from({ length: 30 }).map((_, i) => (
               <motion.div
@@ -80,7 +76,6 @@ const Preloader = ({ onComplete }) => {
             ))}
           </div>
 
-          {/* Vertical scan line */}
           <motion.div
             className="absolute w-px h-full bg-gradient-to-b from-transparent via-cyan-500/20 to-transparent pointer-events-none"
             initial={{ x: '-100%' }}
@@ -89,7 +84,6 @@ const Preloader = ({ onComplete }) => {
           />
 
           <div className="relative flex flex-col items-center">
-            {/* Counter */}
             <div className="overflow-hidden">
               <motion.span
                 ref={counterRef}
@@ -104,7 +98,6 @@ const Preloader = ({ onComplete }) => {
               </motion.span>
             </div>
 
-            {/* Progress bar */}
             <div className="mt-10 w-48 h-[1px] bg-white/[0.06] rounded-full overflow-hidden">
               <div
                 ref={progressBarRef}
@@ -113,7 +106,6 @@ const Preloader = ({ onComplete }) => {
               />
             </div>
 
-            {/* Label */}
             <p
               ref={labelRef}
               className="mt-6 text-[11px] text-slate-600 font-bold tracking-[0.4em] uppercase opacity-0"
@@ -121,7 +113,6 @@ const Preloader = ({ onComplete }) => {
               Loading Experience
             </p>
 
-            {/* Reveal flash */}
             {phase === 'reveal' && (
               <motion.div
                 className="absolute inset-0 bg-white"
@@ -132,7 +123,6 @@ const Preloader = ({ onComplete }) => {
             )}
           </div>
 
-          {/* Corner brackets */}
           {[
             'top-6 left-6', 'top-6 right-6', 'bottom-6 left-6', 'bottom-6 right-6'
           ].map((pos, i) => (

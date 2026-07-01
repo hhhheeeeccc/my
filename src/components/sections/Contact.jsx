@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Mail, Send, CheckCircle2 } from 'lucide-react';
@@ -6,8 +6,6 @@ import Magnetic from '../common/Magnetic';
 import { SOCIALS } from '../../utils/constants.jsx';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
 
 const Contact = () => {
   const { t } = useTranslation();
@@ -98,7 +96,7 @@ const Contact = () => {
         <div ref={headerRef} className="mb-36 flex flex-col items-center text-center">
           <div data-gsap-reveal className="flex items-center gap-4 mb-8">
             <div className="w-12 h-[2px] bg-gradient-to-r from-transparent to-emerald-500/60" />
-            <span className="text-xs font-black uppercase tracking-[0.4em] text-emerald-400/70">{t('contact.subtitle').slice(0, 30)}</span>
+            <span className="text-xs font-black uppercase tracking-[0.4em] text-emerald-400/70">{t('contact.label')}</span>
             <div className="w-12 h-[2px] bg-gradient-to-l from-transparent to-emerald-500/60" />
           </div>
           <div data-gsap-reveal className="overflow-hidden">
