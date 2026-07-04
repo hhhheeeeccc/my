@@ -1,0 +1,56 @@
+
+> my-portfolio@1.0.0 dev
+> vite
+
+
+  VITE v6.4.3  ready in 430 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+12:38:29 AM [vite] (client) page reload verification/verify_active_theory.py
+12:38:29 AM [vite] (client) page reload verification/verify_active_theory.py
+12:47:14 AM [vite] (client) hmr update /src/components/common/ATScene.jsx, /src/styles/index.css
+12:47:14 AM [vite] (client) hmr update /src/components/common/TechnicalUI.jsx, /src/styles/index.css
+12:52:06 AM [vite] (client) hmr update /src/components/sections/Projects.jsx, /src/styles/index.css
+12:53:27 AM [vite] (client) hmr update /src/components/sections/Projects.jsx, /src/styles/index.css
+12:53:53 AM [vite] (client) hmr update /src/components/sections/Hero.jsx, /src/styles/index.css
+12:54:16 AM [vite] (client) hmr update /src/App.jsx, /src/styles/index.css
+12:56:35 AM [vite] (client) warning: Duplicate "rel" attribute in JSX element
+536|                  href={project.links.github}
+537|                  target="_blank" rel="noopener noreferrer"
+538|                  rel="noopener noreferrer"
+   |                  ^
+539|                  className="group/btn inline-flex items-center gap-2.5 px-5 py-3 rounded-xl text-sm font-semibold transition-all duration-300"
+540|                  style={{
+
+  Plugin: vite:esbuild
+  File: /app/src/components/sections/Projects.jsx
+12:56:35 AM [vite] (client) warning: Duplicate "rel" attribute in JSX element
+566|                  href={project.links.demo}
+567|                  target="_blank" rel="noopener noreferrer"
+568|                  rel="noopener noreferrer"
+   |                  ^
+569|                  className="inline-flex items-center gap-2.5 px-5 py-3 rounded-xl text-sm font-semibold text-white/60 bg-white/[0.04] border border-white/[0.08] hover:bg-white/[0.08] hover:text-white/90 transition-all duration-300"
+570|                  whileHover={{ y: -2 }}
+
+  Plugin: vite:esbuild
+  File: /app/src/components/sections/Projects.jsx
+1:18:16 AM [vite] (client) hmr update /src/components/common/ATScene.jsx, /src/styles/index.css
+1:18:16 AM [vite] (client) hmr update /src/components/common/TechnicalUI.jsx, /src/styles/index.css
+1:18:16 AM [vite] (client) hmr update /src/components/sections/Projects.jsx, /src/styles/index.css
+1:19:15 AM [vite] (client) hmr update /src/components/common/ATScene.jsx, /src/styles/index.css
+1:19:15 AM [vite] (client) hmr update /src/components/common/TechnicalUI.jsx, /src/styles/index.css
+1:19:15 AM [vite] (client) hmr update /src/App.jsx, /src/styles/index.css
+1:20:05 AM [vite] (client) hmr update /src/components/common/ATScene.jsx, /src/styles/index.css
+1:20:05 AM [vite] (client) hmr update /src/components/sections/Projects.jsx, /src/styles/index.css
+1:20:05 AM [vite] (client) hmr update /src/components/sections/Hero.jsx, /src/styles/index.css
+1:24:35 AM [vite] (client) hmr update /src/components/common/ATScene.jsx, /src/styles/index.css
+1:24:35 AM [vite] (client) hmr update /src/components/sections/Projects.jsx, /src/styles/index.css
+1:24:35 AM [vite] (client) hmr update /src/components/common/TechnicalUI.jsx, /src/styles/index.css
+5:26:04 AM [vite] (client) hmr update /src/components/common/ATScene.jsx, /src/styles/index.css
+5:27:21 AM [vite] (client) hmr update /src/components/layout/Navbar.jsx, /src/styles/index.css
+5:27:21 AM [vite] (client) hmr update /src/components/common/ATScene.jsx, /src/styles/index.css
+5:28:43 AM [vite] (client) hmr update /src/components/common/ATScene.jsx, /src/styles/index.css
+5:28:43 AM [vite] (client) hmr update /src/components/layout/Navbar.jsx, /src/styles/index.css
+5:31:38 AM [vite] (client) hmr update /src/components/layout/Navbar.jsx, /src/styles/index.css
+5:31:38 AM [vite] (client) hmr update /src/components/common/ATScene.jsx, /src/styles/index.css

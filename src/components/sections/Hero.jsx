@@ -1,115 +1,57 @@
 import { useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
 
 const Hero = () => {
   const { t } = useTranslation();
   const sectionRef = useRef(null);
-  const contentRef = useRef(null);
+  const titleRef = useRef(null);
+  const subtitleRef = useRef(null);
+  const ctaRef = useRef(null);
 
   useEffect(() => {
-    if (!sectionRef.current || !contentRef.current) return;
-
     const ctx = gsap.context(() => {
-      // Fade out hero content on scroll
-      gsap.to(contentRef.current, {
-        opacity: 0,
-        y: -60,
-        scale: 0.96,
-        ease: 'power2.in',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top top',
-          end: '+=40%',
-          scrub: 0.5,
-        },
-      });
-    }, sectionRef);
+      const words = titleRef.current?.querySelectorAll('.word-wrapper');
+      if (!words?.length) return;
+      const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
+      tl.fromTo(words, { y: '100%', clipPath: 'polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)' }, { y: '0%', clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)', duration: 1.5, stagger: 0.1, delay: 0.5 })
+        .fromTo(subtitleRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1 }, '-=0.8')
+        .fromTo(ctaRef.current, { opacity: 0, scale: 0.95 }, { opacity: 1, scale: 1, duration: 1 }, '-=1');
 
+      const handleMouseMove = (e) => {
+        if (!titleRef.current) return;
+        const xPos = (e.clientX / (window.innerWidth || 1) - 0.5) * 30;
+        const yPos = (e.clientY / (window.innerHeight || 1) - 0.5) * 30;
+        gsap.to(titleRef.current, { x: xPos, y: yPos, duration: 2, ease: 'power2.out' });
+      };
+      window.addEventListener('mousemove', handleMouseMove, { passive: true });
+      return () => window.removeEventListener('mousemove', handleMouseMove);
+    }, sectionRef);
     return () => ctx.revert();
   }, []);
 
   return (
-    <section
-      ref={sectionRef}
-      id="hero"
-      className="relative w-full h-screen flex items-center justify-center overflow-hidden bg-black"
-    >
-      {/* Content */}
-      <div
-        ref={contentRef}
-        className="relative z-[5] text-center px-6 max-w-5xl mx-auto"
-      >
-        {/* Top label — AT style */}
-        <p className="text-[10px] md:text-[11px] tracking-[0.4em] text-white/25 uppercase font-body mb-8 md:mb-12">
-          Creative Developer &amp; Designer
-        </p>
-
-        {/* Main title — AT style: large, minimal, elegant */}
-        <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[9rem] font-normal text-white leading-[0.95] tracking-tight font-body">
-          {t('hero.title').split(' ').map((word, i) => (
-            <span key={i} className="inline-block mr-[0.15em] last:mr-0" style={{
-              opacity: 0,
-              animation: `atFadeUp 1.2s ${0.8 + i * 0.1}s cubic-bezier(0.16, 1, 0.3, 1) forwards`,
-            }}>
-              {word}
+    <section ref={sectionRef} id="hero" className="relative w-full min-h-[100dvh] flex items-center justify-center overflow-hidden bg-black">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 flex flex-col items-center text-center">
+        <h1 ref={titleRef} className="text-[12vw] md:text-[10vw] font-display text-white leading-[0.85] tracking-tighter uppercase select-none">
+          {t('hero.name').split(' ').map((word, i) => (
+            <span key={`hero-word-${i}`} className="inline-block overflow-hidden py-[0.1em] mr-[0.2em] last:mr-0">
+              <span className="word-wrapper inline-block">{word}</span>
             </span>
           ))}
         </h1>
-
-        {/* Subtitle */}
-        <p
-          className="mt-8 md:mt-12 text-sm md:text-base text-white/30 max-w-xl mx-auto leading-relaxed font-body"
-          style={{
-            opacity: 0,
-            animation: `atFadeUp 1s 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards`,
-          }}
-        >
-          {t('hero.subtitle')}
-        </p>
-
-        {/* CTA — AT style: minimal underline link */}
-        <div
-          className="mt-10 md:mt-14"
-          style={{
-            opacity: 0,
-            animation: `atFadeUp 1s 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards`,
-          }}
-        >
-          <a
-            href="#projects"
-            className="group inline-flex items-center gap-3 text-[11px] tracking-[0.25em] text-white/40 hover:text-white/80 transition-colors duration-500 uppercase font-body"
-          >
-            <span>{t('hero.ctaWork')}</span>
-            <svg
-              width="16"
-              height="8"
-              viewBox="0 0 16 8"
-              fill="none"
-              className="transition-transform duration-500 group-hover:translate-x-1"
-            >
-              <path d="M0 4H14M14 4L10 0.5M14 4L10 7.5" stroke="currentColor" strokeWidth="0.8" />
-            </svg>
+        <div className="mt-12 max-w-2xl overflow-hidden">
+          <p ref={subtitleRef} className="text-base md:text-lg text-white/40 font-body leading-relaxed tracking-wide">{t('hero.subtitle')}</p>
+        </div>
+        <div ref={ctaRef} className="mt-16">
+          <a href="#projects" className="group relative inline-flex items-center gap-4 px-10 py-5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 transition-all duration-500 backdrop-blur-md overflow-hidden">
+            <span className="relative z-10 text-[10px] tracking-[0.4em] text-white/60 group-hover:text-white uppercase font-black">{t('hero.ctaWork')}</span>
+            <div className="absolute inset-0 bg-gradient-to-r from-violet-500/0 via-violet-500/20 to-violet-500/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
           </a>
         </div>
       </div>
-
-      {/* Scroll indicator — AT style: minimal dot */}
-      <div
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 z-[5] flex flex-col items-center gap-3"
-        style={{
-          opacity: 0,
-          animation: `atFadeUp 1s 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards`,
-        }}
-      >
-        <div className="w-[1px] h-8 bg-gradient-to-b from-white/0 to-white/20" />
-        <span className="text-[9px] tracking-[0.4em] text-white/15 uppercase font-body">
-          Scroll
-        </span>
-      </div>
+      <div className="absolute top-12 left-12 w-32 h-32 border-l border-t border-white/5 pointer-events-none" />
+      <div className="absolute bottom-12 right-12 w-32 h-32 border-r border-b border-white/5 pointer-events-none" />
     </section>
   );
 };
