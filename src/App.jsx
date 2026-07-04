@@ -6,26 +6,17 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Layout Components
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
-
-// Section Components
 import Hero from './components/sections/Hero';
 import About from './components/sections/About';
 import Skills from './components/sections/Skills';
 import Projects from './components/sections/Projects';
 import Contact from './components/sections/Contact';
-
-// 3D & Technical Overlays
 import GlobalCanvas from './components/common/GlobalCanvas';
 import TechnicalUI from './components/common/TechnicalUI';
-
-// Admin Components
 import Dashboard from './components/admin/Dashboard';
 import AdminToggle from './components/admin/AdminToggle';
-
-// Common Components
 import Preloader from './components/common/Preloader';
 
 class ErrorBoundary extends Component {
@@ -34,24 +25,18 @@ class ErrorBoundary extends Component {
     this.state = { hasError: false };
     this.handleReload = this.handleReload.bind(this);
   }
-
-  static getDerivedStateFromError() {
-    return { hasError: true };
-  }
-
+  static getDerivedStateFromError() { return { hasError: true }; }
   handleReload() {
-    window.location.href = window.location.origin + window.location.pathname;
+    if (typeof window !== 'undefined') {
+      window.location.href = window.location.origin + window.location.pathname;
+    }
   }
-
   render() {
     if (this.state.hasError) {
       return (
         <div className="fixed inset-0 flex flex-col items-center justify-center bg-black text-white p-10 text-center z-[999]">
           <h2 className="text-2xl font-display mb-6">Critical System Error</h2>
-          <button
-            onClick={this.handleReload}
-            className="px-8 py-3 border border-white/20 rounded-full hover:bg-white/10 transition-colors uppercase text-[10px] tracking-widest"
-          >
+          <button type="button" onClick={this.handleReload} className="px-8 py-3 border border-white/20 rounded-full hover:bg-white/10 transition-colors uppercase text-[10px] tracking-widest">
             Re-Initialize System
           </button>
         </div>
@@ -76,10 +61,10 @@ function App() {
 
   useEffect(() => {
     if (!isLoaded) return;
-
     const ctx = gsap.context(() => {
       const sections = gsap.utils.toArray('section:not(#hero)');
       sections.forEach((section) => {
+        if (!section) return;
         gsap.fromTo(section,
           { clipPath: 'inset(10% 0% 10% 0%)', opacity: 0 },
           {
@@ -96,7 +81,6 @@ function App() {
         );
       });
     });
-
     return () => ctx.revert();
   }, [isLoaded]);
 
