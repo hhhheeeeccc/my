@@ -50,7 +50,7 @@ const TechnicalUI = () => {
         </div>
         <div className="flex flex-col items-center gap-2">
           <div className="flex gap-1">
-            {[1, 2, 3].map(i => <div key={i} className="w-[2px] h-3 bg-white/10" />)}
+            {[1, 2, 3].map(i => <div key={`lsb-${i}`} className="w-[2px] h-3 bg-white/10" />)}
           </div>
           <span className="text-[8px] tracking-[0.4em] text-white/10 uppercase">Data Stream</span>
         </div>
