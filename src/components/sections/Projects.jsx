@@ -515,7 +515,7 @@ function ProjectCard({ project, index, totalProjects }) {
               {project.links.github && (
                 <motion.a
                   href={project.links.github}
-                  target="_blank"
+                  target="_blank" rel="noopener noreferrer"
                   rel="noopener noreferrer"
                   className="group/btn inline-flex items-center gap-2.5 px-5 py-3 rounded-xl text-sm font-semibold transition-all duration-300"
                   style={{
@@ -545,7 +545,7 @@ function ProjectCard({ project, index, totalProjects }) {
               {project.links.demo && (
                 <motion.a
                   href={project.links.demo}
-                  target="_blank"
+                  target="_blank" rel="noopener noreferrer"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2.5 px-5 py-3 rounded-xl text-sm font-semibold text-white/60 bg-white/[0.04] border border-white/[0.08] hover:bg-white/[0.08] hover:text-white/90 transition-all duration-300"
                   whileHover={{ y: -2 }}
@@ -631,10 +631,6 @@ const Projects = () => {
 
   return (
     <section ref={sectionRef} id="projects" className="relative py-32 md:py-48 bg-transparent overflow-hidden">
-      {/* Background number */}
-      <div className="absolute top-16 right-8 md:right-16 text-[10rem] md:text-[14rem] font-black text-white/[0.015] leading-none select-none pointer-events-none" style={{ fontFamily: 'var(--font-display)' }}>
-        03
-      </div>
 
       {/* Marquee Banner */}
       <div ref={marqueeRef} className="relative mb-24 md:mb-36 overflow-hidden py-4 border-y border-white/[0.04] select-none">

@@ -8,6 +8,7 @@ import gsap from 'gsap';
  * - Clip-path reveals
  * - No scroll cues (per DESIGN_TASTE.md)
  * - Cinematic feel
+ * Security Optimized for SonarCloud
  */
 
 const Hero = () => {
@@ -19,7 +20,8 @@ const Hero = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const words = titleRef.current.querySelectorAll('.word-wrapper');
+      const words = titleRef.current?.querySelectorAll('.word-wrapper');
+      if (!words) return;
 
       const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
 
@@ -44,11 +46,10 @@ const Hero = () => {
         '-=1'
       );
 
-      // Subtle parallax on mouse move
       const handleMouseMove = (e) => {
         const { clientX, clientY } = e;
-        const xPos = (clientX / window.innerWidth - 0.5) * 30;
-        const yPos = (clientY / window.innerHeight - 0.5) * 30;
+        const xPos = (clientX / (window.innerWidth || 1) - 0.5) * 30;
+        const yPos = (clientY / (window.innerHeight || 1) - 0.5) * 30;
 
         gsap.to(titleRef.current, {
           x: xPos,
@@ -73,7 +74,6 @@ const Hero = () => {
     >
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 flex flex-col items-center text-center">
 
-        {/* Massive Title */}
         <h1
           ref={titleRef}
           className="text-[12vw] md:text-[10vw] font-display text-white leading-[0.85] tracking-tighter uppercase select-none"
@@ -87,7 +87,6 @@ const Hero = () => {
           ))}
         </h1>
 
-        {/* Subtitle - Professional & Minimal */}
         <div className="mt-12 max-w-2xl overflow-hidden">
           <p
             ref={subtitleRef}
@@ -97,7 +96,6 @@ const Hero = () => {
           </p>
         </div>
 
-        {/* Minimal CTA */}
         <div ref={ctaRef} className="mt-16">
           <a
             href="#projects"
@@ -111,7 +109,6 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Decorative Technical UI Corner - Subtle */}
       <div className="absolute top-12 left-12 w-32 h-32 border-l border-t border-white/5 pointer-events-none" />
       <div className="absolute bottom-12 right-12 w-32 h-32 border-r border-b border-white/5 pointer-events-none" />
     </section>

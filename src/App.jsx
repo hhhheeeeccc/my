@@ -29,15 +29,27 @@ import AdminToggle from './components/admin/AdminToggle';
 import Preloader from './components/common/Preloader';
 
 class ErrorBoundary extends Component {
-  state = { hasError: false };
-  static getDerivedStateFromError() { return { hasError: true }; }
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+    this.handleReload = this.handleReload.bind(this);
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  handleReload() {
+    window.location.href = window.location.origin + window.location.pathname;
+  }
+
   render() {
     if (this.state.hasError) {
       return (
         <div className="fixed inset-0 flex flex-col items-center justify-center bg-black text-white p-10 text-center z-[999]">
           <h2 className="text-2xl font-display mb-6">Critical System Error</h2>
           <button
-            onClick={() => window.location.reload()}
+            onClick={this.handleReload}
             className="px-8 py-3 border border-white/20 rounded-full hover:bg-white/10 transition-colors uppercase text-[10px] tracking-widest"
           >
             Re-Initialize System
@@ -66,7 +78,6 @@ function App() {
     if (!isLoaded) return;
 
     const ctx = gsap.context(() => {
-      // Global Section Reveal Transitions
       const sections = gsap.utils.toArray('section:not(#hero)');
       sections.forEach((section) => {
         gsap.fromTo(section,
@@ -98,18 +109,10 @@ function App() {
     <ErrorBoundary>
       <ReactLenis root options={{ lerp: 0.08, smoothWheel: true }}>
         <div className="relative min-h-screen bg-black text-white selection:bg-white/10">
-
-          {/* BACKGROUND LAYER (3D) */}
           <GlobalCanvas />
-
-          {/* OVERLAY LAYER (FUI) */}
           <TechnicalUI />
-
-          {/* UI LAYER (Static) */}
           {!isLoaded && <Preloader onComplete={handlePreloaderComplete} />}
           <Navbar isAdminOpen={isAdminOpen} />
-
-          {/* CONTENT LAYER */}
           <main className={`relative z-10 transition-opacity duration-1500 ease-in-out ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
             <Hero />
             <About />
@@ -117,12 +120,9 @@ function App() {
             <Projects />
             <Contact />
           </main>
-
           <div className="relative z-10">
             <Footer />
           </div>
-
-          {/* ADMIN LAYER */}
           <AdminToggle onClick={() => setIsAdminOpen(true)} />
           {isAdminOpen && <Dashboard onClose={() => setIsAdminOpen(false)} />}
         </div>
