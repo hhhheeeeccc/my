@@ -2,214 +2,191 @@ import { useRef, useMemo } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
-/*
-  ActiveTheory-inspired 3D Background
-  - Subtle floating particles (white/gray, not neon)
-  - Soft ambient lighting
-  - Gentle camera movement on scroll
-  - No flashy cyberpunk effects
-  - Elegant, minimal, sophisticated
-*/
+/**
+ * ATScene - Cinematic 3D Environment inspired by Active Theory
+ * Implements:
+ * - Liquid Noise Background (Shader)
+ * - Volumetric Lighting simulation
+ * - Reactive Dust System
+ * - High-inertia camera tracking
+ */
 
-// Simple seeded PRNG for deterministic visual positions (not security-sensitive)
-function mulberry32(seed) {
-  let a = seed | 0;
-  return function () {
-    a = (a + 0x6D2B79F5) | 0;
-    let t = Math.imul(a ^ (a >>> 15), 1 | a);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
+const LiquidBackground = () => {
+  const meshRef = useRef();
+  const { viewport } = useThree();
 
-// ─── Subtle floating dust particles ───
-function DustParticles({ count = 800 }) {
-  const ref = useRef();
+  const shaderArgs = useMemo(() => ({
+    uniforms: {
+      uTime: { value: 0 },
+      uMouse: { value: new THREE.Vector2(0, 0) },
+      uResolution: { value: new THREE.Vector2(viewport.width, viewport.height) },
+      uColor1: { value: new THREE.Color('#050505') },
+      uColor2: { value: new THREE.Color('#101520') },
+      uColor3: { value: new THREE.Color('#1a1a2e') }
+    },
+    vertexShader: `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform float uTime;
+      uniform vec2 uMouse;
+      uniform vec2 uResolution;
+      uniform vec3 uColor1;
+      uniform vec3 uColor2;
+      uniform vec3 uColor3;
+      varying vec2 vUv;
 
-  const { positions } = useMemo(() => {
+      // Simplex 2D noise
+      vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
+      float snoise(vec2 v){
+        const vec4 C = vec4(0.211324865405187, 0.366025403784439,
+                 -0.577350269189626, 0.024390243902439);
+        vec2 i  = floor(v + dot(v, C.yy) );
+        vec2 x0 = v -   i + dot(i, C.xx);
+        vec2 i1;
+        i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+        vec4 x12 = x0.xyxy + C.xxzz;
+        x12.xy -= i1;
+        i = mod(i, 289.0);
+        vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
+        + i.x + vec3(0.0, i1.x, 1.0 ));
+        vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy),
+          dot(x12.zw,x12.zw)), 0.0);
+        m = m*m ;
+        m = m*m ;
+        vec3 x = 2.0 * fract(p * C.www) - 1.0;
+        vec3 h = abs(x) - 0.5;
+        vec3 a0 = x - floor(x + 0.5);
+        vec3 g = a0.x  * vec2(x0.x,x12.x) + h.x  * vec2(x0.y,x12.y);
+        float n = 130.0 * dot(m, g);
+        return n;
+      }
+
+      void main() {
+        vec2 uv = vUv;
+        float noise = snoise(uv * 2.0 + uTime * 0.1 + uMouse * 0.2);
+        float noise2 = snoise(uv * 4.0 - uTime * 0.05);
+
+        vec3 color = mix(uColor1, uColor2, noise * 0.5 + 0.5);
+        color = mix(color, uColor3, noise2 * 0.3);
+
+        // Vignette
+        float dist = length(uv - 0.5);
+        color *= 1.0 - smoothstep(0.4, 1.2, dist);
+
+        gl_FragColor = vec4(color, 1.0);
+      }
+    `
+  }), [viewport]);
+
+  useFrame((state) => {
+    if (!meshRef.current) return;
+    meshRef.current.material.uniforms.uTime.value = state.clock.elapsedTime;
+    meshRef.current.material.uniforms.uMouse.value.lerp(
+      new THREE.Vector2(state.mouse.x, state.mouse.y),
+      0.05
+    );
+  });
+
+  return (
+    <mesh ref={meshRef} position={[0, 0, -1]}>
+      <planeGeometry args={[viewport.width * 2, viewport.height * 2]} />
+      <shaderMaterial args={[shaderArgs]} depthWrite={false} />
+    </mesh>
+  );
+};
+
+const CinematicParticles = ({ count = 400 }) => {
+  const pointsRef = useRef();
+
+  const particles = useMemo(() => {
     const pos = new Float32Array(count * 3);
-    const rng = mulberry32(42); // Fixed seed for consistent layout
+    const speed = new Float32Array(count);
     for (let i = 0; i < count; i++) {
-      pos[i * 3] = (rng() - 0.5) * 40;
-      pos[i * 3 + 1] = (rng() - 0.5) * 25;
-      pos[i * 3 + 2] = (rng() - 0.5) * 30 - 5;
+      pos[i * 3] = (Math.random() - 0.5) * 30;
+      pos[i * 3 + 1] = (Math.random() - 0.5) * 20;
+      pos[i * 3 + 2] = (Math.random() - 0.5) * 10;
+      speed[i] = 0.02 + Math.random() * 0.05;
     }
-    return { positions: pos };
+    return { pos, speed };
   }, [count]);
 
   useFrame((state) => {
-    if (!ref.current) return;
-    const t = state.clock.elapsedTime;
-    const posArr = ref.current.geometry.attributes.position.array;
+    if (!pointsRef.current) return;
+    const time = state.clock.elapsedTime;
+    const posArr = pointsRef.current.geometry.attributes.position.array;
+
     for (let i = 0; i < count; i++) {
-      posArr[i * 3 + 1] += Math.sin(t * 0.3 + i * 0.5) * 0.001;
-      posArr[i * 3] += Math.cos(t * 0.2 + i * 0.3) * 0.0005;
+      const idx = i * 3;
+      posArr[idx + 1] += Math.sin(time * 0.2 + i) * 0.002;
+      posArr[idx] += Math.cos(time * 0.1 + i) * 0.001;
     }
-    ref.current.geometry.attributes.position.needsUpdate = true;
-    ref.current.rotation.y = t * 0.008;
+    pointsRef.current.geometry.attributes.position.needsUpdate = true;
+    pointsRef.current.rotation.y = time * 0.02;
   });
 
   return (
-    <points ref={ref}>
+    <points ref={pointsRef}>
       <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+        <bufferAttribute
+          attach="attributes-position"
+          count={count}
+          array={particles.pos}
+          itemSize={3}
+        />
       </bufferGeometry>
       <pointsMaterial
-        size={0.03}
+        size={0.02}
         color="#ffffff"
         transparent
-        opacity={0.15}
-        sizeAttenuation
-        depthWrite={false}
+        opacity={0.2}
         blending={THREE.AdditiveBlending}
+        sizeAttenuation={true}
+        depthWrite={false}
       />
     </points>
   );
-}
+};
 
-// ─── Subtle geometric wireframe shapes ───
-function FloatingGeometry() {
-  const group = useRef();
-
-  const shapes = useMemo(() => [
-    { pos: [-6, 3, -12], rot: [0.3, 0.5, 0], scale: 1.2, speed: 0.15 },
-    { pos: [7, -2, -15], rot: [0.1, 0.8, 0.2], scale: 0.8, speed: 0.12 },
-    { pos: [-3, -4, -10], rot: [0.5, 0.3, 0.1], scale: 0.6, speed: 0.18 },
-    { pos: [5, 4, -18], rot: [0.2, 0.1, 0.4], scale: 1.5, speed: 0.1 },
-    { pos: [0, 0, -20], rot: [0, 0, 0], scale: 2.0, speed: 0.08 },
-  ], []);
-
-  useFrame((state) => {
-    if (!group.current) return;
-    const t = state.clock.elapsedTime;
-    group.current.children.forEach((mesh, i) => {
-      const s = shapes[i];
-      mesh.rotation.x = s.rot[0] + t * s.speed;
-      mesh.rotation.y = s.rot[1] + t * s.speed * 0.7;
-      mesh.position.y = s.pos[1] + Math.sin(t * 0.3 + i) * 0.5;
-    });
-  });
-
-  return (
-    <group ref={group}>
-      {shapes.map((s, i) => (
-        <mesh key={i} position={s.pos} rotation={s.rot} scale={s.scale}>
-          {i % 3 === 0 ? (
-            <icosahedronGeometry args={[1, 1]} />
-          ) : i % 3 === 1 ? (
-            <octahedronGeometry args={[1, 0]} />
-          ) : (
-            <torusGeometry args={[1, 0.3, 8, 16]} />
-          )}
-          <meshBasicMaterial
-            color="#ffffff"
-            wireframe
-            transparent
-            opacity={0.03 + i * 0.005}
-          />
-        </mesh>
-      ))}
-    </group>
-  );
-}
-
-// ─── Soft light orbs (AT ambient lights) ───
-function AmbientOrbs() {
-  const group = useRef();
-
-  const orbs = useMemo(() => [
-    { pos: [5, 3, -8], color: '#4a9eff', intensity: 0.4, distance: 20 },
-    { pos: [-6, -2, -10], color: '#8855ff', intensity: 0.3, distance: 18 },
-    { pos: [0, 5, -12], color: '#ff6688', intensity: 0.2, distance: 15 },
-  ], []);
-
-  useFrame((state) => {
-    if (!group.current) return;
-    const t = state.clock.elapsedTime;
-    group.current.children.forEach((light, i) => {
-      const o = orbs[i];
-      light.position.x = o.pos[0] + Math.sin(t * 0.2 + i * 2) * 2;
-      light.position.y = o.pos[1] + Math.cos(t * 0.15 + i) * 1.5;
-    });
-  });
-
-  return (
-    <group ref={group}>
-      {orbs.map((o, i) => (
-        <pointLight
-          key={i}
-          color={o.color}
-          intensity={o.intensity}
-          distance={o.distance}
-          position={o.pos}
-        />
-      ))}
-    </group>
-  );
-}
-
-// ─── Subtle ground plane with grid ───
-function SubtleGrid() {
-  const matRef = useRef();
-
-  const material = useMemo(() => {
-    return new THREE.ShaderMaterial({
-      transparent: true,
-      uniforms: {
-        uTime: { value: 0 },
-      },
-      vertexShader: `
-        varying vec2 vUv;
-        void main() {
-          vUv = uv;
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-      `,
-      fragmentShader: `
-        uniform float uTime;
-        varying vec2 vUv;
-        void main() {
-          vec2 grid = abs(fract(vUv * 40.0 - 0.5) - 0.5) / fwidth(vUv * 40.0);
-          float line = min(grid.x, grid.y);
-          float gridAlpha = 1.0 - min(line, 1.0);
-          float dist = length(vUv - 0.5);
-          float fade = 1.0 - smoothstep(0.1, 0.5, dist);
-          float alpha = gridAlpha * 0.04 * fade;
-          gl_FragColor = vec4(1.0, 1.0, 1.0, alpha);
-        }
-      `,
-    });
-  }, []);
-
-  useFrame((state) => {
-    material.uniforms.uTime.value = state.clock.elapsedTime;
-  });
-
-  return (
-    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -5, -5]} material={material}>
-      <planeGeometry args={[60, 60]} />
-    </mesh>
-  );
-}
-
-// ─── MAIN SCENE ───
 const ATScene = () => {
   const { camera } = useThree();
+  const targetCameraPos = useRef(new THREE.Vector3(0, 0, 8));
 
-  useFrame(() => {
-    const t = performance.now() * 0.0001;
-    camera.position.x = THREE.MathUtils.lerp(camera.position.x, Math.sin(t * 3) * 0.3, 0.02);
-    camera.position.y = THREE.MathUtils.lerp(camera.position.y, Math.cos(t * 2) * 0.2, 0.02);
+  useFrame((state) => {
+    // Smooth camera inertia
+    targetCameraPos.current.x = state.mouse.x * 0.5;
+    targetCameraPos.current.y = state.mouse.y * 0.3;
+    camera.position.lerp(targetCameraPos.current, 0.03);
+    camera.lookAt(0, 0, 0);
   });
 
   return (
     <>
-      <fog attach="fog" args={['#000000', 8, 30]} />
-      <ambientLight intensity={0.05} />
-      <AmbientOrbs />
-      <DustParticles count={600} />
-      <FloatingGeometry />
-      <SubtleGrid />
+      <color attach="background" args={['#000000']} />
+      <fog attach="fog" args={['#000000', 5, 25]} />
+
+      <LiquidBackground />
+      <CinematicParticles />
+
+      {/* Volumetric atmosphere lighting */}
+      <spotLight
+        position={[10, 10, 10]}
+        angle={0.15}
+        penumbra={1}
+        intensity={2}
+        color="#4080ff"
+      />
+      <spotLight
+        position={[-10, -10, 10]}
+        angle={0.15}
+        penumbra={1}
+        intensity={1.5}
+        color="#8040ff"
+      />
     </>
   );
 };
