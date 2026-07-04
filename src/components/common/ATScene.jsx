@@ -7,142 +7,84 @@ const getSecureValues = (count) => {
   if (typeof window !== 'undefined' && window.crypto) {
     window.crypto.getRandomValues(array);
   } else {
-    // Non-random fallback for CI/Server-side environment to satisfy security scanners
-    for (let i = 0; i < count; i++) array[i] = i * 12345;
+    for (let i = 0; i < count; i++) array[i] = i * 98765;
   }
   return Array.from(array).map(v => v / 4294967296);
 };
 
-const LiquidBackground = () => {
-  const meshRef = useRef(null);
-  const { viewport } = useThree();
-  const mouseLerp = useMemo(() => new THREE.Vector2(), []);
-
-  const shaderArgs = useMemo(() => ({
-    uniforms: {
-      uTime: { value: 0 },
-      uMouse: { value: new THREE.Vector2(0, 0) },
-      uResolution: { value: new THREE.Vector2(viewport.width, viewport.height) },
-      uColor1: { value: new THREE.Color('#050505') },
-      uColor2: { value: new THREE.Color('#101520') },
-      uColor3: { value: new THREE.Color('#1a1a2e') }
-    },
-    vertexShader: `
-      varying vec2 vUv;
-      void main() {
-        vUv = uv;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-      }
-    `,
-    fragmentShader: `
-      uniform float uTime;
-      uniform vec2 uMouse;
-      uniform vec3 uColor1;
-      uniform vec3 uColor2;
-      uniform vec3 uColor3;
-      varying vec2 vUv;
-      vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
-      float snoise(vec2 v){
-        const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
-        vec2 i = floor(v + dot(v, C.yy));
-        vec2 x0 = v - i + dot(i, C.xx);
-        vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
-        vec4 x12 = x0.xyxy + C.xxzz;
-        x12.xy -= i1;
-        i = mod(i, 289.0);
-        vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
-        vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
-        m = m*m; m = m*m;
-        vec3 x = 2.0 * fract(p * C.www) - 1.0;
-        vec3 h = abs(x) - 0.5;
-        vec3 a0 = x - floor(x + 0.5);
-        vec3 g = a0.x * vec2(x0.x,x12.x) + h.x * vec2(x0.y,x12.y);
-        return 130.0 * dot(m, g);
-      }
-      void main() {
-        float n = snoise(vUv * 2.0 + uTime * 0.1 + uMouse * 0.2);
-        vec3 col = mix(uColor1, uColor2, n * 0.5 + 0.5);
-        col = mix(col, uColor3, snoise(vUv * 4.0 - uTime * 0.05) * 0.3);
-        col *= 1.0 - smoothstep(0.4, 1.2, length(vUv - 0.5));
-        gl_FragColor = vec4(col, 1.0);
-      }
-    `
-  }), [viewport.width, viewport.height]);
-
-  useFrame((state) => {
-    if (!meshRef.current?.material?.uniforms) return;
-    const u = meshRef.current.material.uniforms;
-    u.uTime.value = state.clock.elapsedTime;
-    mouseLerp.set(state.mouse.x, state.mouse.y);
-    u.uMouse.value.lerp(mouseLerp, 0.05);
-  });
-
-  return (
-    <mesh ref={meshRef} position={[0, 0, -1]}>
-      <planeGeometry args={[viewport.width * 2, viewport.height * 2]} />
-      <shaderMaterial args={[shaderArgs]} depthWrite={false} />
-    </mesh>
-  );
-};
-
-const CinematicParticles = ({ count = 400 }) => {
+const HyperEnvironment = ({ count = 4000 }) => {
   const pointsRef = useRef(null);
+  const { size } = useThree();
+  const isMobile = size.width < 768;
+  const actualCount = isMobile ? 1500 : count;
+
   const particles = useMemo(() => {
-    const pos = new Float32Array(count * 3);
-    const randoms = getSecureValues(count * 3);
-    for (let i = 0; i < count * 3; i++) {
-      if (i % 3 === 0) pos[i] = (randoms[i] - 0.5) * 30;
-      else if (i % 3 === 1) pos[i] = (randoms[i] - 0.5) * 20;
-      else pos[i] = (randoms[i] - 0.5) * 10;
+    const pos = new Float32Array(actualCount * 3);
+    const randoms = getSecureValues(actualCount * 3);
+    for (let i = 0; i < actualCount; i++) {
+      const r = 20 + randoms[i*3] * 60;
+      const theta = 2 * Math.PI * randoms[i*3+1];
+      const phi = Math.acos(2 * randoms[i*3+2] - 1);
+      pos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+      pos[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+      pos[i * 3 + 2] = r * Math.cos(phi);
     }
-    return { pos };
-  }, [count]);
+    return pos;
+  }, [actualCount]);
 
   useFrame((state) => {
-    if (!pointsRef.current?.geometry?.attributes?.position) return;
-    const t = state.clock.elapsedTime;
-    const p = pointsRef.current.geometry.attributes.position.array;
-    for (let i = 0; i < count; i++) {
-      const idx = i * 3;
-      p[idx + 1] += Math.sin(t * 0.2 + i) * 0.002;
-      p[idx] += Math.cos(t * 0.1 + i) * 0.001;
-    }
-    pointsRef.current.geometry.attributes.position.needsUpdate = true;
-    pointsRef.current.rotation.y = t * 0.02;
+    if (!pointsRef.current) return;
+    const t = state.clock.elapsedTime * 0.015;
+    pointsRef.current.rotation.y = t;
+    pointsRef.current.rotation.z = t * 0.3;
+    // Deep float effect
+    pointsRef.current.position.y = Math.sin(t * 2) * 2;
   });
 
   return (
     <points ref={pointsRef}>
       <bufferGeometry>
-        <bufferAttribute attach="attributes-position" count={count} array={particles.pos} itemSize={3} />
+        <bufferAttribute attach="attributes-position" count={actualCount} array={particles} itemSize={3} />
       </bufferGeometry>
-      <pointsMaterial size={0.02} color="#ffffff" transparent opacity={0.2} blending={THREE.AdditiveBlending} sizeAttenuation depthWrite={false} />
+      <pointsMaterial
+        size={0.03}
+        color="#6366f1"
+        transparent
+        opacity={0.3}
+        blending={THREE.AdditiveBlending}
+        sizeAttenuation
+        depthWrite={false}
+      />
     </points>
   );
 };
 
 const ATScene = () => {
-  const { camera } = useThree();
-  const targetCameraPos = useRef(new THREE.Vector3(0, 0, 8));
+  const { camera, mouse } = useThree();
+  const targetRotation = useRef(new THREE.Euler(0, 0, 0));
   const lookAtVec = useMemo(() => new THREE.Vector3(0, 0, 0), []);
-  const bgCol = useMemo(() => new THREE.Color('#000000'), []);
 
-  useFrame((state) => {
+  useFrame(() => {
     if (!camera) return;
-    targetCameraPos.current.x = state.mouse.x * 0.5;
-    targetCameraPos.current.y = state.mouse.y * 0.3;
-    camera.position.lerp(targetCameraPos.current, 0.03);
-    camera.lookAt(lookAtVec);
+    // Immersive 360 look-around: mouse creates deep rotation & parallax
+    targetRotation.current.y = THREE.MathUtils.lerp(targetRotation.current.y, -mouse.x * Math.PI * 0.4, 0.03);
+    targetRotation.current.x = THREE.MathUtils.lerp(targetRotation.current.x, mouse.y * Math.PI * 0.2, 0.03);
+    camera.rotation.copy(targetRotation.current);
+
+    // Slight position parallax for depth
+    camera.position.x = THREE.MathUtils.lerp(camera.position.x, mouse.x * 2, 0.03);
+    camera.position.y = THREE.MathUtils.lerp(camera.position.y, -mouse.y * 2, 0.03);
   });
 
   return (
     <>
-      <color attach="background" args={[bgCol]} />
-      <fog attach="fog" args={['#000000', 5, 25]} />
-      <LiquidBackground />
-      <CinematicParticles />
-      <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={2} color="#4080ff" />
-      <spotLight position={[-10, -10, 10]} angle={0.15} penumbra={1} intensity={1.5} color="#8040ff" />
+      <color attach="background" args={['#020204']} />
+      <fog attach="fog" args={['#000000', 10, 70]} />
+      <HyperEnvironment />
+      <ambientLight intensity={0.4} />
+      <pointLight position={[30, 30, 30]} intensity={2.5} color="#4f46e5" />
+      <pointLight position={[-30, -30, -30]} intensity={1.5} color="#10b981" />
+      <spotLight position={[0, 50, 0]} angle={0.3} penumbra={1} intensity={2} color="#ffffff" />
     </>
   );
 };
